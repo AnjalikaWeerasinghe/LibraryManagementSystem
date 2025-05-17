@@ -16,6 +16,32 @@ namespace Library.Repositories
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<Book> Books { get; set; }
+        public DbSet<LibraryInfo> LibraryInfos { get; set; }
+        public DbSet<Acquisition> Acquisitions { get; set; }
+        public DbSet<AcquisitionItem> AcquisitionItems { get; set; }
+        public DbSet<AcquisitionType> AcquisitionTypes { get; set; }
+        public DbSet<Author> Authors { get; set; }
+        public DbSet<Borrowing> Borrowings { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<DivisionStaff> DivisionStaff { get; set; }
+        public DbSet<Donor> Donors { get; set; }
+        public DbSet<Fine> Fines { get; set; }
+        public DbSet<FineType> FineTypes { get; set; }
+        public DbSet<Genre> Genres { get; set; }
+        public DbSet<ItemAuthor> ItemAuthors { get; set; }
+        public DbSet<ItemCondition> ItemConditions { get; set; }
+        public DbSet<ItemCopy> ItemCopies { get; set; }
+        public DbSet<Language> Languages { get; set; }
+        public DbSet<LibraryDivision> LibraryDivisions { get; set; }
+        public DbSet<LibraryItem> LibraryItems { get; set; }
+        public DbSet<Member> Members { get; set; }
+        public DbSet<MembershipType> MembershipTypes { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Publisher> Publishers { get; set; }
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+        public DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<Vendor> Vendors { get; set; }
+
     }
 }

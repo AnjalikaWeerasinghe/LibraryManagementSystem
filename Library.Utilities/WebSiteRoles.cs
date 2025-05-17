@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Library.Utilities
 {
-    public class WebSiteRoles
+    public static class WebSiteRoles
     {
         public const string WebSite_Admin = "Admin";
         public const string WebSite_Librarian = "Librarian";

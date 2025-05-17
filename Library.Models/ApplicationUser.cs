@@ -12,11 +12,17 @@ namespace Library.Models
     public class ApplicationUser : IdentityUser
     {
         [Required]
-        public string Name { get; set; }
+        public string FullName { get; set; }
+        public string CallingName { get; set; }
         public Gender Gender { get; set; }
-        public string Nationality { get; set; }
+        public string Email { get; set; }
         public string Address { get; set; }
         public DateTime DOB { get; set; }
+        public int MemberId { get; set; }
+
+        public Member Member { get; set; }
+
+        public ICollection<DivisionStaff> StaffMembers { get; set; }
     }
 }
 
