@@ -1,7 +1,6 @@
 Library Management System for Gampola Urban Council Public Library
 
-This is a web-based Library Management System built with ASP.NET Core MVC, Entity Framework, and SQL Server. This system supports catalog management, member registration, borrowing and returning books, fine payment 
-management and staff administration.
+This is a web-based Library Management System built with ASP.NET Core MVC, Entity Framework, and SQL Server. This system supports catalog management, member registration, borrowing and returning books, fine payment management and staff administration.
 
 Technology Stack:
 
