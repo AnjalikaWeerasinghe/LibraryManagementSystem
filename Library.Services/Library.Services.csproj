@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Library.ViewModels\Library.ViewModels.csproj" />
+    <ProjectReference Include="..\Library.Utilities\Library.Utilities.csproj" />
+  </ItemGroup>
+  
 </Project>

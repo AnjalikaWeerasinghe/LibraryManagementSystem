@@ -9,8 +9,9 @@ namespace Library.Models
     public class LibraryInfo
     {
         public int Id { get; set; }
+        public string RegisteredCode { get; set; }
         public string Name { get; set; }
-        public string  Address { get; set; }
+        public string Address { get; set; }
         public string PhoneNumber { get; set; } 
         public string Email { get; set; }
         public string OpeningHours { get; set; }
@@ -18,6 +19,8 @@ namespace Library.Models
         public string Description { get; set; }
 
         public ICollection<LibraryDivision> LibraryDivisions { get; set; }
-
+        public ICollection<Vendor> Vendors { get; set; }
+        public ICollection<Donor> Donors { get; set; }
+        public ICollection<LibraryEvent> Events { get; set; }
     }
 }

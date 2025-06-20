@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250516203633_ModeltoDatabase")]
-    partial class ModeltoDatabase
+    [Migration("20250526135003_UpdateModeltoDatabase")]
+    partial class UpdateModeltoDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,10 @@ namespace Library.Repositories.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcquisitionCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("AcquisitionDate")
                         .HasColumnType("datetime2");
@@ -144,6 +148,10 @@ namespace Library.Repositories.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BorrowedCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("BorrowedDate")
                         .HasColumnType("datetime2");
 
@@ -230,9 +238,16 @@ namespace Library.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DonorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LibraryInfoId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -248,7 +263,42 @@ namespace Library.Repositories.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LibraryInfoId");
+
                     b.ToTable("Donors");
+                });
+
+            modelBuilder.Entity("Library.Models.EventParticipant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("LibraryEventId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ParticipantStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RegisteredDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("LibraryEventId");
+
+                    b.ToTable("EventParticipants");
                 });
 
             modelBuilder.Entity("Library.Models.Fine", b =>
@@ -265,13 +315,17 @@ namespace Library.Repositories.Migrations
                     b.Property<int>("BorrowingId")
                         .HasColumnType("int");
 
+                    b.Property<string>("FineCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("FineTypeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("IssuedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MemberId")
+                    b.Property<int?>("MemberId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("PaidDate")
@@ -377,6 +431,10 @@ namespace Library.Repositories.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ItemCopyCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ItemStatus")
                         .HasColumnType("int");
 
@@ -437,6 +495,46 @@ namespace Library.Repositories.Migrations
                     b.ToTable("LibraryDivisions");
                 });
 
+            modelBuilder.Entity("Library.Models.LibraryEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LibraryInfoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LibraryInfoId");
+
+                    b.ToTable("LibraryEvents");
+                });
+
             modelBuilder.Entity("Library.Models.LibraryInfo", b =>
                 {
                     b.Property<int>("Id")
@@ -473,6 +571,10 @@ namespace Library.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RegisteredCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("LibraryInfos");
@@ -497,6 +599,10 @@ namespace Library.Repositories.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ISBN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ItemCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -533,6 +639,10 @@ namespace Library.Repositories.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("MemberCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("MembershipDate")
                         .HasColumnType("datetime2");
@@ -581,18 +691,37 @@ namespace Library.Repositories.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("LibrarianId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentReference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
-                    b.Property<int>("PurchaseOrderItemId")
+                    b.Property<int?>("PurchaseOrderId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PurchaseOrderItemId");
+                    b.HasIndex("LibrarianId");
+
+                    b.HasIndex("PurchaseOrderId");
 
                     b.ToTable("Payments");
                 });
@@ -630,24 +759,24 @@ namespace Library.Repositories.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
-                    b.Property<int>("PaymentId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("PONumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VendorId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PaymentId");
 
                     b.HasIndex("VendorId");
 
@@ -700,6 +829,10 @@ namespace Library.Repositories.Migrations
                     b.Property<int>("MemberId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ReservationCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("ReservationDate")
                         .HasColumnType("datetime2");
 
@@ -735,6 +868,9 @@ namespace Library.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("LibraryInfoId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -747,7 +883,13 @@ namespace Library.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("VendorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("LibraryInfoId");
 
                     b.ToTable("Vendors");
                 });
@@ -971,7 +1113,7 @@ namespace Library.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DOB")
+                    b.Property<DateTime?>("DOB")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FullName")
@@ -1069,7 +1211,7 @@ namespace Library.Repositories.Migrations
                         .IsRequired();
 
                     b.HasOne("Library.Models.ApplicationUser", "User")
-                        .WithMany("StaffMembers")
+                        .WithMany("DivisionStaffs")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1077,6 +1219,34 @@ namespace Library.Repositories.Migrations
                     b.Navigation("Division");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Library.Models.Donor", b =>
+                {
+                    b.HasOne("Library.Models.LibraryInfo", "LibraryInfo")
+                        .WithMany("Donors")
+                        .HasForeignKey("LibraryInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LibraryInfo");
+                });
+
+            modelBuilder.Entity("Library.Models.EventParticipant", b =>
+                {
+                    b.HasOne("Library.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("Library.Models.LibraryEvent", "LibraryEvent")
+                        .WithMany("Participants")
+                        .HasForeignKey("LibraryEventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("LibraryEvent");
                 });
 
             modelBuilder.Entity("Library.Models.Fine", b =>
@@ -1093,17 +1263,13 @@ namespace Library.Repositories.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Library.Models.Member", "Member")
+                    b.HasOne("Library.Models.Member", null)
                         .WithMany("Fines")
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MemberId");
 
                     b.Navigation("Borrowing");
 
                     b.Navigation("FineType");
-
-                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("Library.Models.ItemAuthor", b =>
@@ -1140,6 +1306,17 @@ namespace Library.Repositories.Migrations
                 {
                     b.HasOne("Library.Models.LibraryInfo", "LibraryInfo")
                         .WithMany("LibraryDivisions")
+                        .HasForeignKey("LibraryInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LibraryInfo");
+                });
+
+            modelBuilder.Entity("Library.Models.LibraryEvent", b =>
+                {
+                    b.HasOne("Library.Models.LibraryInfo", "LibraryInfo")
+                        .WithMany("Events")
                         .HasForeignKey("LibraryInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1193,30 +1370,26 @@ namespace Library.Repositories.Migrations
 
             modelBuilder.Entity("Library.Models.Payment", b =>
                 {
-                    b.HasOne("Library.Models.PurchaseOrderItem", "PurchaseOrderItem")
-                        .WithMany()
-                        .HasForeignKey("PurchaseOrderItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Library.Models.ApplicationUser", "Librarian")
+                        .WithMany("Payments")
+                        .HasForeignKey("LibrarianId");
 
-                    b.Navigation("PurchaseOrderItem");
+                    b.HasOne("Library.Models.PurchaseOrder", "PurchaseOrder")
+                        .WithMany()
+                        .HasForeignKey("PurchaseOrderId");
+
+                    b.Navigation("Librarian");
+
+                    b.Navigation("PurchaseOrder");
                 });
 
             modelBuilder.Entity("Library.Models.PurchaseOrder", b =>
                 {
-                    b.HasOne("Library.Models.Payment", "Payment")
-                        .WithMany("PurchaseOrders")
-                        .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Library.Models.Vendor", "Vendor")
                         .WithMany("PurchaseOrders")
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Payment");
 
                     b.Navigation("Vendor");
                 });
@@ -1257,6 +1430,17 @@ namespace Library.Repositories.Migrations
                     b.Navigation("LibraryItem");
 
                     b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("Library.Models.Vendor", b =>
+                {
+                    b.HasOne("Library.Models.LibraryInfo", "LibraryInfo")
+                        .WithMany("Vendors")
+                        .HasForeignKey("LibraryInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LibraryInfo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1381,9 +1565,20 @@ namespace Library.Repositories.Migrations
                     b.Navigation("StaffMembers");
                 });
 
+            modelBuilder.Entity("Library.Models.LibraryEvent", b =>
+                {
+                    b.Navigation("Participants");
+                });
+
             modelBuilder.Entity("Library.Models.LibraryInfo", b =>
                 {
+                    b.Navigation("Donors");
+
+                    b.Navigation("Events");
+
                     b.Navigation("LibraryDivisions");
+
+                    b.Navigation("Vendors");
                 });
 
             modelBuilder.Entity("Library.Models.LibraryItem", b =>
@@ -1412,11 +1607,6 @@ namespace Library.Repositories.Migrations
                     b.Navigation("Members");
                 });
 
-            modelBuilder.Entity("Library.Models.Payment", b =>
-                {
-                    b.Navigation("PurchaseOrders");
-                });
-
             modelBuilder.Entity("Library.Models.Publisher", b =>
                 {
                     b.Navigation("LibraryItems");
@@ -1436,7 +1626,9 @@ namespace Library.Repositories.Migrations
 
             modelBuilder.Entity("Library.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("StaffMembers");
+                    b.Navigation("DivisionStaffs");
+
+                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }

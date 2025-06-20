@@ -10,6 +10,7 @@ namespace Library.Models
     {
         public int Id { get; set; }
         public int AcquisitionTypeId { get; set; }
+        public string AcquisitionCode { get; set; }
         public DateTime AcquisitionDate { get; set; }
         public int? VendorId { get; set; }
         public int? DonorId { get; set; }

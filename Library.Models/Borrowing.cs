@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public int MemeberId { get; set; }
         public int ItemCopyId { get; set; }
+        public string BorrowedCode { get; set; }
         public DateTime BorrowedDate { get; set; }
         public DateTime DueDate { get; set; }
         public DateTime? ReturnedDate { get; set; }

@@ -10,6 +10,7 @@ namespace Library.Models
     public class LibraryItem
     {
         public int Id { get; set; }
+        public string ItemCode { get; set; }
         public string Title { get; set; }
         public string ISBN { get; set; }
         public DateTime YearPublished { get; set; }

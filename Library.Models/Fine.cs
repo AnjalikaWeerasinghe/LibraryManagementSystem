@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int BorrowingId { get; set; }
+        public string FineCode { get; set; }
         public decimal Amount { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public DateTime IssuedDate { get; set; }

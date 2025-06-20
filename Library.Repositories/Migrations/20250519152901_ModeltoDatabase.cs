@@ -327,6 +327,29 @@ namespace Library.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PurchaseOrders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PONumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderStatus = table.Column<int>(type: "int", nullable: false),
+                    VendorId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PurchaseOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PurchaseOrders_Vendors_VendorId",
+                        column: x => x.VendorId,
+                        principalTable: "Vendors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DivisionStaff",
                 columns: table => new
                 {
@@ -465,6 +488,34 @@ namespace Library.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PurchaseOrderItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PurchaseOrderId = table.Column<int>(type: "int", nullable: false),
+                    LibraryItemId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PurchaseOrderItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PurchaseOrderItems_LibraryItems_LibraryItemId",
+                        column: x => x.LibraryItemId,
+                        principalTable: "LibraryItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PurchaseOrderItems_PurchaseOrders_PurchaseOrderId",
+                        column: x => x.PurchaseOrderId,
+                        principalTable: "PurchaseOrders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Borrowings",
                 columns: table => new
                 {
@@ -502,12 +553,12 @@ namespace Library.Repositories.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BorrowingId = table.Column<int>(type: "int", nullable: false),
-                    MemberId = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PaymentStatus = table.Column<int>(type: "int", nullable: false),
                     IssuedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaidDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    FineTypeId = table.Column<int>(type: "int", nullable: false)
+                    FineTypeId = table.Column<int>(type: "int", nullable: false),
+                    MemberId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -528,80 +579,7 @@ namespace Library.Repositories.Migrations
                         name: "FK_Fines_Members_MemberId",
                         column: x => x.MemberId,
                         principalTable: "Members",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Payments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PurchaseOrderItemId = table.Column<int>(type: "int", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PaymentStatus = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Payments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PurchaseOrders",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    OrderStatus = table.Column<int>(type: "int", nullable: false),
-                    VendorId = table.Column<int>(type: "int", nullable: false),
-                    PaymentId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PurchaseOrders", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PurchaseOrders_Payments_PaymentId",
-                        column: x => x.PaymentId,
-                        principalTable: "Payments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PurchaseOrders_Vendors_VendorId",
-                        column: x => x.VendorId,
-                        principalTable: "Vendors",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PurchaseOrderItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PurchaseOrderId = table.Column<int>(type: "int", nullable: false),
-                    LibraryItemId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PurchaseOrderItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PurchaseOrderItems_LibraryItems_LibraryItemId",
-                        column: x => x.LibraryItemId,
-                        principalTable: "LibraryItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PurchaseOrderItems_PurchaseOrders_PurchaseOrderId",
-                        column: x => x.PurchaseOrderId,
-                        principalTable: "PurchaseOrders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -722,11 +700,6 @@ namespace Library.Repositories.Migrations
                 column: "MembershipTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_PurchaseOrderItemId",
-                table: "Payments",
-                column: "PurchaseOrderItemId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PurchaseOrderItems_LibraryItemId",
                 table: "PurchaseOrderItems",
                 column: "LibraryItemId");
@@ -735,11 +708,6 @@ namespace Library.Repositories.Migrations
                 name: "IX_PurchaseOrderItems_PurchaseOrderId",
                 table: "PurchaseOrderItems",
                 column: "PurchaseOrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PurchaseOrders_PaymentId",
-                table: "PurchaseOrders",
-                column: "PaymentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PurchaseOrders_VendorId",
@@ -763,14 +731,6 @@ namespace Library.Repositories.Migrations
                 principalTable: "Members",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Payments_PurchaseOrderItems_PurchaseOrderItemId",
-                table: "Payments",
-                column: "PurchaseOrderItemId",
-                principalTable: "PurchaseOrderItems",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
@@ -779,18 +739,6 @@ namespace Library.Repositories.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_AspNetUsers_Members_MemberId",
                 table: "AspNetUsers");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_PurchaseOrderItems_LibraryItems_LibraryItemId",
-                table: "PurchaseOrderItems");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_PurchaseOrders_Vendors_VendorId",
-                table: "PurchaseOrders");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Payments_PurchaseOrderItems_PurchaseOrderItemId",
-                table: "Payments");
 
             migrationBuilder.DropTable(
                 name: "AcquisitionItems");
@@ -803,6 +751,9 @@ namespace Library.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "ItemAuthors");
+
+            migrationBuilder.DropTable(
+                name: "PurchaseOrderItems");
 
             migrationBuilder.DropTable(
                 name: "Reservations");
@@ -826,6 +777,9 @@ namespace Library.Repositories.Migrations
                 name: "Authors");
 
             migrationBuilder.DropTable(
+                name: "PurchaseOrders");
+
+            migrationBuilder.DropTable(
                 name: "AcquisitionTypes");
 
             migrationBuilder.DropTable(
@@ -841,10 +795,13 @@ namespace Library.Repositories.Migrations
                 name: "Members");
 
             migrationBuilder.DropTable(
-                name: "MembershipTypes");
+                name: "Vendors");
 
             migrationBuilder.DropTable(
                 name: "LibraryItems");
+
+            migrationBuilder.DropTable(
+                name: "MembershipTypes");
 
             migrationBuilder.DropTable(
                 name: "Categories");
@@ -857,18 +814,6 @@ namespace Library.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "Publishers");
-
-            migrationBuilder.DropTable(
-                name: "Vendors");
-
-            migrationBuilder.DropTable(
-                name: "PurchaseOrderItems");
-
-            migrationBuilder.DropTable(
-                name: "PurchaseOrders");
-
-            migrationBuilder.DropTable(
-                name: "Payments");
 
             migrationBuilder.DropIndex(
                 name: "IX_AspNetUsers_MemberId",

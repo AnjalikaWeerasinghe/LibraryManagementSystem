@@ -1,6 +1,7 @@
 using Library.Repositories;
 using Library.Repositories.Implementation;
 using Library.Repositories.Interfaces;
+using Library.Services;
 using Library.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -20,6 +21,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddTransient<ILibraryInfo, LibraryInfoService>();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -44,7 +46,7 @@ app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{Area=Member}/{controller=Home}/{action=Index}/{id?}");
+    pattern: "{Area=admin}/{controller=Libraries}/{action=Index}/{id?}");
 
 app.Run();
 

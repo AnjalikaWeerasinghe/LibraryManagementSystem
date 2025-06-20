@@ -25,6 +25,7 @@ namespace Library.Repositories
         public DbSet<Category> Categories { get; set; }
         public DbSet<DivisionStaff> DivisionStaff { get; set; }
         public DbSet<Donor> Donors { get; set; }
+        public DbSet<EventParticipant> EventParticipants { get; set; }
         public DbSet<Fine> Fines { get; set; }
         public DbSet<FineType> FineTypes { get; set; }
         public DbSet<Genre> Genres { get; set; }
@@ -33,6 +34,7 @@ namespace Library.Repositories
         public DbSet<ItemCopy> ItemCopies { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<LibraryDivision> LibraryDivisions { get; set; }
+        public DbSet<LibraryEvent> LibraryEvents { get; set; }
         public DbSet<LibraryItem> LibraryItems { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<MembershipType> MembershipTypes { get; set; }

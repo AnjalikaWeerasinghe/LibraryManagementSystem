@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int UserId { get; set; }
+        public string MemberCode { get; set; }
         public DateTime MembershipDate { get; set; }
         public UserStatus UserStatus { get; set; }
         public int? MembershipTypeId { get; set; }
