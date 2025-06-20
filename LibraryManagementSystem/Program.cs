@@ -46,7 +46,7 @@ app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{Area=admin}/{controller=Libraries}/{action=Index}/{id?}");
+    pattern: "{Area=admin}/{controller=Library}/{action=Index}/{id?}");
 
 app.Run();
 
