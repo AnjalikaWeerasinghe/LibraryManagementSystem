@@ -13,10 +13,8 @@ namespace Library.Models
         public decimal Price { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public int VendorId { get; set; }
-        public int PaymentId { get; set; }
 
         public Vendor Vendor { get; set; }
-        public Payment Payment { get; set; }
 
         public ICollection<PurchaseOrderItem> PurchaseOrderItems { get; set; }
     }
