@@ -35,5 +35,12 @@ namespace Library.ViewModels
                 IssueNumber = this.IssueNumber
             };
         }
+
+        public NewspaperViewModel(NewspaperViewModel model)
+        {
+            ISSN = model.ISSN;
+            IssuedDate = model.IssuedDate;
+            IssueNumber = model.IssueNumber;
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace Library.Services
     public interface ILibraryItemService
     {
         PagedResult<LibraryItemViewModel> GetAll(int pageNumber, int pageSize);
-        Task<LibraryItem> GetLibraryItemById(int ItemID);
+        Task<LibraryItemViewModel> GetLibraryItemByIdAsync(int ItemID);
         Task InsertLibraryItem(LibraryItem libraryItem);
         Task UpdateLibraryItem(LibraryItem libraryItem);
         Task DeleteLibraryItem(int id);

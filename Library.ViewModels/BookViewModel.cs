@@ -35,5 +35,12 @@ namespace Library.ViewModels
                 GenreId = this.GenreId
             };
         }
+
+        public BookViewModel(Book book) : base(book)
+        {
+            ISBN = book.ISBN;
+            Edition = book.Edition;
+            GenreId = book.GenreId;
+        }
     }
 }

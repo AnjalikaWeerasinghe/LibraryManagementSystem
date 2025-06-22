@@ -13,22 +13,22 @@ namespace Library.ViewModels
         public string ItemCode { get; set; }
         public string Title { get; set; }
         public DateTime YearPublished { get; set; }
-        public string ItemType { get; set; }
+        public ItemType ItemType { get; set; }
         public string ShelfLocation { get; set; }
         public int LanguageId { get; set; }
         public int CategoryId { get; set; }
         public int PublisherId { get; set; }
         public string Description { get; set; }
 
-        public LibraryItemViewModel()
+        protected LibraryItemViewModel()
         {
         }
 
         public abstract LibraryItem ToDomainModel();
 
-        public static LibraryItemViewModel FromDomainModel(LibraryItem item)
+        public LibraryItemViewModel ConvertViewModel(LibraryItem model)
         {
-            return item switch
+            return model switch
             {
                 Book book => new BookViewModel
                 {
@@ -36,7 +36,7 @@ namespace Library.ViewModels
                     ItemCode = book.ItemCode,
                     Title = book.Title,
                     YearPublished = book.YearPublished,
-                    ItemType = "Book",
+                    ItemType = ItemType.Book,
                     ShelfLocation = book.ShelfLocation,
                     LanguageId = book.LanguageId,
                     CategoryId = book.CategoryId,
@@ -52,7 +52,7 @@ namespace Library.ViewModels
                     ItemCode = newspaper.ItemCode,
                     Title = newspaper.Title,
                     YearPublished = newspaper.YearPublished,
-                    ItemType = "Newspaper",
+                    ItemType = ItemType.Newspaper,
                     ShelfLocation = newspaper.ShelfLocation,
                     LanguageId = newspaper.LanguageId,
                     CategoryId = newspaper.CategoryId,
@@ -68,7 +68,7 @@ namespace Library.ViewModels
                     ItemCode = journal.ItemCode,
                     Title = journal.Title,
                     YearPublished = journal.YearPublished,
-                    ItemType = "Journal",
+                    ItemType = ItemType.Journal,
                     ShelfLocation = journal.ShelfLocation,
                     LanguageId = journal.LanguageId,
                     CategoryId = journal.CategoryId,
@@ -85,7 +85,7 @@ namespace Library.ViewModels
                     ItemCode = periodical.ItemCode,
                     Title = periodical.Title,
                     YearPublished = periodical.YearPublished,
-                    ItemType = "Periodical",
+                    ItemType = ItemType.Periodical,
                     ShelfLocation = periodical.ShelfLocation,
                     LanguageId = periodical.LanguageId,
                     CategoryId = periodical.CategoryId,
@@ -99,6 +99,19 @@ namespace Library.ViewModels
             };
         }
 
+        protected LibraryItemViewModel(LibraryItem model)
+        {
+            Id = model.Id;
+            ItemCode = model.ItemCode;
+            Title = model.Title;
+            YearPublished = model.YearPublished;
+            ItemType = model.ItemType;
+            ShelfLocation = model.ShelfLocation;
+            LanguageId = model.LanguageId;
+            CategoryId = model.CategoryId;
+            PublisherId = model.PublisherId;
+            Description = model.Description;
+        }
         
     }
 }

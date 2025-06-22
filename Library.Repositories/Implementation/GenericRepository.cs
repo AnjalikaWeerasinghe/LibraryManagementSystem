@@ -99,6 +99,11 @@ namespace Library.Repositories.Implementation
             return dbSet.Find(id);
         }
 
+        public async Task<T> GetByIdAsync(int id)
+        {
+            return await dbSet.FindAsync(id);
+        }
+
         public async Task<T> GetByIdAsync(object id)
         {
             return await dbSet.FindAsync(id);

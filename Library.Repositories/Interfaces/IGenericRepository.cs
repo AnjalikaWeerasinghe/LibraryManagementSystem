@@ -16,6 +16,7 @@ namespace Library.Repositories.Interfaces
 
         T GetById(object id);
         Task<T> GetByIdAsync(object id);
+        Task<T> GetByIdAsync(int id);
         void Add(T entity);
         Task<T> AddAsync(T entity);
         void Update(T entity);

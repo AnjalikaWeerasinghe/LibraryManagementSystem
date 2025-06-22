@@ -19,29 +19,138 @@ namespace Library.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Task DeleteLibraryItem(int id)
+        public async Task DeleteLibraryItem(int id)
         {
-            throw new NotImplementedException();
+            var model = _unitOfWork.GenericRepository<LibraryItem>().GetById(id);
+            _unitOfWork.GenericRepository<LibraryItem>().Delete(model);
+            _unitOfWork.Save();
         }
 
         public PagedResult<LibraryItemViewModel> GetAll(int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            int totalCount;
+            List<LibraryItemViewModel> vmList;
+
+            try
+            {
+                int excludeRecords = (pageNumber - 1) * pageSize;
+
+                var modelList = _unitOfWork.GenericRepository<LibraryItem>()
+                    .GetAll()
+                    .Skip(excludeRecords)
+                    .Take(pageSize)
+                    .ToList();
+
+                totalCount = _unitOfWork.GenericRepository<LibraryItem>()
+                    .GetAll()
+                    .Count();
+
+                 vmList = ConvertModelToViewModelList(modelList);
+            }
+            catch(Exception)
+            {
+                throw;
+            }
+
+            return new PagedResult<LibraryItemViewModel>
+            {
+                Data = vmList,
+                TotalItems = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
-        public Task<LibraryItem> GetLibraryItemById(int ItemID)
+        private List<LibraryItemViewModel> ConvertModelToViewModelList(List<LibraryItem> modelList)
         {
-            throw new NotImplementedException();
+            var vmList = new List<LibraryItemViewModel>();
+
+            foreach (var item in modelList)
+            {
+                LibraryItemViewModel viewModel;
+
+                switch (item)
+                {
+                    case Book book:
+                        viewModel = new BookViewModel(book);
+                        break;
+
+                    default:
+                        throw new InvalidOperationException("Invalid LibraryItem Type.");
+                }
+
+                vmList.Add(viewModel);
+            }
+            return vmList;
         }
 
-        public Task InsertLibraryItem(LibraryItem libraryItem)
+        public async Task<LibraryItemViewModel> GetLibraryItemByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var libraryitem = _unitOfWork.GenericRepository<LibraryItem>().GetById(id);
+
+            if (libraryitem == null)
+            {
+                return null;
+            }
+
+            LibraryItemViewModel viewModel;
+
+            switch (libraryitem)
+            {
+                case Book book:
+                    viewModel = new BookViewModel(book);
+                    break;
+                default:
+                    throw new InvalidOperationException("Invalid Library Item Type");
+            }
+
+            return viewModel;
         }
 
-        public Task UpdateLibraryItem(LibraryItem libraryItem)
+        public async Task InsertLibraryItem(LibraryItem libraryItem)
         {
-            throw new NotImplementedException();
+            LibraryItem item;
+
+            switch (libraryItem.ItemType)
+            {
+                case ItemType.Book:
+                    item = new Book
+                    {
+                        Title = libraryItem.Title,
+                        ItemCode = libraryItem.ItemCode
+                    };
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Unsupported Item Type");
+            }
+
+            _unitOfWork.GenericRepository<LibraryItem>().Add(item);
+            _unitOfWork.Save();
+
+        }
+
+        public async Task UpdateLibraryItem(LibraryItem libraryItem)
+        {
+            var existingItem = _unitOfWork.GenericRepository<LibraryItem>().GetById(libraryItem.Id);
+
+            if (existingItem == null)
+            {
+                throw new Exception("Item Not Found");
+            }
+
+            existingItem.Title = libraryItem.Title;
+
+            switch (existingItem)
+            {
+                case Book book:
+                    break;
+                case Newspaper newspaper:
+                    break;
+            }
+
+            _unitOfWork.GenericRepository<LibraryItem>().Update(existingItem);
+            _unitOfWork.Save();
         }
     }
 }
