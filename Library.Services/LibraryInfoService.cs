@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Library.Services
 {
-    public class LibraryInfoService : ILibraryInfo
+    public class LibraryInfoService : ILibraryInfoService
     {
         private IUnitOfWork _unitOfWork;
 

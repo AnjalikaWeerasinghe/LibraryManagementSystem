@@ -7,9 +7,9 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
     [Area("admin")]
     public class LibraryController : Controller
     {
-        private ILibraryInfo _libraryInfo;
+        private ILibraryInfoService _libraryInfo;
 
-        public LibraryController(ILibraryInfo libraryInfo)
+        public LibraryController(ILibraryInfoService libraryInfo)
         {
             _libraryInfo = libraryInfo;
         }

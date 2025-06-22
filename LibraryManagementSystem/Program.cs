@@ -21,7 +21,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddTransient<ILibraryInfo, LibraryInfoService>();
+builder.Services.AddTransient<ILibraryInfoService, LibraryInfoService>();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();

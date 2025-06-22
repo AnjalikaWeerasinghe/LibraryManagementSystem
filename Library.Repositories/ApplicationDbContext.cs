@@ -45,5 +45,17 @@ namespace Library.Repositories
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelbuilder)
+        {
+            base.OnModelCreating(modelbuilder);
+
+            modelbuilder.Entity<LibraryItem>()
+                .HasDiscriminator<string>("Item Type")
+                .HasValue<Book>("Book")
+                .HasValue<Newspaper>("Newspaper")
+                .HasValue<Journal>("Journal")
+                .HasValue<Periodical>("Periodical");
+        }
+
     }
 }

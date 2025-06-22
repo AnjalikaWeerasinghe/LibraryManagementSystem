@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Library.Services
 {
-    public interface ILibraryInfo
+    public interface ILibraryInfoService
     {
         PagedResult<LibraryInfoViewModel> GetAll(int pageNumber, int pageSize);
         LibraryInfoViewModel GetLibraryById(int LibraryId);
