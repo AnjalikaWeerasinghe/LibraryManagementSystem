@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.13" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Library.ViewModels\Library.ViewModels.csproj" />
     <ProjectReference Include="..\Library.Utilities\Library.Utilities.csproj" />
   </ItemGroup>

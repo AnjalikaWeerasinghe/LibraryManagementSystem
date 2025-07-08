@@ -37,5 +37,13 @@ namespace Library.ViewModels
                 Field = this.Field
             };
         }
+
+        public JournalViewModel(Journal journal) : base(journal)
+        {
+            ISSN = journal.ISSN;
+            Volume = journal.Volume;
+            Issue = journal.Issue;
+            Field = journal.Field;
+        }
     }
 }

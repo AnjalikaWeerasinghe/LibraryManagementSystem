@@ -36,11 +36,11 @@ namespace Library.ViewModels
             };
         }
 
-        public NewspaperViewModel(NewspaperViewModel model)
+        public NewspaperViewModel(Newspaper newspaper) : base(newspaper)
         {
-            ISSN = model.ISSN;
-            IssuedDate = model.IssuedDate;
-            IssueNumber = model.IssueNumber;
+            ISSN = newspaper.ISSN;
+            IssuedDate = newspaper.IssuedDate;
+            IssueNumber = newspaper.IssueNumber;
         }
     }
 }

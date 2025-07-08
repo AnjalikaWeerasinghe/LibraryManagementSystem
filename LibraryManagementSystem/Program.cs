@@ -21,7 +21,17 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+
 builder.Services.AddTransient<ILibraryInfoService, LibraryInfoService>();
+builder.Services.AddTransient<ILibraryItemService, LibraryItemService>();
+builder.Services.AddTransient<ILibraryEventService, LibraryEventService>();
+builder.Services.AddTransient<ILanguageService, LanguageService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<IPublisherService, PublisherService>();
+builder.Services.AddTransient<IGenreService, GenreService>();
+builder.Services.AddTransient<ICountryService, CountryService>();
+builder.Services.AddTransient<IAuthorService, AuthorService>();
+
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -44,9 +54,17 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{Area=admin}/{controller=Library}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "areas",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+    );
+
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
 
 app.Run();
 

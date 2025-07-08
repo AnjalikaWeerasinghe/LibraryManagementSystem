@@ -35,5 +35,12 @@ namespace Library.ViewModels
                 Theme = this.Theme
             };
         }
+
+        public PeriodicalViewModel(Periodical periodical) : base(periodical)
+        {
+            ISSN = periodical.ISSN;
+            Frequency = periodical.Frequency.ToString();
+            Theme = periodical.Theme;
+        }
     }
 }

@@ -1,8 +1,37 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome to the Public Library</h1>
+    <h2>Urban Council Gampola </h2>
+</div>
+<br />
+
+<div id="event" class="carousel slide" data-bs-ride="carousel">
+
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#event" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#event" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#event" data-bs-slide-to="2"></button>
+    </div>
+
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="~/Images/Essay_Event.webp" alt="" class="d-block w-100"></img>
+        </div>
+        <div class="carousel-item">
+            <img src="" alt="" class="d-block w-100"></img>
+        </div>
+        <div class="carousel-item">
+            <img src="" alt="" class="d-block w-100"></img>
+        </div>
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#event" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#event" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
 </div>

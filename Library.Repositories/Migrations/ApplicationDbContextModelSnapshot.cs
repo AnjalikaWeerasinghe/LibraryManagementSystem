@@ -124,15 +124,16 @@ namespace Library.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CountryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
 
                     b.ToTable("Authors");
                 });
@@ -194,6 +195,23 @@ namespace Library.Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Library.Models.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Country");
                 });
 
             modelBuilder.Entity("Library.Models.DivisionStaff", b =>
@@ -314,7 +332,8 @@ namespace Library.Repositories.Migrations
 
                     b.Property<string>("FineCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("FineTypeId")
                         .HasColumnType("int");
@@ -391,17 +410,12 @@ namespace Library.Repositories.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BookId")
-                        .HasColumnType("int");
-
                     b.Property<int>("LibraryItemId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
-
-                    b.HasIndex("BookId");
 
                     b.HasIndex("LibraryItemId");
 
@@ -516,7 +530,15 @@ namespace Library.Repositories.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LibraryInfoId")
+                    b.Property<string>("EventCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("LibraryInfoId")
                         .HasColumnType("int");
 
                     b.Property<string>("Location")
@@ -595,7 +617,11 @@ namespace Library.Repositories.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("GenreId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Item Type")
                         .IsRequired()
@@ -604,7 +630,8 @@ namespace Library.Repositories.Migrations
 
                     b.Property<string>("ItemCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("ItemType")
                         .HasColumnType("int");
@@ -621,7 +648,8 @@ namespace Library.Repositories.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("YearPublished")
                         .HasColumnType("datetime2");
@@ -747,12 +775,14 @@ namespace Library.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Landline")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -1118,12 +1148,10 @@ namespace Library.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GenreId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ISBN")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasIndex("GenreId");
 
@@ -1150,6 +1178,8 @@ namespace Library.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasIndex("GenreId");
+
                     b.HasDiscriminator().HasValue("Journal");
                 });
 
@@ -1167,6 +1197,8 @@ namespace Library.Repositories.Migrations
 
                     b.Property<DateTime>("IssuedDate")
                         .HasColumnType("datetime2");
+
+                    b.HasIndex("GenreId");
 
                     b.ToTable("LibraryItems", t =>
                         {
@@ -1191,6 +1223,8 @@ namespace Library.Repositories.Migrations
                     b.Property<string>("Theme")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasIndex("GenreId");
 
                     b.ToTable("LibraryItems", t =>
                         {
@@ -1281,6 +1315,17 @@ namespace Library.Repositories.Migrations
                     b.Navigation("ItemCondition");
 
                     b.Navigation("LibraryItem");
+                });
+
+            modelBuilder.Entity("Library.Models.Author", b =>
+                {
+                    b.HasOne("Library.Models.Country", "Country")
+                        .WithMany("Authors")
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("Library.Models.Borrowing", b =>
@@ -1380,12 +1425,8 @@ namespace Library.Repositories.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Library.Models.Book", null)
-                        .WithMany("ItemAuthors")
-                        .HasForeignKey("BookId");
-
                     b.HasOne("Library.Models.LibraryItem", "LibraryItem")
-                        .WithMany()
+                        .WithMany("ItemAuthors")
                         .HasForeignKey("LibraryItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1421,9 +1462,7 @@ namespace Library.Repositories.Migrations
                 {
                     b.HasOne("Library.Models.LibraryInfo", "LibraryInfo")
                         .WithMany("Events")
-                        .HasForeignKey("LibraryInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LibraryInfoId");
 
                     b.Navigation("LibraryInfo");
                 });
@@ -1594,9 +1633,34 @@ namespace Library.Repositories.Migrations
                 {
                     b.HasOne("Library.Models.Genre", "Genre")
                         .WithMany("Books")
-                        .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GenreId");
+
+                    b.Navigation("Genre");
+                });
+
+            modelBuilder.Entity("Library.Models.Journal", b =>
+                {
+                    b.HasOne("Library.Models.Genre", "Genre")
+                        .WithMany()
+                        .HasForeignKey("GenreId");
+
+                    b.Navigation("Genre");
+                });
+
+            modelBuilder.Entity("Library.Models.Newspaper", b =>
+                {
+                    b.HasOne("Library.Models.Genre", "Genre")
+                        .WithMany()
+                        .HasForeignKey("GenreId");
+
+                    b.Navigation("Genre");
+                });
+
+            modelBuilder.Entity("Library.Models.Periodical", b =>
+                {
+                    b.HasOne("Library.Models.Genre", "Genre")
+                        .WithMany()
+                        .HasForeignKey("GenreId");
 
                     b.Navigation("Genre");
                 });
@@ -1635,6 +1699,11 @@ namespace Library.Repositories.Migrations
             modelBuilder.Entity("Library.Models.Category", b =>
                 {
                     b.Navigation("LibraryItems");
+                });
+
+            modelBuilder.Entity("Library.Models.Country", b =>
+                {
+                    b.Navigation("Authors");
                 });
 
             modelBuilder.Entity("Library.Models.Donor", b =>
@@ -1692,6 +1761,8 @@ namespace Library.Repositories.Migrations
                 {
                     b.Navigation("Copies");
 
+                    b.Navigation("ItemAuthors");
+
                     b.Navigation("Reservations");
                 });
 
@@ -1727,11 +1798,6 @@ namespace Library.Repositories.Migrations
                     b.Navigation("Acquisitions");
 
                     b.Navigation("PurchaseOrders");
-                });
-
-            modelBuilder.Entity("Library.Models.Book", b =>
-                {
-                    b.Navigation("ItemAuthors");
                 });
 
             modelBuilder.Entity("Library.Models.ApplicationUser", b =>

@@ -2,7 +2,7 @@
 
 namespace LibraryManagementSystem.Areas.Admin.Controllers
 {
-    public class LibraryItemController : Controller
+    public class PeriodicalController : Controller
     {
         public IActionResult Index()
         {

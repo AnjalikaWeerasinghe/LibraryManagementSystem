@@ -1,0 +1,100 @@
+﻿@using Library.Utilities
+@model PagedResult<Library.ViewModels.GenreViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@Html.Partial("_DeleteModal")
+
+<h1>Genres of Catalogues</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-secondary">Create a New Genre</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Data) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |
+                <button class="btn btn-danger" onclick="openDeleteModal(@item.Id, '@item.Name')">Delete</button>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        let selectedGenreId = 0;
+        let selectedGenreName = "";
+
+        function openDeleteModal(genreId, genreName) {
+            selectedGenreId = genreId;
+            selectedGenreName = genreName;
+            document.getElementById("confirmDeleteText").textContent = `Are you sure you want to delete "${genreName}"?`;
+            const confirmModal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
+            confirmModal.show();
+        }
+
+        document.getElementById("confirmYesBtn").addEventListener("click", function () {
+            fetch(`/Admin/Genre/Delete/${selectedGenreId}`, {
+                method: "POST"
+            }).then(response => {
+                if (response.ok) {
+                    const confirmModalEl = document.getElementById("confirmDeleteModal");
+                    const confirmModal = bootstrap.Modal.getInstance(confirmModalEl);
+                    confirmModal.hide();
+
+                    document.getElementById("successMessage").textContent = ` "${selectedGenreName}" deleted successfully.`;
+                    const successModal = new bootstrap.Modal(document.getElementById("successModal"));
+                    successModal.show();
+                }
+            });
+        });
+
+        document.getElementById("successOkBtn").addEventListener("click", function () {
+            const successModal = bootstrap.Modal.getInstance(document.getElementById("successModal"));
+            successModal.hide();
+            location.reload(); // or redirect as needed
+        });
+    </script>
+}
+
+<cs-pager cs-paging-pagesize=(int)Model.PageSize
+          cs-paging-pagenumber=(int)Model.PageNumber
+          cs-paging-totalitems=(int)Model.TotalItems
+          cs-pagenumber-param="pageNumber"
+          asp-controller="Genre"
+
+          asp-action="Index"
+          cs-pager-li-current-class="page-item active"
+          cs-pager-li-other-class="page-item"
+          cs-pager-li-non-active-class="page-item disabled"
+          cs-pager-link-current-class="page-link"
+          cs-pager-link-other-class="page-link">
+</cs-pager>

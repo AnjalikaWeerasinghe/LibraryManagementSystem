@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Library.ViewModels
 {
@@ -16,8 +17,17 @@ namespace Library.ViewModels
         public ItemType ItemType { get; set; }
         public string ShelfLocation { get; set; }
         public int LanguageId { get; set; }
+        public List<SelectListItem> LanguageList { get; set; }
+        public string Language { get; set; }
         public int CategoryId { get; set; }
+        public List<SelectListItem> CategoryList { get; set; }
+        public string Category { get; set; }
         public int PublisherId { get; set; }
+        public List<SelectListItem> PublisherList { get; set; }
+        public string Publisher { get; set; }
+        public int? GenreId { get; set; }
+        public List<SelectListItem> GenreList { get; set; }
+        public string Genre { get; set; }
         public string Description { get; set; }
 
         protected LibraryItemViewModel()
@@ -108,8 +118,13 @@ namespace Library.ViewModels
             ItemType = model.ItemType;
             ShelfLocation = model.ShelfLocation;
             LanguageId = model.LanguageId;
+            Language = model.Language?.Name ?? string.Empty;
             CategoryId = model.CategoryId;
+            Category = model.Category?.Name ?? string.Empty;
             PublisherId = model.PublisherId;
+            Publisher = model.Publisher?.Name ?? string.Empty;
+            GenreId = model.GenreId;
+            Genre = model.Genre?.Name ?? string.Empty;
             Description = model.Description;
         }
         

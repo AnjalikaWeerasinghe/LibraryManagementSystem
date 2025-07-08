@@ -1,0 +1,99 @@
+﻿using Library.Models;
+using Library.Repositories.Interfaces;
+using Library.Utilities;
+using Library.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Library.Services
+{
+    public class LibraryEventService : ILibraryEventService
+    {
+        private IUnitOfWork _unitOfWork;
+
+        public LibraryEventService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
+        public void DeleteLibraryEvent(int id)
+        {
+            var model = _unitOfWork.GenericRepository<LibraryEvent>().GetById(id);
+            _unitOfWork.GenericRepository<LibraryEvent>().Delete(model);
+            _unitOfWork.Save();
+        }
+
+        public PagedResult<LibraryEventViewModel> GetAll(int pageNumber, int pageSize)
+        {
+            var vm = new LibraryEventViewModel();
+            int totalCount;
+            List<LibraryEventViewModel> vmList = new List<LibraryEventViewModel>();
+            try
+            {
+                int ExcludeRecords = (pageSize * pageNumber) - pageSize;
+
+                var modelList = _unitOfWork.GenericRepository<LibraryEvent>().GetAll().
+                    Skip(ExcludeRecords).Take(pageSize).ToList();
+
+                totalCount = _unitOfWork.GenericRepository<LibraryEvent>().GetAll().ToList().Count;
+
+                vmList = ConvertModelToViewModelList(modelList);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            var result = new PagedResult<LibraryEventViewModel>
+            {
+                Data = vmList,
+                TotalItems = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+            return result;
+
+        }
+
+        private List<LibraryEventViewModel> ConvertModelToViewModelList(List<LibraryEvent> modelList)
+        {
+            return modelList.Select(x => new LibraryEventViewModel(x)).ToList();
+        }
+
+        public LibraryEventViewModel GetLibraryEventById(int LibraryId)
+        {
+            var model = _unitOfWork.GenericRepository<LibraryEvent>().GetById(LibraryId);
+            var vm = new LibraryEventViewModel(model);
+            return vm;
+        }
+
+        public void InsertLibraryEvent(LibraryEventViewModel libraryEvent)
+        {
+            var model = new LibraryEventViewModel().ConvertViewModel(libraryEvent);
+            _unitOfWork.GenericRepository<LibraryEvent>().Add(model);
+            _unitOfWork.Save();
+        }
+
+        public void UpdateLibraryEvent(LibraryEventViewModel libraryEvent)
+        {
+            var model = new LibraryEventViewModel().ConvertViewModel(libraryEvent);
+            var ModelById = _unitOfWork.GenericRepository<LibraryEvent>().GetById(model.Id);
+
+            ModelById.EventCode = libraryEvent.EventCode;
+            ModelById.Title = libraryEvent.Title;
+            ModelById.Description = libraryEvent.Description;
+            ModelById.Image = libraryEvent.Image;
+            ModelById.StartDate = libraryEvent.StartDate;
+            ModelById.EndDate = libraryEvent.EndDate;
+            ModelById.Location = libraryEvent.Location;
+            ModelById.CreatedBy = libraryEvent.CreatedBy;
+
+            _unitOfWork.GenericRepository<LibraryEvent>().Update(ModelById);
+            _unitOfWork.Save();
+        }
+    }
+
+}

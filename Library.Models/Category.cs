@@ -1,4 +1,6 @@
-﻿namespace Library.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Library.Models
 {
     public class Category
     {

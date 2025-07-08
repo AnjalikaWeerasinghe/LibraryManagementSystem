@@ -11,7 +11,6 @@ namespace Library.ViewModels
     {
         public string ISBN { get; set; }
         public string Edition { get; set; }
-        public int GenreId { get; set; }
 
         public BookViewModel()
         {
@@ -29,10 +28,11 @@ namespace Library.ViewModels
                 LanguageId = this.LanguageId,
                 CategoryId = this.CategoryId,
                 PublisherId = this.CategoryId,
+                GenreId = this.GenreId,
                 Description = this.Description,
+
                 ISBN = this.ISBN,
-                Edition = this.Edition,
-                GenreId = this.GenreId
+                Edition = this.Edition
             };
         }
 
@@ -40,7 +40,6 @@ namespace Library.ViewModels
         {
             ISBN = book.ISBN;
             Edition = book.Edition;
-            GenreId = book.GenreId;
         }
     }
 }
