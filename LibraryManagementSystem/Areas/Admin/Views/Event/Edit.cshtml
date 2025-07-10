@@ -4,9 +4,8 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Edit Event Details</h1>
 
-<h4>LibraryEventViewModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -33,9 +32,9 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
+                <label asp-for="ImageUrl" class="control-label"></label>
+                <input asp-for="ImageUrl" class="form-control" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>
@@ -57,14 +56,44 @@
                 <input asp-for="CreatedBy" class="form-control" />
                 <span asp-validation-for="CreatedBy" class="text-danger"></span>
             </div>
+            <br />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-info" />
             </div>
         </form>
     </div>
 </div>
-
+<br />
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
+@if (ViewBag.ShowModal != null && (bool)ViewBag.ShowModal)
+{
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-black">
+                    <h5 class="modal-title" id="updateModalLabel">Update Successful!</h5>
+                </div>
+                <div class="modal-body">
+                    @ViewBag.UpdateSuccess
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" id="confirmRedirectBtn">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function () {
+            var modal = new bootstrap.Modal(document.getElementById('updateModal'));
+            modal.show();
+
+            document.getElementById('confirmRedirectBtn').addEventListener('click', function () {
+                window.location.href = '@Url.Action("Index", "Event")';
+            });
+        });
+    </script>
+}

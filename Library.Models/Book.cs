@@ -9,11 +9,7 @@ namespace Library.Models
 {
     public class Book : LibraryItem
     {
-        [Required]
-        [StringLength(50)]
-        [RegularExpression(@"^(?i:ISBN)\s((?:\d[-]?){12}\d)$", ErrorMessage = "ISBN Number must start with 'ISBN', followed by 13 digits.")]
         public string ISBN { get; set; }
-        [Required]
         public string Edition { get; set; }
 
     }

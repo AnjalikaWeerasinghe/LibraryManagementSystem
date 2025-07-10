@@ -5,30 +5,66 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Library.ViewModels
 {
     public abstract class LibraryItemViewModel
     {
+        [Key]
         public int Id { get; set; }
+        [Required]
+        [StringLength(10)]
+        [RegularExpression(@"^ITD\d{4}$", ErrorMessage = "Item Code must be in the format ITD0001.")]
         public string ItemCode { get; set; }
+        [Required]
+        [StringLength(100)]
         public string Title { get; set; }
+        [Required]
+        [DataType("Year")]
         public DateTime YearPublished { get; set; }
-        public ItemType ItemType { get; set; }
+        [Required]
         public string ShelfLocation { get; set; }
+        [Required]
+        [Display(Name = "Language")]
+        [ForeignKey("Language")]
         public int LanguageId { get; set; }
-        public List<SelectListItem> LanguageList { get; set; }
-        public string Language { get; set; }
+        public List<Language> Languages { get; set; }
+        [Required]
+        [Display(Name = "Category")]
+        [ForeignKey("Category")]
         public int CategoryId { get; set; }
         public List<SelectListItem> CategoryList { get; set; }
-        public string Category { get; set; }
+        [Required]
+        [Display(Name = "Publisher")]
+        [ForeignKey("Publisher")]
         public int PublisherId { get; set; }
         public List<SelectListItem> PublisherList { get; set; }
-        public string Publisher { get; set; }
+        [Required]
+        [Display(Name = "Genre")]
+        [ForeignKey("Genre")]
         public int? GenreId { get; set; }
         public List<SelectListItem> GenreList { get; set; }
-        public string Genre { get; set; }
+        [Required]
+        [MaxLength(1000)]
+        [DataType(DataType.MultilineText)]
+        [Display(Name = "Description")]
         public string Description { get; set; }
+
+        public Genre Genre { get; set; }
+        public Language Language { get; set; }
+        public Category Category { get; set; }
+        public Publisher Publisher { get; set; }
+
+        // Book
+        [Required]
+        [StringLength(50)]
+        [RegularExpression(@"^(?i:ISBN)\s((?:\d[-]?){12}\d)$", ErrorMessage = "ISBN Number must start with 'ISBN', followed by 13 digits.")]
+        public string? ISBN { get; set; }
+        [Required]
+        public string? Edition { get; set; }
+
 
         protected LibraryItemViewModel()
         {
@@ -40,45 +76,14 @@ namespace Library.ViewModels
         {
             return model switch
             {
-                Book book => new BookViewModel
-                {
-                    Id = book.Id,
-                    ItemCode = book.ItemCode,
-                    Title = book.Title,
-                    YearPublished = book.YearPublished,
-                    ItemType = ItemType.Book,
-                    ShelfLocation = book.ShelfLocation,
-                    LanguageId = book.LanguageId,
-                    CategoryId = book.CategoryId,
-                    PublisherId = book.CategoryId,
-                    Description = book.Description,
-                    ISBN = book.ISBN,
-                    Edition = book.Edition,
-                    GenreId = book.GenreId
-                },
-                Newspaper newspaper => new NewspaperViewModel
-                {
-                    Id = newspaper.Id,
-                    ItemCode = newspaper.ItemCode,
-                    Title = newspaper.Title,
-                    YearPublished = newspaper.YearPublished,
-                    ItemType = ItemType.Newspaper,
-                    ShelfLocation = newspaper.ShelfLocation,
-                    LanguageId = newspaper.LanguageId,
-                    CategoryId = newspaper.CategoryId,
-                    PublisherId = newspaper.CategoryId,
-                    Description = newspaper.Description,
-                    ISSN = newspaper.ISSN,
-                    IssuedDate = newspaper.IssuedDate,
-                    IssueNumber = newspaper.IssueNumber
-                },
+                
+                
                 Journal journal => new JournalViewModel
                 {
                     Id = journal.Id,
                     ItemCode = journal.ItemCode,
                     Title = journal.Title,
                     YearPublished = journal.YearPublished,
-                    ItemType = ItemType.Journal,
                     ShelfLocation = journal.ShelfLocation,
                     LanguageId = journal.LanguageId,
                     CategoryId = journal.CategoryId,
@@ -95,7 +100,6 @@ namespace Library.ViewModels
                     ItemCode = periodical.ItemCode,
                     Title = periodical.Title,
                     YearPublished = periodical.YearPublished,
-                    ItemType = ItemType.Periodical,
                     ShelfLocation = periodical.ShelfLocation,
                     LanguageId = periodical.LanguageId,
                     CategoryId = periodical.CategoryId,
@@ -115,18 +119,25 @@ namespace Library.ViewModels
             ItemCode = model.ItemCode;
             Title = model.Title;
             YearPublished = model.YearPublished;
-            ItemType = model.ItemType;
             ShelfLocation = model.ShelfLocation;
             LanguageId = model.LanguageId;
-            Language = model.Language?.Name ?? string.Empty;
+            Language = model.Language;
             CategoryId = model.CategoryId;
-            Category = model.Category?.Name ?? string.Empty;
+            Category = model.Category;
             PublisherId = model.PublisherId;
-            Publisher = model.Publisher?.Name ?? string.Empty;
+            Publisher = model.Publisher;
             GenreId = model.GenreId;
-            Genre = model.Genre?.Name ?? string.Empty;
+            Genre = model.Genre;
             Description = model.Description;
         }
         
+    }
+}
+
+namespace Library.Models
+{
+    public enum ItemType
+    {
+        Book, Newspaper, Journal, Periodical
     }
 }

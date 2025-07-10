@@ -22,6 +22,26 @@ namespace Library.Repositories.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Library.Models.About", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Abouts");
+                });
+
             modelBuilder.Entity("Library.Models.Acquisition", b =>
                 {
                     b.Property<int>("Id")
@@ -211,7 +231,7 @@ namespace Library.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Country");
+                    b.ToTable("Countries");
                 });
 
             modelBuilder.Entity("Library.Models.DivisionStaff", b =>
@@ -222,21 +242,18 @@ namespace Library.Repositories.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("DivisionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
+                    b.Property<string>("ApplicationUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("UserStatus")
+                    b.Property<int>("DivisionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DivisionId");
+                    b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("DivisionId");
 
                     b.ToTable("DivisionStaff");
                 });
@@ -292,6 +309,7 @@ namespace Library.Repositories.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApplicationUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("LibraryEventId")
@@ -302,10 +320,6 @@ namespace Library.Repositories.Migrations
 
                     b.Property<DateTime>("RegisteredDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -397,6 +411,28 @@ namespace Library.Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("Library.Models.HomeContent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomLinks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Contents");
                 });
 
             modelBuilder.Entity("Library.Models.ItemAuthor", b =>
@@ -534,8 +570,7 @@ namespace Library.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
-                        .IsRequired()
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("LibraryInfoId")
@@ -544,6 +579,9 @@ namespace Library.Repositories.Migrations
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("MemberId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -555,6 +593,8 @@ namespace Library.Repositories.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LibraryInfoId");
+
+                    b.HasIndex("MemberId");
 
                     b.ToTable("LibraryEvents");
                 });
@@ -617,8 +657,7 @@ namespace Library.Repositories.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("GenreId")
                         .HasColumnType("int");
@@ -630,8 +669,7 @@ namespace Library.Repositories.Migrations
 
                     b.Property<string>("ItemCode")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ItemType")
                         .HasColumnType("int");
@@ -648,8 +686,7 @@ namespace Library.Repositories.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("YearPublished")
                         .HasColumnType("datetime2");
@@ -677,6 +714,13 @@ namespace Library.Repositories.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicatioUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("MemberCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -687,13 +731,9 @@ namespace Library.Repositories.Migrations
                     b.Property<int?>("MembershipTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserStatus")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("MembershipTypeId");
 
@@ -1150,8 +1190,7 @@ namespace Library.Repositories.Migrations
 
                     b.Property<string>("ISBN")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasIndex("GenreId");
 
@@ -1244,7 +1283,6 @@ namespace Library.Repositories.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CallingName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DOB")
@@ -1257,12 +1295,22 @@ namespace Library.Repositories.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<int>("MemberId")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsMember")
+                        .HasColumnType("bit");
 
-                    b.HasIndex("MemberId")
-                        .IsUnique()
-                        .HasFilter("[MemberId] IS NOT NULL");
+                    b.Property<string>("PictureUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SelectedRole")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserStatus")
+                        .HasColumnType("int");
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
@@ -1349,21 +1397,21 @@ namespace Library.Repositories.Migrations
 
             modelBuilder.Entity("Library.Models.DivisionStaff", b =>
                 {
+                    b.HasOne("Library.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Library.Models.LibraryDivision", "Division")
                         .WithMany("StaffMembers")
                         .HasForeignKey("DivisionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Library.Models.ApplicationUser", "User")
-                        .WithMany("DivisionStaffs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ApplicationUser");
 
                     b.Navigation("Division");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Library.Models.Donor", b =>
@@ -1381,7 +1429,9 @@ namespace Library.Repositories.Migrations
                 {
                     b.HasOne("Library.Models.ApplicationUser", "ApplicationUser")
                         .WithMany()
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Library.Models.LibraryEvent", "LibraryEvent")
                         .WithMany("Participants")
@@ -1464,6 +1514,10 @@ namespace Library.Repositories.Migrations
                         .WithMany("Events")
                         .HasForeignKey("LibraryInfoId");
 
+                    b.HasOne("Library.Models.Member", null)
+                        .WithMany("Events")
+                        .HasForeignKey("MemberId");
+
                     b.Navigation("LibraryInfo");
                 });
 
@@ -1496,9 +1550,15 @@ namespace Library.Repositories.Migrations
 
             modelBuilder.Entity("Library.Models.Member", b =>
                 {
+                    b.HasOne("Library.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Library.Models.MembershipType", "MembershipType")
                         .WithMany("Members")
                         .HasForeignKey("MembershipTypeId");
+
+                    b.Navigation("ApplicationUser");
 
                     b.Navigation("MembershipType");
                 });
@@ -1665,17 +1725,6 @@ namespace Library.Repositories.Migrations
                     b.Navigation("Genre");
                 });
 
-            modelBuilder.Entity("Library.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("Library.Models.Member", "Member")
-                        .WithOne("ApplicationUser")
-                        .HasForeignKey("Library.Models.ApplicationUser", "MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Member");
-                });
-
             modelBuilder.Entity("Library.Models.Acquisition", b =>
                 {
                     b.Navigation("AcquisitionItems");
@@ -1768,10 +1817,9 @@ namespace Library.Repositories.Migrations
 
             modelBuilder.Entity("Library.Models.Member", b =>
                 {
-                    b.Navigation("ApplicationUser")
-                        .IsRequired();
-
                     b.Navigation("Borrowings");
+
+                    b.Navigation("Events");
 
                     b.Navigation("Fines");
 
@@ -1802,8 +1850,6 @@ namespace Library.Repositories.Migrations
 
             modelBuilder.Entity("Library.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("DivisionStaffs");
-
                     b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618

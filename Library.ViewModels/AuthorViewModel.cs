@@ -20,7 +20,6 @@ namespace Library.ViewModels
         [Required]
         [Display(Name = "Country")]
         public int CountryId { get; set; }
-        public string CountryName { get; set; }
         public List<SelectListItem> CountryList { get; set; }
         [Required]
         [MaxLength(1000)]
@@ -45,7 +44,6 @@ namespace Library.ViewModels
             Id = model.Id;
             Name = model.Name;
             CountryId = model.CountryId;
-            CountryName = model.Country?.Name; // Assuming Country is a navigation property
             Biography = model.Biography;
             Country = model.Country;
         }

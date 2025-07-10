@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Library.ViewModels
 {
-    public class MemberViewModel
+    public class MemberViewModel : ApplicationUser
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
         public string MemberCode { get; set; }
         public DateTime MembershipDate { get; set; }
         public int? MembershipTypeId { get; set; }
+        public string ApplicatioUserId { get; set; } //Foreign key to Application User
 
         public MemberViewModel()
         {
@@ -22,10 +22,10 @@ namespace Library.ViewModels
         public MemberViewModel(Member model)
         {
             Id = model.Id;
-            UserId = model.UserId;
             MemberCode = model.MemberCode;
             MembershipDate = model.MembershipDate;
             MembershipTypeId = model.MembershipTypeId;
+            ApplicatioUserId = model.ApplicatioUserId;
         }
 
         public Member ConvertViewModel(MemberViewModel model)
@@ -33,11 +33,10 @@ namespace Library.ViewModels
             return new Member
             {
                 Id = model.Id,
-                UserId = model.UserId,
                 MemberCode = model.MemberCode,
                 MembershipDate = model.MembershipDate,
-                MembershipTypeId = model.MembershipTypeId
-
+                MembershipTypeId = model.MembershipTypeId,
+                ApplicatioUserId = model.ApplicatioUserId
             };
         }
 

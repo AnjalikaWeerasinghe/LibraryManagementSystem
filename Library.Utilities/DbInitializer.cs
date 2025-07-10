@@ -45,12 +45,13 @@ namespace Library.Utilities
                 _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Admin)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Librarian)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Member)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.Website_Guest)).GetAwaiter().GetResult();
 
                 _userManager.CreateAsync(new ApplicationUser
                 {
                     UserName = "Admin",
-                    Email = "adminuser@gmail.com"
-                }, "Admin@123").GetAwaiter().GetResult();
+                    PasswordHash = "Admin@123",
+                } ).GetAwaiter().GetResult();
 
                 var Appuser = _context.ApplicationUsers.FirstOrDefault(x => x.Email == "adminuser@gmail.com");
                 if (Appuser != null)

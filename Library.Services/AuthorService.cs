@@ -109,7 +109,6 @@ namespace Library.Services
                 Id = p.Id,
                 Name = p.Name,
                 CountryId = p.CountryId,
-                CountryName = p.Country?.Name,
                 Biography = p.Biography
             }).ToList();
 

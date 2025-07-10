@@ -10,12 +10,12 @@ namespace Library.Models
     {
         public int Id { get; set; }
         public int LibraryEventId { get; set; }
-        public string UserId { get; set; }
         public DateTime RegisteredDate { get; set; }
         public ParticipantStatus ParticipantStatus { get; set; }
 
-        public LibraryEvent LibraryEvent { get; set; }
+        public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
+        public LibraryEvent LibraryEvent { get; set; }
     }
 }
 

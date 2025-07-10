@@ -85,7 +85,7 @@ namespace Library.Services
             ModelById.EventCode = libraryEvent.EventCode;
             ModelById.Title = libraryEvent.Title;
             ModelById.Description = libraryEvent.Description;
-            ModelById.Image = libraryEvent.Image;
+            ModelById.ImageUrl = libraryEvent.ImageUrl;
             ModelById.StartDate = libraryEvent.StartDate;
             ModelById.EndDate = libraryEvent.EndDate;
             ModelById.Location = libraryEvent.Location;
@@ -93,6 +93,43 @@ namespace Library.Services
 
             _unitOfWork.GenericRepository<LibraryEvent>().Update(ModelById);
             _unitOfWork.Save();
+        }
+
+        public PagedResult<LibraryEventViewModel> GetEventByTitle(string name, int pageNumber, int pageSize)
+        {
+            var query = _unitOfWork.GenericRepository<LibraryEvent>()
+                .GetAll()
+                .Where(p => p.Title.Contains(name))
+                .AsQueryable();
+
+            int totalCount = query.Count();
+
+            var data = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var viewModels = data.Select(p => new LibraryEventViewModel
+            {
+                Id = p.Id,
+                EventCode = p.EventCode,
+                Title = p.Title,
+                Description = p.Description,
+                ImageUrl = p.ImageUrl,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate,
+                Location = p.Location,
+                CreatedBy = p.CreatedBy
+
+            }).ToList();
+
+            return new PagedResult<LibraryEventViewModel>
+            {
+                Data = viewModels,
+                TotalItems = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
     }
 

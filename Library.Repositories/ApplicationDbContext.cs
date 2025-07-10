@@ -44,6 +44,13 @@ namespace Library.Repositories
         public DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<About> Abouts { get; set; }
+        public DbSet<HomeContent> Contents { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<Book> Books { get; set; }
+        public DbSet<Newspaper> Newspapers { get; set; }
+        public DbSet<Journal> Journals { get; set; }
+        public DbSet<Periodical> Periodicals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {

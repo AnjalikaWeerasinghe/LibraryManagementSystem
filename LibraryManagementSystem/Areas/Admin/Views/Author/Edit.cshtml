@@ -23,19 +23,17 @@
             </div>
             <div class="form-group">
                 <label asp-for="CountryId" class="control-label"></label>
-                <input asp-for="CountryId" class="form-control" />
+                <select asp-for="CountryId" asp-items="Model.CountryList" class="form-control">
+                    <option value=""> -- Select Country --</option>
+                </select>
                 <span asp-validation-for="CountryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CountryName" class="control-label"></label>
-                <input asp-for="CountryName" class="form-control" />
-                <span asp-validation-for="CountryName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Biography" class="control-label"></label>
                 <textarea asp-for="Biography" class="form-control"></textarea>
                 <span asp-validation-for="Biography" class="text-danger"></span>
             </div>
+            <br />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-info" />
             </div>
@@ -74,6 +72,7 @@
 }
 
 <br />
+
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

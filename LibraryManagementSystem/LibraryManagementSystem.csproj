@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Guest\Views\" />
     <Folder Include="Areas\Librarian\Controllers\" />
     <Folder Include="Areas\Librarian\Views\" />
   </ItemGroup>

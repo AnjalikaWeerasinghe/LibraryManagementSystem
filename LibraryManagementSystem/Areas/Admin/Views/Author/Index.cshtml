@@ -7,17 +7,19 @@
 
 @Html.Partial("_DeleteModal")
 
-<h1>Authors of Library Catalogues</h1>
+<h1>Authors of Catalogs</h1>
+
 <br />
 
 <form asp-action="Index" method="get">
-    <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" style="width: 400px" placeholder="Search by Author Name" />
+    <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" style="width: 400px" placeholder="Search by Publisher Name" />
     <button type="submit" class="btn btn-primary">Search</button>
     <a asp-action="Index" class="btn btn-primary">Clear</a>
 </form>
 <br />
+
 <p>
-    <a asp-action="Create" class="btn btn-secondary">Add a new Author</a>
+    <a asp-action="Create" class="btn btn-secondary">Create a new Author</a>
 </p>
 <table class="table">
     <thead>
@@ -46,9 +48,8 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-                @* CountryName changed to Country.Name *@
             <td>
-                @Html.DisplayFor(modelItem => item.CountryName) 
+                @Html.DisplayFor(modelItem => item.Country.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Biography)
@@ -67,16 +68,16 @@
         let selectedId = 0;
         let selectedName = "";
 
-        function openDeleteModal(Id, Name) {
-            selectedId = Id;
-            selectedName = Name;
-            document.getElementById("confirmDeleteText").textContent = `Are you sure you want to delete "${Name}"?`;
+        function openDeleteModal(id, name) {
+            selectedId = id;
+            selectedName = name;
+            document.getElementById("confirmDeleteText").textContent = `Are you sure you want to delete "${name}"?`;
             const confirmModal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
             confirmModal.show();
         }
 
         document.getElementById("confirmYesBtn").addEventListener("click", function () {
-            fetch(`/Admin/Country/Delete/${selectedId}`, {
+            fetch(`/Admin/Author/Delete/${selectedId}`, {
                 method: "POST"
             }).then(response => {
                 if (response.ok) {

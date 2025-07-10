@@ -22,21 +22,21 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
 
         public IActionResult Index(string searchTerm, int pageNumber = 1, int pageSize = 10)
         {
-            return View(_author.GetAll(pageNumber, pageSize));
+            //return View(_author.GetAll(pageNumber, pageSize));
 
-            //PagedResult<AuthorViewModel> result;
+            PagedResult<AuthorViewModel> result;
 
-            //if (!string.IsNullOrWhiteSpace(searchTerm))
-            //{
-            //    result = _author.GetAuthorByName(searchTerm, pageNumber, pageSize);
-            //}
-            //else
-            //{
-            //    result = _author.GetAll(pageNumber, pageSize);
-            //}
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                result = _author.GetAuthorByName(searchTerm, pageNumber, pageSize);
+            }
+            else
+            {
+                result = _author.GetAll(pageNumber, pageSize);
+            }
 
-            //ViewBag.SearchTerm = searchTerm;
-            //return View(result);
+            ViewBag.SearchTerm = searchTerm;
+            return View(result);
         }
 
         private List<SelectListItem> GetCountryList()
@@ -54,35 +54,33 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         public IActionResult Edit(int id)
         {
             var viewModel = _author.GetAuthorById(id);
+            viewModel.CountryList = GetCountryList();
             return View(viewModel);
         }
 
         [HttpPost]
         public IActionResult Edit(AuthorViewModel vm)
         {
-            _author.UpdateAuthor(vm);
+            if (!ModelState.IsValid)
+            {
+                vm.CountryList = GetCountryList(); // Repopulate on validation failure
+                return View(vm);
+            }
+
+            try
+            {
+                _author.UpdateAuthor(vm); // Use service
+
+                ViewBag.UpdateSuccess = $"'{vm.Name}' updated successfully!";
+                ViewBag.ShowModal = true;
+            }
+            catch
+            {
+                ModelState.AddModelError("", "An error occurred while updating.");
+            }
+
+            vm.CountryList = GetCountryList();
             return View(vm);
-
-            //if (!ModelState.IsValid)
-            //{
-            //    vm.CountryList = GetCountryList(); // Re-populate dropdown on validation failure
-            //    return View(vm);
-            //}
-
-            //try
-            //{
-            //    _author.UpdateAuthor(vm); // Use service
-
-            //    ViewBag.UpdateSuccess = $"'{vm.Name}' updated successfully!";
-            //    ViewBag.ShowModal = true;
-            //}
-            //catch
-            //{
-            //    ModelState.AddModelError("", "An error occurred while updating.");
-            //}
-
-            //vm.CountryList = GetCountryList();
-            //return View(vm);
 
         }
 
@@ -90,66 +88,42 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         public IActionResult Create()
         {
 
+            ViewBag.CountryList = GetCountryList();
             return View();
-
-            //var vm = new AuthorViewModel
-            //{
-            //    CountryList = GetCountryList()
-            //};
-            //return View(vm);
         }
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public IActionResult Create(AuthorViewModel vm)
         {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.CountryList = GetCountryList();
+                return View(vm);
+            }
 
             _author.InsertAuthor(vm);
+            TempData["SuccessMessage"] = $"{vm.Name} created successfully!";
+            ModelState.Clear();
+            vm = new AuthorViewModel(); // ✅ Reset view model after insert
+            ViewBag.CountryList = GetCountryList();
             return View(vm);
-           
-            //if (!ModelState.IsValid)
-            //{
-            //    vm.CountryList = GetCountryList(); // Repopulate dropdown
-            //    return View(vm);
-            //}
-
-            //try
-            //{
-            //    _author.InsertAuthor(vm); // Use service method
-            //    TempData["SuccessMessage"] = $"{vm.Name} successfully added!";
-            //    ModelState.Clear();
-
-            //    // reset form
-            //    vm = new AuthorViewModel()
-            //    {
-            //        CountryList = GetCountryList()
-            //    };
-                
-
-            //    return View(vm);
-            //}
-            //catch (Exception ex)
-            //{
-            //    ModelState.AddModelError("", "An error occurred while saving." + ex.Message);
-            //    vm.CountryList = GetCountryList();
-            //    return View(vm);
-            //}
 
         }
 
         public IActionResult Delete(int id)
         {
-            _author.DeleteAuthor(id);
-            return RedirectToAction("Index");
+            //_author.DeleteAuthor(id);
+            //return RedirectToAction("Index");
 
-            //var entity = _unitOfWork.GenericRepository<Author>().GetById(id);
-            //if (entity == null)
-            //    return NotFound();
+            var entity = _unitOfWork.GenericRepository<Author>().GetById(id);
+            if (entity == null)
+                return NotFound();
 
-            //_unitOfWork.GenericRepository<Author>().Delete(entity);
-            //_unitOfWork.Save();
+            _unitOfWork.GenericRepository<Author>().Delete(entity);
+            _unitOfWork.Save();
 
-            //return Ok();
+            return Ok();
         }
     }
 }

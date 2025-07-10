@@ -1,3 +1,4 @@
+using Library.Models;
 using Library.Repositories;
 using Library.Repositories.Implementation;
 using Library.Repositories.Interfaces;
@@ -23,7 +24,6 @@ builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 builder.Services.AddTransient<ILibraryInfoService, LibraryInfoService>();
-builder.Services.AddTransient<ILibraryItemService, LibraryItemService>();
 builder.Services.AddTransient<ILibraryEventService, LibraryEventService>();
 builder.Services.AddTransient<ILanguageService, LanguageService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
@@ -31,6 +31,9 @@ builder.Services.AddTransient<IPublisherService, PublisherService>();
 builder.Services.AddTransient<IGenreService, GenreService>();
 builder.Services.AddTransient<ICountryService, CountryService>();
 builder.Services.AddTransient<IAuthorService, AuthorService>();
+builder.Services.AddTransient<IApplicationUserService, ApplicationUserService>();
+builder.Services.AddTransient<IBookService, BookService>();
+builder.Services.AddTransient<INewspaperService, NewspaperService>();
 
 builder.Services.AddRazorPages();
 

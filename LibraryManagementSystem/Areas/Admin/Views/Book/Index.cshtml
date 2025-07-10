@@ -5,10 +5,18 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Library Books</h1>
+@Html.Partial("_DeleteModal")
 
+<h1>Books</h1>
+
+<br />
+<form asp-action="Index" method="get">
+    <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" style="width: 400px" placeholder="Search by Book Title" />
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a asp-action="Index" class="btn btn-primary">Clear</a>
+</form>
 <p>
-    <a asp-action="Create">Create a New Book</a>
+    <a asp-action="Create" class="btn btn-secondary">Add a New Book</a>
 </p>
 <table class="table">
     <thead>
@@ -23,22 +31,10 @@
                 Title
             </th>
             <th>
-                ISBN
-            </th>
-            <th>
                 YearPublished
             </th>
             <th>
-                Edition
-            </th>
-            <th>
-                Publisher
-            </th>
-            <th>
-                Description
-            </th>
-            <th>
-                Genre
+                ShelfLocation
             </th>
             <th>
                 Language
@@ -47,7 +43,19 @@
                 Category
             </th>
             <th>
-                ShelfLocation
+                Publisher
+            </th>
+            <th>
+                Genre
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                ISBN
+            </th>
+            <th>
+                Edition
             </th>
             <th></th>
         </tr>
@@ -57,7 +65,7 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
-            </td>          
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ItemCode)
             </td>
@@ -65,41 +73,79 @@
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ISBN)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.YearPublished)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Edition)
-            </td>
-            <td>
-               @Html.DisplayFor(modelItem => item.Publisher) 
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Genre) 
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Language) 
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ShelfLocation)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                @Html.DisplayFor(modelItem => item.Language.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Publisher.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Genre.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ISBN)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Edition)
+            </td>
+            <td>
+                <div class="d-flex gap-2">
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |
+                <button class="btn btn-danger" onclick="openDeleteModal(@item.Id, '@item.Title')">Delete</button>
+                </div>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        let selectedId = 0;
+        let selectedName = "";
+
+        function openDeleteModal(id, name) {
+            selectedId = id;
+            selectedName = name;
+            document.getElementById("confirmDeleteText").textContent = `Are you sure you want to delete "${name}"?`;
+            const confirmModal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
+            confirmModal.show();
+        }
+
+        document.getElementById("confirmYesBtn").addEventListener("click", function () {
+            fetch(`/Admin/Book/Delete/${selectedId}`, {
+                method: "POST"
+            }).then(response => {
+                if (response.ok) {
+                    const confirmModalEl = document.getElementById("confirmDeleteModal");
+                    const confirmModal = bootstrap.Modal.getInstance(confirmModalEl);
+                    confirmModal.hide();
+
+                    document.getElementById("successMessage").textContent = ` "${selectedName}" deleted successfully.`;
+                    const successModal = new bootstrap.Modal(document.getElementById("successModal"));
+                    successModal.show();
+                }
+            });
+        });
+
+        document.getElementById("successOkBtn").addEventListener("click", function () {
+            const successModal = bootstrap.Modal.getInstance(document.getElementById("successModal"));
+            successModal.hide();
+            location.reload(); // or redirect as needed
+        });
+    </script>
+}
 
 <cs-pager cs-paging-pagesize=(int)Model.PageSize
           cs-paging-pagenumber=(int)Model.PageNumber

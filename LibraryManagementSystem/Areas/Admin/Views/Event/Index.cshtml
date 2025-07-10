@@ -5,10 +5,21 @@
     ViewData["Title"] = "Index";
 }
 
+@Html.Partial("_DeleteModal")
+
 <h1>Library Events</h1>
 
+<br />
+
+<form asp-action="Index" method="get">
+    <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" style="width: 400px" placeholder="Search by Event Name" />
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a asp-action="Index" class="btn btn-primary">Clear</a>
+</form>
+<br />
+
 <p>
-    <a asp-action="Create">Create New Event</a>
+    <a asp-action="Create" class="btn btn-secondary">Create a New Event</a>
 </p>
 <table class="table">
     <thead>
@@ -26,19 +37,19 @@
                 Description
             </th>
             <th>
-                Image
+                Image Url
             </th>
             <th>
-                StartDate
+                Start Date
             </th>
             <th>
-                EndDate
+                End Date
             </th>
             <th>
                 Location
             </th>
             <th>
-                CreatedBy
+                Created By
             </th>
             <th></th>
         </tr>
@@ -59,7 +70,7 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Image)
+                @Html.DisplayFor(modelItem => item.ImageUrl)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StartDate)
@@ -74,14 +85,52 @@
                 @Html.DisplayFor(modelItem => item.CreatedBy)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+                <div class="d-flex gap-2">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |
+                    <button class="btn btn-danger" onclick="openDeleteModal(@item.Id, '@item.Title')">Delete</button>
+                </div>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        let selectedId = 0;
+        let selectedName = "";
+
+        function openDeleteModal(id, name) {
+            selectedId = id;
+            selectedName = name;
+            document.getElementById("confirmDeleteText").textContent = `Are you sure you want to delete "${name}"?`;
+            const confirmModal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
+            confirmModal.show();
+        }
+
+        document.getElementById("confirmYesBtn").addEventListener("click", function () {
+            fetch(`/Admin/Event/Delete/${selectedId}`, {
+                method: "POST"
+            }).then(response => {
+                if (response.ok) {
+                    const confirmModalEl = document.getElementById("confirmDeleteModal");
+                    const confirmModal = bootstrap.Modal.getInstance(confirmModalEl);
+                    confirmModal.hide();
+
+                    document.getElementById("successMessage").textContent = ` "${selectedName}" deleted successfully.`;
+                    const successModal = new bootstrap.Modal(document.getElementById("successModal"));
+                    successModal.show();
+                }
+            });
+        });
+
+        document.getElementById("successOkBtn").addEventListener("click", function () {
+            const successModal = bootstrap.Modal.getInstance(document.getElementById("successModal"));
+            successModal.hide();
+            location.reload(); // or redirect as needed
+        });
+    </script>
+}
 
 <cs-pager cs-paging-pagesize=(int)Model.PageSize
           cs-paging-pagenumber=(int)Model.PageNumber

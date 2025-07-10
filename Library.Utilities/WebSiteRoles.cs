@@ -11,5 +11,6 @@ namespace Library.Utilities
         public const string WebSite_Admin = "Admin";
         public const string WebSite_Librarian = "Librarian";
         public const string WebSite_Member = "Member";
+        public const string Website_Guest = "Guest";
     }
 }

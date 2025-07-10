@@ -11,6 +11,7 @@ namespace Library.Services
     public interface ILibraryEventService
     {
         PagedResult<LibraryEventViewModel> GetAll(int pageNumber, int pageSize);
+        PagedResult<LibraryEventViewModel> GetEventByTitle(string name, int pageNumber, int pageSize);
         LibraryEventViewModel GetLibraryEventById(int LibraryId);
         void UpdateLibraryEvent(LibraryEventViewModel libraryEvent);
         void InsertLibraryEvent(LibraryEventViewModel libraryEvent);
