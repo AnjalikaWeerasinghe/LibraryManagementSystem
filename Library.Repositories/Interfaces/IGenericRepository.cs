@@ -14,6 +14,10 @@ namespace Library.Repositories.Interfaces
             Func<IQueryable<T>, IOrderedQueryable<T>> orderby = null,
             string includeProperties = "");
 
+        IQueryable<T> GetAll();
+
+        Task<IEnumerable<T>> GetAllAsync();
+
         T GetById(object id);
         Task<T> GetByIdAsync(object id);
         Task<T> GetByIdAsync(int id);

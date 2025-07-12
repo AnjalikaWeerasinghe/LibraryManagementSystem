@@ -13,7 +13,7 @@ namespace Library.Models
         public int Id { get; set; }
         public string ItemCode { get; set; }
         public string Title { get; set; }
-        public DateTime YearPublished { get; set; }
+        public int PublishedYear { get; set; }
         public ItemType ItemType { get; set; }
         public string ShelfLocation { get; set; }
         public int LanguageId { get; set; }

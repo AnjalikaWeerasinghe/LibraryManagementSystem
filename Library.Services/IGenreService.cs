@@ -12,6 +12,7 @@ namespace Library.Services
     {
         PagedResult<GenreViewModel> GetAll(int pageNumber, int pageSize);
         GenreViewModel GetGenreById(int GenreId);
+        Task<IEnumerable<GenreViewModel>> GetAllAsync();
         void UpdateGenre(GenreViewModel genre);
         void InsertGenre(GenreViewModel genre);
         void DeleteGenre(int id);

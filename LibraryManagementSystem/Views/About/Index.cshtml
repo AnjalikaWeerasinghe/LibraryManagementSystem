@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "About";
+}
+
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- LEFT: placeholder that will be filled via AJAX -->
+        <div class="col-md-9" id="aboutContent">
+            <h3>Welcome to our Library</h3>
+            <p>Please pick a section on the right.</p>
+        </div>
+
+        <!-- RIGHT: list of buttons/links -->
+        <div class="col-md-3" id="aboutLinks">
+            <button data-url="~/About/WhoWeAre" class="btn btn-secondary w-100 my-1">WHO WE ARE</button>
+            <button data-url="~/About/VisionMission" class="btn btn-secondary w-100 my-1">VISION &amp; MISSION</button>
+            <button data-url="~/About/AimsObjectives" class="btn btn-secondary w-100 my-1">AIMS &amp; OBJECTIVES</button>
+            <button data-url="~/About/Background" class="btn btn-secondary w-100 my-1">BACKGROUND</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/js/link-loader.js"></script>
+}

@@ -46,5 +46,10 @@ namespace Library.Repositories.Implementation
         {
             _context.SaveChanges();
         }
+
+        public async Task SaveAsync()
+        {
+            _context.SaveChangesAsync();
+        }
     }
 }

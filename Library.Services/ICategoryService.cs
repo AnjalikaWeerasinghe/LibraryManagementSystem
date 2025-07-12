@@ -12,6 +12,7 @@ namespace Library.Services
     {
         PagedResult<CategoryViewModel> GetAll(int pageNumber, int pageSize);
         CategoryViewModel GetCategoryById(int CategoryId);
+        Task<IEnumerable<CategoryViewModel>> GetAllAsync();
         void UpdateCategory(CategoryViewModel category);
         void InsertCategory(CategoryViewModel category);
         void DeleteCategory(int id);

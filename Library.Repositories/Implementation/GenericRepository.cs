@@ -121,6 +121,16 @@ namespace Library.Repositories.Implementation
             _context.Entry(entity).State = EntityState.Modified;
             return entity;
         }
+
+        public IQueryable<T> GetAll()
+        {
+            return _context.Set<T>();
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await dbSet.AsNoTracking().ToListAsync();
+        }
     }
 
 }

@@ -13,29 +13,37 @@ namespace Library.ViewModels
     {
         [Key]
         public int Id { get; set; }
+
         [Required]
         [StringLength(10)]
-        [RegularExpression(@"^ED\d{4}$", ErrorMessage = "Event Code must be in the format ED0001.")]
+        [RegularExpression(@"^EID-\d{4}$", ErrorMessage = "Event Code must be in the format EID-0001.")]
         public string EventCode { get; set; }
-        [Required]
-        [StringLength(100)]
+
+        [Required(ErrorMessage = "Include title for event.")]
+        [StringLength(100, ErrorMessage = "Title cannot exceed 100 characters.")]
         public string Title { get; set; }
-        [Required]
-        [MaxLength(1000)]
+
+        [Required(ErrorMessage = "Add a description.")]
+        [MaxLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
         [DataType(DataType.MultilineText)]
         [Display(Name = "Description")]
         public string Description { get; set; }
-        [Required]
-        public string ImageUrl { get; set; }
-        [Required]
+
+        [Url(ErrorMessage = "Enter a valid URL.")]
+        [Display(Name = "Image URL")]
+        public string? ImageUrl { get; set; }
+
+        [Required(ErrorMessage = "Include a event starting date.")]
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
+
         [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Add the location of the event.")]
+        [StringLength(150, ErrorMessage = "Location cannot exceed 150 characters.")]
         public string Location { get; set; }
-        [Required]
-        public string CreatedBy { get; set; }
+        
 
         public class EventSearchViewModel
         {
@@ -57,7 +65,7 @@ namespace Library.ViewModels
             StartDate = model.StartDate;
             EndDate = model.EndDate;
             Location = model.Location;
-            CreatedBy = model.CreatedBy;
+           
         }
 
         public LibraryEvent ConvertViewModel(LibraryEventViewModel model)
@@ -72,7 +80,7 @@ namespace Library.ViewModels
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
                 Location = model.Location,
-                CreatedBy = model.CreatedBy
+                
             };
         }
     }

@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Library.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,64 +15,75 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public IndexModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        #region Output / TempData
+
         public string Username { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
+        #endregion
+
+        #region InputModel
+
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Required, Display(Name = "Full name")]
+            public string FullName { get; set; }
+
+            [Display(Name = "Calling name")]
+            public string CallingName { get; set; }
+
+            [Display(Name = "Address")]
+            public string Address { get; set; }
+
+            [Display(Name = "Gender")]
+            public Gender? Gender { get; set; }
+
+            [Display(Name = "Date of birth"), DataType(DataType.Date)]
+            public DateTime? DOB { get; set; }
+
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
         }
+        #endregion
 
-        private async Task LoadAsync(IdentityUser user)
+        #region Helpers
+
+        private async Task LoadAsync(ApplicationUser user)
         {
-            var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
-            Username = userName;
+            
+            Username = await _userManager.GetUserNameAsync(user);
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                FullName = user.FullName,
+                CallingName = user.CallingName,
+                Address = user.Address,
+                Gender = user.Gender,
+                DOB = user.DOB,
+                PhoneNumber = await _userManager.GetPhoneNumberAsync(user)
             };
         }
+
+        #endregion
+
+        #region GET
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -84,6 +96,10 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account.Manage
             await LoadAsync(user);
             return Page();
         }
+
+        #endregion
+
+        #region POST
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -110,9 +126,25 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            bool changed = false;
+
+            if (user.FullName != Input.FullName) { user.FullName = Input.FullName; changed = true; }
+            if (user.CallingName != Input.CallingName) { user.CallingName = Input.CallingName; changed = true; }
+            if (user.Address != Input.Address) { user.Address = Input.Address; changed = true; }
+            if (user.Gender != Input.Gender) { user.Gender = Input.Gender ?? Gender.Male; changed = true; }
+            if (user.DOB != Input.DOB) { user.DOB = Input.DOB; changed = true; }
+
+            if (changed)
+                await _userManager.UpdateAsync(user); // persist custom fields
+
+            // Refresh cookie
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
+      
         }
+
+        #endregion
+        
     }
 }

@@ -16,6 +16,7 @@ namespace Library.Services
         void UpdateLibraryEvent(LibraryEventViewModel libraryEvent);
         void InsertLibraryEvent(LibraryEventViewModel libraryEvent);
         void DeleteLibraryEvent(int id);
+        string GenerateNextEventCode();
 
     }
 }

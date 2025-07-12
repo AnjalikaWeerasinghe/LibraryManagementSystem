@@ -20,7 +20,7 @@ namespace Library.ViewModels
         [Required]
         [Display(Name = "Country")]
         public int CountryId { get; set; }
-        public List<SelectListItem> CountryList { get; set; }
+        
         [Required]
         [MaxLength(1000)]
         [DataType(DataType.MultilineText)]
@@ -28,6 +28,9 @@ namespace Library.ViewModels
         public string Biography { get; set; }
 
         public Country Country { get; set; }
+
+        public IEnumerable<CountryViewModel> Countries { get; set; }
+
 
         public class AuthorSearchViewModel
         {

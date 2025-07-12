@@ -2,10 +2,12 @@
 using Library.Repositories.Interfaces;
 using Library.Utilities;
 using Library.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Library.Services
@@ -103,15 +105,12 @@ namespace Library.Services
 
             ModelById.FullName = user.FullName;
             ModelById.CallingName = user.CallingName;
-            ModelById.UserName = user.UserName;
             ModelById.UserCode = user.UserCode;
             ModelById.Gender = user.Gender;
-            ModelById.Email = user.Email;
             ModelById.Address = user.Address;
             ModelById.DOB = user.DOB;
             ModelById.UserStatus = user.UserStatus;
             ModelById.PictureUrl = user.PictureUrl;
-            ModelById.SelectedRole = user.SelectedRole;
 
             _unitOfWork.GenericRepository<ApplicationUser>().Update(ModelById);
             _unitOfWork.Save();
@@ -166,6 +165,26 @@ namespace Library.Services
             var model = _unitOfWork.GenericRepository<ApplicationUser>().GetById(userId);
             var vm = new ApplicationUserViewModel(model);
             return vm;
+        }
+
+        public async Task<string> GenerateNextUserCode(bool ismember)
+        {
+            var prefix = ismember ? "LIB-MEM" : "LIB-STF";
+            var pattern = @$"^{prefix}-(\d{{4}})$";
+
+            var last = await _unitOfWork.GenericRepository<ApplicationUser>()
+                             .GetAll()
+                             .Where(u => u.UserCode != null &&
+                                         EF.Functions.Like(u.UserCode, $"{prefix}-%"))
+                             .OrderByDescending(u => u.UserCode)   // works because zero‑padded
+                             .Select(u => u.UserCode)
+                             .FirstOrDefaultAsync();
+
+            var lastNumber = 0;
+            if (last != null)
+                lastNumber = int.Parse(last.Substring(8, 4)); // LIB-XXX‑****
+
+            return $"{prefix}-{(lastNumber + 1):D4}";
         }
     }
 }

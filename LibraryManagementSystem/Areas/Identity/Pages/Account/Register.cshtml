@@ -14,6 +14,11 @@
             <br />
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            @* <div class="form-floating mb-3"> *@
+            @*     <input asp-for="Input.UserName" class="form-control" autocomplete="username" aria-required="true" placeholder="UserName" /> *@
+            @*     <label asp-for="Input.UserName">UserName</label> *@
+            @*     <span asp-validation-for="Input.UserName" class="text-danger"></span> *@
+            @* </div> *@
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="Email" />
                 <label asp-for="Input.Email">Email</label>
@@ -28,6 +33,11 @@
                 <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="Input.IsMember" class="form-check-input" />
+                <label asp-for="Input.IsMember" class="form-check-label"></label>
             </div>
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>

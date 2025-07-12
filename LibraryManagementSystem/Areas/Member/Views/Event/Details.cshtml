@@ -1,0 +1,14 @@
+﻿@model Library.ViewModels.LibraryEventViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>@Model.Title</h2>
+<img src="@Model.ImageUrl" class="img-fluid mb-3" />
+<p><strong>Date:</strong> @Model.StartDate.ToShortDateString()</p>
+<p>@Model.Description</p>
+
+<a asp-area="Member" asp-controller="EventRegistration" asp-action="Register" asp-route-eventId="@Model.Id" class="btn btn-info">
+    Register for this Event
+</a>

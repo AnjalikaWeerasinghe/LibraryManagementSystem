@@ -86,5 +86,16 @@ namespace Library.Services
             _unitOfWork.GenericRepository<Country>().Update(ModelById);
             _unitOfWork.Save();
         }
+
+        public async Task<IEnumerable<CountryViewModel>> GetAllAsync()
+        {
+            var countries = await _unitOfWork.GenericRepository<Country>().GetAllAsync();     
+
+            return countries.Select(l => new CountryViewModel
+            {
+                Id = l.Id,
+                Name = l.Name
+            });
+        }
     }
 }

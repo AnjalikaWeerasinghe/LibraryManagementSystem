@@ -1,4 +1,5 @@
-﻿using Library.Utilities;
+﻿using Library.Models;
+using Library.Utilities;
 using Library.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace Library.Services
     {
         PagedResult<LanguageViewModel> GetAll(int pageNumber, int pageSize);
         LanguageViewModel GetLanguageById(int LanguageId);
+        Task<IEnumerable<LanguageViewModel>> GetAllAsync();
         void UpdateLanguage(LanguageViewModel language);
         void InsertLanguage(LanguageViewModel language);
         void DeleteLanguage(int id);

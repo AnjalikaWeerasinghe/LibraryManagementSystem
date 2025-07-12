@@ -87,5 +87,16 @@ namespace Library.Services
             _unitOfWork.GenericRepository<Language>().Update(ModelById);
             _unitOfWork.Save();
         }
+
+        public async Task<IEnumerable<LanguageViewModel>> GetAllAsync()
+        {
+            var langs = await _unitOfWork.GenericRepository<Language>().GetAllAsync();     // <- this is the missing call
+
+            return langs.Select(l => new LanguageViewModel
+            {
+                Id = l.Id,
+                Name = l.Name
+            });
+        }
     }
 }

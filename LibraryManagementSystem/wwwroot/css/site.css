@@ -2,7 +2,7 @@ html {
   font-size: 14px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1000px) {
   html {
     font-size: 16px;
   }
@@ -17,6 +17,34 @@ html {
   min-height: 100%;
 }
 
+/*CSS for user profile*/
+
 body {
-  margin-bottom: 60px;
+  margin-bottom: 70px;
 }
+
+.profile-header {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #0056b3;
+    margin-bottom: 20px;
+}
+
+.profile-section {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+    .profile-section label {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .profile-section input,
+    .profile-section select {
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 0.95rem;
+    }

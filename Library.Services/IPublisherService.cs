@@ -13,6 +13,7 @@ namespace Library.Services
         PagedResult<PublisherViewModel> GetAll(int pageNumber, int pageSize);
         PagedResult<PublisherViewModel> GetPublisherByName(string name, int pageNumber, int pageSize);
         PublisherViewModel GetPublisherById(int PublisherId);
+        Task<IEnumerable<PublisherViewModel>> GetAllAsync();
         void UpdatePublisher(PublisherViewModel publisher);
         void InsertPublisher(PublisherViewModel publisher);
         void DeletePublisher(int id);

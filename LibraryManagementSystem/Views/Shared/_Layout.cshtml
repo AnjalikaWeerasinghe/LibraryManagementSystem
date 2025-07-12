@@ -33,18 +33,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark me-5" asp-area="" asp-controller="OurService" asp-action="Index">Our Services</a>
                         </li>
+                       
 
                         @if (User.IsInRole("Member"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark me-5" asp-area="member" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link text-dark me-5" asp-area="member" asp-controller="Event" asp-action="Index">Library Events</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark me-5" asp-area="member" asp-controller="MyProfile" asp-action="Index">My Profile</a>
+                                <a class="nav-link text-dark me-5" asp-area="member" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
                             </li>
+                            
+                            
                         }
 
 
@@ -55,8 +55,8 @@
                                 <ul class="dropdown-menu" aria-labelledby="collectiondropdown">
                                     <li><a class="dropdown-item" asp-area="admin" asp-controller="Book" asp-action="Index">Books</a></li>
                                     <li><a class="dropdown-item" asp-area="admin" asp-controller="Newspaper" asp-action="Index">Newspapers</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Journal" asp-action="Index">Journals</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Periodical" asp-action="Index">Periodicals</a></li>
+                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Journal" asp-action="Index">Journals</a></li>
+                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Periodical" asp-action="Index">Periodicals</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item">
@@ -68,12 +68,16 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Acquisition" asp-action="Index">Acquisitions</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="User" asp-action="AllMembers">Member Details</a>
+                            <li class="nav-item dropdown hover-dropdown">
+                                <a class="nav-link dropdown-toggle text-dark me-5 no-caret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">User Details</a>
+                                <ul class="dropdown-menu" aria-labelledby="collectiondropdown">
+                                    <li>
+                                        <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="User" asp-action="AllMembers">Member Details</a>
+                                    </li>
+                                    <li><a class="nav-link text-dark me-4" asp-area="admin" asp-controller="User" asp-action="Index">Staff Details</a></li>
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="User" asp-action="Index">User Details</a>
-                            </li>
+                            
                             <li class="nav-item dropdown hover-dropdown">
                                 <a class="nav-link dropdown-toggle text-dark me-5 no-caret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin Settings</a>
                                 <ul class="dropdown-menu" aria-labelledby="collectiondropdown">
@@ -114,6 +118,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/link-loader.js" defer></script>
+    <script src="~/lib/chartjs/chart.umd.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

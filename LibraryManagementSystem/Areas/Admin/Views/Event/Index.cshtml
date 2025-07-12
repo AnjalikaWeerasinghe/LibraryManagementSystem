@@ -24,9 +24,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                Id
-            </th>
+            
             <th>
                 EventCode
             </th>
@@ -48,18 +46,14 @@
             <th>
                 Location
             </th>
-            <th>
-                Created By
-            </th>
+            
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model.Data) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
+            
             <td>
                 @Html.DisplayFor(modelItem => item.EventCode)
             </td>
@@ -81,9 +75,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Location)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
+            
             <td>
                 <div class="d-flex gap-2">
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |

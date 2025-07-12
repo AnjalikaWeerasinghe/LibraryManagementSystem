@@ -5,7 +5,9 @@ using Library.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Library.Services
@@ -89,7 +91,6 @@ namespace Library.Services
             ModelById.StartDate = libraryEvent.StartDate;
             ModelById.EndDate = libraryEvent.EndDate;
             ModelById.Location = libraryEvent.Location;
-            ModelById.CreatedBy = libraryEvent.CreatedBy;
 
             _unitOfWork.GenericRepository<LibraryEvent>().Update(ModelById);
             _unitOfWork.Save();
@@ -119,7 +120,6 @@ namespace Library.Services
                 StartDate = p.StartDate,
                 EndDate = p.EndDate,
                 Location = p.Location,
-                CreatedBy = p.CreatedBy
 
             }).ToList();
 
@@ -130,6 +130,24 @@ namespace Library.Services
                 PageNumber = pageNumber,
                 PageSize = pageSize
             };
+        }
+
+        public string GenerateNextEventCode()
+        {
+            var lastEvent = _unitOfWork.GenericRepository<LibraryEvent>()
+            .GetAll()
+            .OrderByDescending(e => e.Id)
+            .FirstOrDefault();
+
+            int lastNumber = 0;
+
+            if (lastEvent != null && Regex.IsMatch(lastEvent.EventCode ?? "", @"^EID-(\d{4})$"))
+            {
+                var match = Regex.Match(lastEvent.EventCode, @"^EID-(\d{4})$");
+                lastNumber = int.Parse(match.Groups[1].Value);
+            }
+
+            return $"EID-{(lastNumber + 1).ToString("D4")}";
         }
     }
 

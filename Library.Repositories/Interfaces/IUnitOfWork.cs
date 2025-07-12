@@ -11,5 +11,7 @@ namespace Library.Repositories.Interfaces
         IGenericRepository<T> GenericRepository<T>() where T : class;
 
         void Save();
+
+        Task SaveAsync();
     }
 }

@@ -1,49 +1,107 @@
 ﻿using Library.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Library.ViewModels
 {
-    public class JournalViewModel : LibraryItemViewModel
+    public class JournalViewModel 
     {
+        [Key]
+        public int Id { get; set; }
+        [Required]
+        [StringLength(10)]
+        //[RegularExpression(@"^ITD\d{4}$", ErrorMessage = "Item Code must be in the format ITD0001.")]
+        public string ItemCode { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string Title { get; set; }
+        [Required]
+        [StringLength(50)]
         public string ISSN { get; set; }
+        [Required]
+        [MaxLength(1000)]
+        [DataType(DataType.MultilineText)]
+        [Display(Name = "Description")]
+        public string Description { get; set; }
+        [Required]
+        public int PublishedYear { get; set; }
+        [Required]
+        public string ShelfLocation { get; set; }
+        [Required]
+        [Display(Name = "Language")]
+        [ForeignKey("Language")]
+        public int LanguageId { get; set; }
+        [Required]
+        [Display(Name = "Category")]
+        [ForeignKey("Category")]
+        public int CategoryId { get; set; }
+        [Required]
+        [Display(Name = "Publisher")]
+        [ForeignKey("Publisher")]
+        public int PublisherId { get; set; }
+      
         public string Volume { get; set; }
         public string Issue { get; set; }
         public string Field { get; set; }
+
+        public Language Language { get; set; }
+        public Category Category { get; set; }
+        public Publisher Publisher { get; set; }
+
+        public IEnumerable<LanguageViewModel> Languages { get; set; }
+        public IEnumerable<CategoryViewModel> Categories { get; set; }
+        public IEnumerable<PublisherViewModel> Publishers { get; set; }
 
         public JournalViewModel()
         {
         }
 
-        public override LibraryItem ToDomainModel()
+        public JournalViewModel(Journal model)
+        {
+            Id = model.Id;
+            ItemCode = model.ItemCode;
+            Title = model.Title;
+            PublishedYear = model.PublishedYear;
+            ShelfLocation = model.ShelfLocation;
+            LanguageId = model.LanguageId;
+            Language = model.Language;
+            CategoryId = model.CategoryId;
+            Category = model.Category;
+            PublisherId = model.PublisherId;
+            Publisher = model.Publisher;
+            Description = model.Description;
+
+            ISSN = model.ISSN;
+            Volume = model.Volume;
+            Issue = model.Issue;
+            Field = model.Field;
+        }
+
+        public Journal ConvertToViewModelToModel(JournalViewModel model)
         {
             return new Journal
             {
-                Id = this.Id,
-                ItemCode = this.ItemCode,
-                Title = this.Title,
-                YearPublished = this.YearPublished,
-                ShelfLocation = this.ShelfLocation,
-                LanguageId = this.LanguageId,
-                CategoryId = this.CategoryId,
-                PublisherId = this.CategoryId,
-                Description = this.Description,
-                ISSN = this.ISSN,
-                Volume = this.Volume,
-                Issue = this.Issue,
-                Field = this.Field
-            };
-        }
+                Id = model.Id,
+                ItemCode = model.ItemCode,
+                Title = model.Title,
+                PublishedYear = model.PublishedYear,
+                ShelfLocation = model.ShelfLocation,
+                LanguageId = model.LanguageId,
+                CategoryId = model.CategoryId,
+                PublisherId = model.PublisherId,
+                Description = model.Description,
 
-        public JournalViewModel(Journal journal) : base(journal)
-        {
-            ISSN = journal.ISSN;
-            Volume = journal.Volume;
-            Issue = journal.Issue;
-            Field = journal.Field;
+                ISSN = model.ISSN,
+                Volume = model.Volume,
+                Issue = model.Issue,
+                Field = model.Field
+            };
         }
     }
 }

@@ -21,5 +21,7 @@ namespace Library.Services
         void UpdateApplicationUser(ApplicationUserViewModel user);
         void InsertApplicationUser(ApplicationUserViewModel user);
         void DeleteApplicationUser(int id);
+
+        Task<string> GenerateNextUserCode(bool ismember);
     }
 }

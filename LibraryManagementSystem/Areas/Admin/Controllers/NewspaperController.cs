@@ -44,7 +44,7 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             newspaper.ISSN = vm.ISSN;
             newspaper.ItemCode = vm.ItemCode;
             newspaper.CategoryId = vm.CategoryId;
-            newspaper.YearPublished = vm.YearPublished;
+            newspaper.PublishedYear = vm.PublishedYear;
             newspaper.PublisherId = vm.PublisherId;
             newspaper.LanguageId = vm.LanguageId;
             newspaper.IssuedDate = vm.IssuedDate;

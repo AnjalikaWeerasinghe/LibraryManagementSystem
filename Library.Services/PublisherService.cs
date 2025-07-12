@@ -122,5 +122,16 @@ namespace Library.Services
                 PageSize = pageSize
             };
         }
+
+        public async Task<IEnumerable<PublisherViewModel>> GetAllAsync()
+        {
+            var publishers = await _unitOfWork.GenericRepository<Publisher>().GetAllAsync();
+
+            return publishers.Select(l => new PublisherViewModel
+            {
+                Id = l.Id,
+                Name = l.Name
+            });
+        }
     }
 }

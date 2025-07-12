@@ -1,0 +1,64 @@
+﻿@using Library.ViewModels
+@model IEnumerable<ItemCategoryCountViewModel>
+@{
+    ViewData["Title"] = "Library Item Counts by Category";
+}
+@{
+    string chartJson = ViewBag.ChartJson as string ?? "[]";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<canvas id="itemChart" width="400" height="400"></canvas>
+
+<!-- Optional: original table (hidden by default) -->
+<table id="rawTable" class="table table-bordered table-striped d-none">
+    <thead class="table-dark">
+        <tr><th>Item Type</th><th>Category</th><th class="text-end">Count</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var row in Model)
+        {
+            <tr>
+                <td>@row.ItemType</td>
+                <td>@row.Category</td>
+                <td class="text-end">@row.Count</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section Scripts
+{
+    <!-- Chart.js CDN -->
+    <script src="~/lib/chartjs/chart.umd.min.js"></script>
+
+    <script>
+        // Parse the JSON we tucked into ViewBag
+        const chartData = JSON.parse('@Html.Raw(chartJson)');
+
+        const labels = chartData.map(x => x.label);
+        const counts = chartData.map(x => x.value);
+
+        const ctx = document.getElementById('itemChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: counts
+                    // Chart.js will pick a pleasant default colour palette
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'right' },
+                    tooltip: { callbacks: {
+                        label: ctx => `${ctx.label}: ${ctx.parsed}`
+                    }}
+                }
+            }
+        });
+    </script>
+}

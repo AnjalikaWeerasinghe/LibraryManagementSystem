@@ -87,5 +87,16 @@ namespace Library.Services
             _unitOfWork.GenericRepository<Genre>().Update(ModelById);
             _unitOfWork.Save();
         }
+
+        public async Task<IEnumerable<GenreViewModel>> GetAllAsync()
+        {
+            var genres = await _unitOfWork.GenericRepository<Genre>().GetAllAsync();
+
+            return genres.Select(l => new GenreViewModel
+            {
+                Id = l.Id,
+                Name = l.Name
+            });
+        }
     }
 }

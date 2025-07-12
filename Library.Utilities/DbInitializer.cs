@@ -1,9 +1,11 @@
 ﻿using Library.Models;
 using Library.Repositories;
+using Library.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,11 +14,12 @@ namespace Library.Utilities
 {
     public class DbInitializer : IDbInitializer
     {
-        private UserManager<IdentityUser> _userManager;
+        private UserManager<ApplicationUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
         private ApplicationDbContext _context;
 
-        public DbInitializer(UserManager<IdentityUser> userManager,
+        public DbInitializer(
+            UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             ApplicationDbContext context)
         {
@@ -43,15 +46,17 @@ namespace Library.Utilities
             if (!_roleManager.RoleExistsAsync(WebSiteRoles.WebSite_Admin).GetAwaiter().GetResult())
             {
                 _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Admin)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Librarian)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Member)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.Website_Guest)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Librarian)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Staff)).GetAwaiter().GetResult();
 
                 _userManager.CreateAsync(new ApplicationUser
                 {
                     UserName = "Admin",
-                    PasswordHash = "Admin@123",
-                } ).GetAwaiter().GetResult();
+                    Email = "adminuser@gmail.com",
+                    FullName = "Admin User",
+                    UserCode = "LIB-ADM-0001",
+                }, "Admin@123").GetAwaiter().GetResult();
 
                 var Appuser = _context.ApplicationUsers.FirstOrDefault(x => x.Email == "adminuser@gmail.com");
                 if (Appuser != null)
@@ -59,7 +64,6 @@ namespace Library.Utilities
                     _userManager.AddToRoleAsync(Appuser, WebSiteRoles.WebSite_Admin).GetAwaiter().GetResult();
                 }
             }
-
         }
     }
 }

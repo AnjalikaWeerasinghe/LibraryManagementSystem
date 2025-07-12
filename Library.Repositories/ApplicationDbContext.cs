@@ -51,6 +51,7 @@ namespace Library.Repositories
         public DbSet<Newspaper> Newspapers { get; set; }
         public DbSet<Journal> Journals { get; set; }
         public DbSet<Periodical> Periodicals { get; set; }
+        public DbSet<UserCodeCounter> UserCodeCounters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {
@@ -62,6 +63,22 @@ namespace Library.Repositories
                 .HasValue<Newspaper>("Newspaper")
                 .HasValue<Journal>("Journal")
                 .HasValue<Periodical>("Periodical");
+
+            modelbuilder.Entity<LibraryEvent>()
+                .HasIndex(e => e.EventCode).IsUnique();
+
+            // User can only register once for an event
+            modelbuilder.Entity<EventParticipant>()
+                .HasIndex(ep => new { ep.LibraryEventId, ep.ApplicationUserId })
+                .IsUnique();
+
+            modelbuilder.Entity<ApplicationUser>()
+                .HasIndex(u => u.UserCode)
+                .IsUnique();
+
+            modelbuilder.Entity<LibraryItem>()
+               .Property(p => p.PublishedYear)
+               .HasColumnType("int");
         }
 
     }

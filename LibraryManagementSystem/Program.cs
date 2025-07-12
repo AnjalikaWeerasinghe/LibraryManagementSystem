@@ -16,7 +16,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;  // ? skip e?mail confirmation entirely
+})
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
@@ -34,6 +38,11 @@ builder.Services.AddTransient<IAuthorService, AuthorService>();
 builder.Services.AddTransient<IApplicationUserService, ApplicationUserService>();
 builder.Services.AddTransient<IBookService, BookService>();
 builder.Services.AddTransient<INewspaperService, NewspaperService>();
+builder.Services.AddTransient<IPeriodicalService, PeriodicalService>();
+builder.Services.AddTransient<IJournalService, JournalService>();
+builder.Services.AddTransient<IEventRegistrationService, EventRegistrationService>();
+builder.Services.AddTransient<IUserCodeService, UserCodeService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddRazorPages();
 
@@ -50,7 +59,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-DataSending();
+DataSeeding();
 app.UseRouting();
 app.UseAuthentication();
 
@@ -71,7 +80,7 @@ app.UseEndpoints(endpoints =>
 
 app.Run();
 
-void DataSending()
+void DataSeeding()
 {
     using (var scope = app.Services.CreateScope())
     {

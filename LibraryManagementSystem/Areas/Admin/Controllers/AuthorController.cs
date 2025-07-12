@@ -13,11 +13,13 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
     {
         private IAuthorService _author;
         private IUnitOfWork _unitOfWork;
+        private ICountryService _country;
 
-        public AuthorController(IAuthorService author, IUnitOfWork unitOfWork)
+        public AuthorController(IAuthorService author, IUnitOfWork unitOfWork, ICountryService country)
         {
             _author = author;
             _unitOfWork = unitOfWork;
+            _country = country;
         }
 
         public IActionResult Index(string searchTerm, int pageNumber = 1, int pageSize = 10)
@@ -54,60 +56,59 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         public IActionResult Edit(int id)
         {
             var viewModel = _author.GetAuthorById(id);
-            viewModel.CountryList = GetCountryList();
+            
             return View(viewModel);
         }
 
         [HttpPost]
         public IActionResult Edit(AuthorViewModel vm)
         {
-            if (!ModelState.IsValid)
-            {
-                vm.CountryList = GetCountryList(); // Repopulate on validation failure
-                return View(vm);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    vm.CountryList = GetCountryList(); // Repopulate on validation failure
+            //    return View(vm);
+            //}
 
-            try
-            {
-                _author.UpdateAuthor(vm); // Use service
+            //try
+            //{
+            //    _author.UpdateAuthor(vm); // Use service
 
-                ViewBag.UpdateSuccess = $"'{vm.Name}' updated successfully!";
-                ViewBag.ShowModal = true;
-            }
-            catch
-            {
-                ModelState.AddModelError("", "An error occurred while updating.");
-            }
+            //    ViewBag.UpdateSuccess = $"'{vm.Name}' updated successfully!";
+            //    ViewBag.ShowModal = true;
+            //}
+            //catch
+            //{
+            //    ModelState.AddModelError("", "An error occurred while updating.");
+            //}
 
-            vm.CountryList = GetCountryList();
-            return View(vm);
+            //vm.CountryList = GetCountryList();
+            //return View(vm);
+
+            _author.UpdateAuthor(vm);
+            return RedirectToAction("Index");
 
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
 
-            ViewBag.CountryList = GetCountryList();
-            return View();
+            var vm = new AuthorViewModel
+            {
+                Countries = await _country.GetAllAsync()
+            };
+            return View(vm);
         }
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public IActionResult Create(AuthorViewModel vm)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.CountryList = GetCountryList();
-                return View(vm);
-            }
+            
 
             _author.InsertAuthor(vm);
             TempData["SuccessMessage"] = $"{vm.Name} created successfully!";
-            ModelState.Clear();
-            vm = new AuthorViewModel(); // ✅ Reset view model after insert
-            ViewBag.CountryList = GetCountryList();
-            return View(vm);
+            return RedirectToAction(nameof(Create));
 
         }
 

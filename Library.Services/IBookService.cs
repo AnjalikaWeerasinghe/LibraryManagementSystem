@@ -13,7 +13,8 @@ namespace Library.Services
         PagedResult<BookViewModel> GetAll(int pageNumber, int pageSize);
         BookViewModel GetBookById(int bookId);
         void UpdateBook(BookViewModel book);
-        void InsertBook(BookViewModel book);
+        //void InsertBook(BookViewModel book);
+        Task InsertBookAsync(BookViewModel book);
         void DeleteBook(int id);
     }
 }

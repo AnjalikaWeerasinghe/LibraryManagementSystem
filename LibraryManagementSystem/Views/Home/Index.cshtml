@@ -8,30 +8,51 @@
 </div>
 <br />
 
-<div id="event" class="carousel slide" data-bs-ride="carousel">
+@if (ViewBag.LatestEventImages != null && ViewBag.LatestEventImages.Count > 0)
+{
+    <div id="eventCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            @for (int i = 0; i < ViewBag.LatestEventImages.Count; i++)
+            {
+                var eventItem = ViewBag.LatestEventImages[i];
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <img src="@eventItem.ImageUrl" class="d-block w-100" alt="Event Image">
+                    <div class="carousel-caption d-none d-md-block">
+                        <a asp-area="member" asp-controller="Event" asp-action="Details" asp-route-id="@eventItem.Id">
+                            <h5>@eventItem.Title</h5>
+                        </a>
+                        <p>@eventItem.Description</p>
+                    </div>
+                </div>
+            }
+        </div>
 
-    <div class="carousel-indicators">
-        <button type="button" data-bs-target="#event" data-bs-slide-to="0" class="active"></button>
-        <button type="button" data-bs-target="#event" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#event" data-bs-slide-to="2"></button>
+        <button class="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
+}
 
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img src="~/Images/Essay_Event.webp" alt="" class="d-block w-100"></img>
-        </div>
-        <div class="carousel-item">
-            <img src="" alt="" class="d-block w-100"></img>
-        </div>
-        <div class="carousel-item">
-            <img src="" alt="" class="d-block w-100"></img>
-        </div>
+<div class="container">
+    <div class="row">
+    <div class="col-md-4">
+        <h3>About Us</h3>
+        <p>We are dedicated to providing a wide range of books and resources to our community. Our library offers a peaceful environment for reading, studying, and learning.</p>
     </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#event" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#event" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-    </button>
+    <div class="col-md-4">
+        <h3>Membership</h3>
+        <p>Join our library to access thousands of books, e-books, and other resources. Membership is free for all residents of Gampola.</p>
+    </div>
+    <div class="col-md-4">
+        <h3>Contact Us</h3>
+        <p>If you have any questions or need assistance, feel free to reach out to us via email or phone.</p>
+    </div>
+    </div>
 </div>
+
+

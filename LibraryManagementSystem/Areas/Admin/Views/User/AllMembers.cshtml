@@ -16,18 +16,14 @@
             <th>
                 Calling Name
             </th>
-            <th>
-                UserName
-            </th>
+            
             <th>
                 UserCode
             </th>
             <th>
                 Gender
             </th>
-            <th>
-                Email
-            </th>
+           
             <th>
                 Address
             </th>
@@ -43,9 +39,7 @@
             <th>
                 Picture Url
             </th>
-            <th>
-                Selected Role
-            </th>
+            
             <th></th>
         </tr>
     </thead>
@@ -58,18 +52,14 @@
             <td>
                 @Html.DisplayFor(modelItem => item.CallingName)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
+            
             <td>
                 @Html.DisplayFor(modelItem => item.UserCode)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Gender)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
+            
             <td>
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
@@ -85,9 +75,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.PictureUrl)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SelectedRole)
-            </td>
+            
             <td>
                 <div d-flex gap-2>
                     <a asp-action="Edit" asp-route-id="@item.UserCode" class="btn btn-dark btn-sm">Edit</a>

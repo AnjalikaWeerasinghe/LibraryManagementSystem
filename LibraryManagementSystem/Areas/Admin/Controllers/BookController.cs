@@ -47,7 +47,7 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             book.ISBN = vm.ISBN;
             book.ItemCode = vm.ItemCode;
             book.CategoryId = vm.CategoryId;
-            book.YearPublished = vm.YearPublished;
+            book.PublishedYear = vm.PublishedYear;
             book.PublisherId = vm.PublisherId;
             book.LanguageId = vm.LanguageId;
             book.GenreId = vm.GenreId;
@@ -73,7 +73,9 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(BookViewModel vm)
         {
-            _book.InsertBook(vm);
+            if (!ModelState.IsValid) return View(vm); 
+
+            await _book.InsertBookAsync(vm);
             TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
 
             return View(new BookViewModel());

@@ -86,5 +86,16 @@ namespace Library.Services
             _unitOfWork.GenericRepository<Category>().Update(ModelById);
             _unitOfWork.Save();
         }
+
+        public async Task<IEnumerable<CategoryViewModel>> GetAllAsync()
+        {
+            var cats = await _unitOfWork.GenericRepository<Category>().GetAllAsync();     // <- this is the missing call
+
+            return cats.Select(c => new CategoryViewModel
+            {
+                Id = c.Id,
+                Name = c.Name
+            });
+        }
     }
 }

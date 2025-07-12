@@ -325,7 +325,8 @@ namespace Library.Repositories.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("LibraryEventId");
+                    b.HasIndex("LibraryEventId", "ApplicationUserId")
+                        .IsUnique();
 
                     b.ToTable("EventParticipants");
                 });
@@ -555,20 +556,18 @@ namespace Library.Repositories.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EventCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
@@ -578,7 +577,8 @@ namespace Library.Repositories.Migrations
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<int?>("MemberId")
                         .HasColumnType("int");
@@ -588,9 +588,13 @@ namespace Library.Repositories.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EventCode")
+                        .IsUnique();
 
                     b.HasIndex("LibraryInfoId");
 
@@ -677,6 +681,9 @@ namespace Library.Repositories.Migrations
                     b.Property<int>("LanguageId")
                         .HasColumnType("int");
 
+                    b.Property<int>("PublishedYear")
+                        .HasColumnType("int");
+
                     b.Property<int>("PublisherId")
                         .HasColumnType("int");
 
@@ -687,9 +694,6 @@ namespace Library.Repositories.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("YearPublished")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -927,6 +931,25 @@ namespace Library.Repositories.Migrations
                     b.ToTable("Reservations");
                 });
 
+            modelBuilder.Entity("Library.Models.UserCodeCounter", b =>
+                {
+                    b.Property<string>("RoleKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("LastNumber")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("RoleKey");
+
+                    b.ToTable("UserCodeCounters");
+                });
+
             modelBuilder.Entity("Library.Models.Vendor", b =>
                 {
                     b.Property<int>("Id")
@@ -1127,10 +1150,12 @@ namespace Library.Repositories.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -1167,10 +1192,12 @@ namespace Library.Repositories.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -1280,17 +1307,20 @@ namespace Library.Repositories.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("CallingName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime?>("DOB")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Gender")
                         .HasColumnType("int");
@@ -1301,16 +1331,20 @@ namespace Library.Repositories.Migrations
                     b.Property<string>("PictureUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SelectedRole")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("UserCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserRole")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserStatus")
                         .HasColumnType("int");
+
+                    b.HasIndex("UserCode")
+                        .IsUnique()
+                        .HasFilter("[UserCode] IS NOT NULL");
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
@@ -1510,15 +1544,13 @@ namespace Library.Repositories.Migrations
 
             modelBuilder.Entity("Library.Models.LibraryEvent", b =>
                 {
-                    b.HasOne("Library.Models.LibraryInfo", "LibraryInfo")
+                    b.HasOne("Library.Models.LibraryInfo", null)
                         .WithMany("Events")
                         .HasForeignKey("LibraryInfoId");
 
                     b.HasOne("Library.Models.Member", null)
                         .WithMany("Events")
                         .HasForeignKey("MemberId");
-
-                    b.Navigation("LibraryInfo");
                 });
 
             modelBuilder.Entity("Library.Models.LibraryItem", b =>

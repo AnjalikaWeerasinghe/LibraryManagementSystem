@@ -12,6 +12,7 @@ namespace Library.Services
     {
         PagedResult<CountryViewModel> GetAll(int pageNumber, int pageSize);
         CountryViewModel GetCountryById(int CountryId);
+        Task<IEnumerable<CountryViewModel>> GetAllAsync();
         void UpdateCountry(CountryViewModel country);
         void InsertCountry(CountryViewModel country);
         void DeleteCountry(int id);

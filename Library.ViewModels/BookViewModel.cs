@@ -24,14 +24,14 @@ namespace Library.ViewModels
         public string Title { get; set; }
         [Required]
         [DataType("Year")]
-        public DateTime YearPublished { get; set; }
+        public int PublishedYear { get; set; }
         [Required]
         public string ShelfLocation { get; set; }
         [Required]
         [Display(Name = "Language")]
         [ForeignKey("Language")]
         public int LanguageId { get; set; }
-        public List<Language> Languages { get; set; }
+        public List<SelectListItem> Languages { get; set; }
         [Required]
         [Display(Name = "Category")]
         [ForeignKey("Category")]
@@ -75,7 +75,7 @@ namespace Library.ViewModels
             Id = model.Id;
             ItemCode = model.ItemCode;
             Title = model.Title;
-            YearPublished = model.YearPublished;
+            PublishedYear = model.PublishedYear;
             ShelfLocation = model.ShelfLocation;
             LanguageId = model.LanguageId;
             Language = model.Language;
@@ -97,7 +97,7 @@ namespace Library.ViewModels
                 Id = model.Id,
                 ItemCode = model.ItemCode,
                 Title = model.Title,
-                YearPublished = model.YearPublished,
+                PublishedYear = model.PublishedYear,
                 ShelfLocation = model.ShelfLocation,
                 LanguageId = model.LanguageId,
                 Language = model.Language,

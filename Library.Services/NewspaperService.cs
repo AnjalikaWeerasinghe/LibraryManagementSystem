@@ -37,7 +37,7 @@ namespace Library.Services
                 int ExcludeRecords = (pageSize * pageNumber) - pageSize;
 
                 var modelList = _unitOfWork.GenericRepository<Newspaper>()
-                    .GetAll(includeProperties: "Language,Category,Publisher,Genre")
+                    .GetAll(includeProperties: "Language,Category,Publisher")
                     .Skip(ExcludeRecords).Take(pageSize).ToList();
 
                 totalCount = _unitOfWork.GenericRepository<Newspaper>().GetAll().ToList().Count;
@@ -86,7 +86,7 @@ namespace Library.Services
             ModelById.ItemCode = newspaper.ItemCode;
             ModelById.Title = newspaper.Title;
             ModelById.Description = newspaper.Description;
-            ModelById.YearPublished = newspaper.YearPublished;
+            ModelById.PublishedYear = newspaper.PublishedYear;
             ModelById.ShelfLocation = newspaper.ShelfLocation;
             ModelById.IssuedDate = newspaper.IssuedDate;
             ModelById.IssueNumber = newspaper.IssueNumber;

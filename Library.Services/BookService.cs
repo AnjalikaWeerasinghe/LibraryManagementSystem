@@ -71,12 +71,13 @@ namespace Library.Services
             return vm;
         }
 
-        public void InsertBook(BookViewModel book)
+        public async Task InsertBookAsync(BookViewModel book)
         {
-            var model = new BookViewModel().ConvertToViewModelToModel(book);
-            _unitOfWork.GenericRepository<Book>().Add(model);
-            _unitOfWork.Save();
+            var entity = new BookViewModel().ConvertToViewModelToModel(book);
+            _unitOfWork.GenericRepository<Book>().Add(entity);
+            await _unitOfWork.SaveAsync();
         }
+
 
         public void UpdateBook(BookViewModel book)
         {
@@ -86,7 +87,7 @@ namespace Library.Services
             ModelById.ItemCode = book.ItemCode;
             ModelById.Title = book.Title;
             ModelById.Description = book.Description;
-            ModelById.YearPublished = book.YearPublished;
+            ModelById.PublishedYear = book.PublishedYear;
             ModelById.ShelfLocation = book.ShelfLocation;
             ModelById.Edition = book.Edition;
             ModelById.LanguageId = book.LanguageId;

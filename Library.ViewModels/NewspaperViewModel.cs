@@ -23,7 +23,7 @@ namespace Library.ViewModels
         public string Title { get; set; }
         [Required]
         [DataType("Year")]
-        public DateTime YearPublished { get; set; }
+        public int PublishedYear { get; set; }
         [Required]
         public string ShelfLocation { get; set; }
         [Required]
@@ -49,7 +49,6 @@ namespace Library.ViewModels
 
         [Required]
         [StringLength(50)]
-        [RegularExpression(@"^(?i:ISSN)\s((?:\d[-]?){12}\d)$", ErrorMessage = "ISBN Number must start with 'ISBN', followed by 13 digits.")]
         public string ISSN { get; set; }
         public DateTime IssuedDate { get; set; }
         public string IssueNumber { get; set; }
@@ -68,7 +67,7 @@ namespace Library.ViewModels
             Id = model.Id;
             ItemCode = model.ItemCode;
             Title = model.Title;
-            YearPublished = model.YearPublished;
+            PublishedYear = model.PublishedYear;
             ShelfLocation = model.ShelfLocation;
             LanguageId = model.LanguageId;
             Language = model.Language;
@@ -77,6 +76,7 @@ namespace Library.ViewModels
             PublisherId = model.PublisherId;
             Publisher = model.Publisher;
             Description = model.Description;
+
             ISSN = model.ISSN;
             IssuedDate = model.IssuedDate;
             IssueNumber = model.IssueNumber;
@@ -90,7 +90,7 @@ namespace Library.ViewModels
                 Id = model.Id,
                 ItemCode = model.ItemCode,
                 Title = model.Title,
-                YearPublished = model.YearPublished,
+                PublishedYear = model.PublishedYear,
                 ShelfLocation = model.ShelfLocation,
                 LanguageId = model.LanguageId,
                 Language = model.Language,
