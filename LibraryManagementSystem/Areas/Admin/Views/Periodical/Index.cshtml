@@ -8,6 +8,13 @@
 @Html.Partial("_DeleteModal")
 
 <h1>Periodicals</h1>
+
+<br />
+<form asp-action="Index" method="get">
+    <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" style="width: 400px" placeholder="Search by Periodical Title" />
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a asp-action="Index" class="btn btn-primary">Clear</a>
+</form>
 <br />
 
 <p>
@@ -17,19 +24,25 @@
     <thead>
         <tr>
             <th>
-                Id
-            </th>
-            <th>
                 ItemCode
             </th>
             <th>
                 Title
             </th>
             <th>
-                YearPublished
+                ISSN
             </th>
             <th>
-                ShelfLocation
+                Frequency
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Theme
+            </th>
+            <th>
+                Year Published
             </th>
             <th>
                 Language
@@ -40,18 +53,6 @@
             <th>
                 Publisher
             </th>
-            <th>
-                Description
-            </th>
-            <th>
-                ISSN
-            </th>
-            <th>
-                Frequency
-            </th>
-            <th>
-                Theme
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -59,19 +60,24 @@
 @foreach (var item in Model.Data) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.ItemCode)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.PublishedYear)
+                @Html.DisplayFor(modelItem => item.ISSN)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ShelfLocation)
+                @Html.DisplayFor(modelItem => item.Frequency)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Theme)
+            <td>
+                @Html.DisplayFor(modelItem => item.PublishedYear)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Language.Name)
@@ -82,23 +88,13 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Publisher.Name)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ISSN)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Frequency)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Theme)
-            </td>
+
             <td>
                 <div class="d-flex gap-2">
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |
                     <button class="btn btn-danger" onclick="openDeleteModal(@item.Id, '@item.Title')">Delete</button>
                 </div>
+            </td>
         </tr>
 }
     </tbody>

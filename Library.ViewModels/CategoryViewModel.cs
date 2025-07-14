@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,6 +16,10 @@ namespace Library.ViewModels
         [Required]
         [StringLength(200)]
         public string Name { get; set; }
+        [Required]
+        public ItemType ItemType { get; set; }
+
+        public IEnumerable<SelectListItem> ItemTypeList { get; set; }
 
         public CategoryViewModel()
         {
@@ -24,6 +29,7 @@ namespace Library.ViewModels
         {
             Id = model.Id;
             Name = model.Name;
+            ItemType = model.ItemType;
         }
 
         public Category ConvertViewModel(CategoryViewModel model)
@@ -31,7 +37,8 @@ namespace Library.ViewModels
             return new Category
             {
                 Id = model.Id,
-                Name = model.Name
+                Name = model.Name,
+                ItemType = model.ItemType
             };
         }
     }

@@ -1,77 +1,96 @@
-﻿@model Library.ViewModels.NewspaperViewModel
+﻿@using Library.Models
+@using Library.ViewModels
+
+@model Library.ViewModels.NewspaperViewModel
 
 @{
     ViewData["Title"] = "Edit";
 }
 
+<style>
+    .placeholder-option {
+        color: #6c757d;
+    }
+</style>
+
 <h1>Edit Newspaper Details</h1>
 
 
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+<div class="container mt-3">
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-6 form-group">
                 <label asp-for="ItemCode" class="control-label"></label>
-                <input asp-for="ItemCode" class="form-control" />
+                <input asp-for="ItemCode" class="form-control" readonly />
                 <span asp-validation-for="ItemCode" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="IssuedDate" class="control-label">Issued Date<span class="text-danger"> *</span></label>
+                <input asp-for="IssuedDate" class="form-control" />
+                <span asp-validation-for="IssuedDate" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="Title" class="control-label required">Title<span class="text-danger"> *</span></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="PublishedYear" class="control-label"></label>
-                <input asp-for="PublishedYear" class="form-control" />
-                <span asp-validation-for="PublishedYear" class="text-danger"></span>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="CategoryId" class="control-label required">Item Category<span class="text-danger"> *</span></label>
+                <select asp-for="CategoryId"
+                        asp-items="@(new SelectList(Model.Categories.Where(c => c.ItemType == ItemType.Newspaper), nameof(CategoryViewModel.Id), nameof(CategoryViewModel.Name)))"
+                        class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Category --</option>
+                </select>
             </div>
-            <div class="form-group">
-                <label asp-for="ShelfLocation" class="control-label"></label>
-                <input asp-for="ShelfLocation" class="form-control" />
-                <span asp-validation-for="ShelfLocation" class="text-danger"></span>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="ISSN" class="control-label required">ISSN<span class="text-danger"> *</span></label>
+                <input asp-for="ISSN" class="form-control" placeholder="e.g.,####-#### " />
+                <span asp-validation-for="ISSN" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="LanguageId" class="control-label"></label>
-                <input asp-for="LanguageId" class="form-control" />
-                <span asp-validation-for="LanguageId" class="text-danger"></span>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="LanguageId" class="control-label required">Language<span class="text-danger"> *</span></label>
+                <select asp-for="LanguageId"
+                        asp-items="@(new SelectList(Model.Languages, nameof(LanguageViewModel.Id), nameof(LanguageViewModel.Name)))"
+                        class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Language --</option>
+                </select>
             </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <input asp-for="CategoryId" class="form-control" />
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="IssueNumber" class="control-label">Issue Number<span class="text-danger"> *</span></label>
+                <select asp-for="IssueNumber" class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Issue Number --</option>
+                    @for (var i = 1; i <= 300; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                <span asp-validation-for="IssueNumber" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="col-md-6 form-group">
                 <label asp-for="PublisherId" class="control-label"></label>
-                <input asp-for="PublisherId" class="form-control" />
-                <span asp-validation-for="PublisherId" class="text-danger"></span>
+                <select asp-for="PublisherId"
+                        asp-items="@(new SelectList(Model.Publishers, nameof(PublisherViewModel.Id), nameof(PublisherViewModel.Name)))"
+                        class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Publisher --</option>
+                </select>
             </div>
-            <div class="form-group">
+
+            <div class="col-md-6 form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <textarea asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ISSN" class="control-label"></label>
-                <input asp-for="ISSN" class="form-control" />
-                <span asp-validation-for="ISSN" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IssuedDate" class="control-label"></label>
-                <input asp-for="IssuedDate" class="form-control" />
-                <span asp-validation-for="IssuedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IssueNumber" class="control-label"></label>
-                <input asp-for="IssueNumber" class="form-control" />
-                <span asp-validation-for="IssueNumber" class="text-danger"></span>
-            </div>
+            <br />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-info" />
             </div>

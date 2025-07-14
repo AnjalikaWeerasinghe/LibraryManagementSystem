@@ -5,7 +5,7 @@
     ViewData["Title"] = "Index";
 }
 
-@Html.Partial("_DeleteModal")
+
 
 <h1>Categories of Library Catalogues</h1>
 
@@ -16,10 +16,10 @@
     <thead>
         <tr>
             <th>
-                Id
+                Name
             </th>
             <th>
-                Name
+                Item Type
             </th>
             <th></th>
         </tr>
@@ -28,11 +28,12 @@
 @foreach (var item in Model.Data) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemType)
+            </td>
+            <br />
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |
                 <button class="btn btn-danger" onclick="openDeleteModal(@item.Id, '@item.Name')">Delete</button>
@@ -41,6 +42,8 @@
 }
     </tbody>
 </table>
+
+@Html.Partial("_DeleteModal")
 
 @section Scripts {
     <script>

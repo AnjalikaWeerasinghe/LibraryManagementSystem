@@ -5,12 +5,13 @@ using Library.Utilities;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Drawing.Printing;
 using System.Security.Policy;
 
 namespace LibraryManagementSystem.Areas.Admin.Controllers
 {
-    [Area("admin")]
+    [Area("Admin")]
     public class EventController : Controller
     {
         private ILibraryEventService _libraryEvent; 
@@ -42,19 +43,30 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var viewModel = _libraryEvent.GetLibraryEventById(id);
-            return View(viewModel);
+            var libevent = _libraryEvent.GetLibraryEventById(id);
+            if (libevent == null) return NotFound();
+
+            var vm = new LibraryEventViewModel
+            {
+                Id = libevent.Id,
+                Title = libevent.Title,
+                EventCode = libevent.EventCode,
+                Description = libevent.Description,
+                ImageUrl = libevent.ImageUrl,
+                StartDate = libevent.StartDate,
+                EndDate = libevent.EndDate,
+                Location = libevent.Location,
+            };
+            return View(vm);
+
         }
 
         [HttpPost]
         public IActionResult Edit(LibraryEventViewModel vm, IFormFile ImageFile)
         {
-            // If validation fails, return early
-            if (!ModelState.IsValid)
-                return View(vm);
-
+           
             // Retrieve existing entity
             var libevent = _unitOfWork.GenericRepository<LibraryEvent>().GetById(vm.Id);
             if (libevent == null)
@@ -82,6 +94,7 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             }
 
             // Update remaining fields
+            libevent.Id = vm.Id;
             libevent.EventCode = vm.EventCode;
             libevent.Title = vm.Title;
             libevent.Description = vm.Description;
@@ -116,11 +129,6 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             // Auto-generate EventCode BEFORE model validation
             vm.EventCode = _libraryEvent.GenerateNextEventCode();
 
-            if (!ModelState.IsValid)
-            {
-                return View(vm); // Return validation errors
-            }
-
             // Handle image upload (if applicable)
             if (ImageFile != null && ImageFile.Length > 0)
             {
@@ -141,39 +149,12 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
                 vm.ImageUrl = "/images/events/" + fileName;
             }
 
-            try
-            {
-                // Map ViewModel to Entity
-                var entity = new LibraryEvent
-                {
-                    EventCode = vm.EventCode,
-                    Title = vm.Title,
-                    Description = vm.Description,
-                    ImageUrl = vm.ImageUrl,
-                    StartDate = vm.StartDate,
-                    EndDate = vm.EndDate,
-                    Location = vm.Location
-                };
+            _libraryEvent.InsertLibraryEvent(vm);
+            TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
 
-                _unitOfWork.GenericRepository<LibraryEvent>().Add(entity);
-                _unitOfWork.Save();
+            // PRG: redirect to avoid duplicate submissions
+            return RedirectToAction(nameof(Create));
 
-                TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
-
-                // Prepare a new ViewModel with a fresh EventCode
-                var newVm = new LibraryEventViewModel
-                {
-                    EventCode = _libraryEvent.GenerateNextEventCode()
-                };
-
-                ModelState.Clear(); // Reset form validation
-                return View(newVm);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "An error occurred while saving.");
-                return View(vm);
-            }
         }
 
         public IActionResult Delete(int id)

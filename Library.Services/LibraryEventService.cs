@@ -81,10 +81,10 @@ namespace Library.Services
 
         public void UpdateLibraryEvent(LibraryEventViewModel libraryEvent)
         {
-            var model = new LibraryEventViewModel().ConvertViewModel(libraryEvent);
-            var ModelById = _unitOfWork.GenericRepository<LibraryEvent>().GetById(model.Id);
+            var ModelById = _unitOfWork.GenericRepository<LibraryEvent>().GetById(libraryEvent.Id);
+            if (libraryEvent == null)
+                throw new KeyNotFoundException($"Library Event with Id {libraryEvent.Id} not found.");
 
-            ModelById.EventCode = libraryEvent.EventCode;
             ModelById.Title = libraryEvent.Title;
             ModelById.Description = libraryEvent.Description;
             ModelById.ImageUrl = libraryEvent.ImageUrl;

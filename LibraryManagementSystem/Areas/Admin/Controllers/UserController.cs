@@ -25,12 +25,12 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             return View(_userservice.GetAllMember(pageNumber, pageSize));
         }
 
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            var viewModel = _userservice.GetUserById(id);
-            return View(viewModel);
-        }
+        //[HttpGet]
+        //public IActionResult Edit(int id)
+        //{
+        //    var viewModel = _userservice.GetUserById(id);
+        //    return View(viewModel);
+        //}
 
         [HttpPost]
         public IActionResult Edit(ApplicationUserViewModel vm)
@@ -52,10 +52,6 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Delete(int id)
-        {
-            _userservice.DeleteApplicationUser(id);
-            return RedirectToAction("Index");
-        }
+        
     }
 }

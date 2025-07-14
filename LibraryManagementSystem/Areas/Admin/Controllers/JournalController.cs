@@ -5,6 +5,7 @@ using Library.Utilities;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing.Printing;
+using System.Threading.Tasks;
 
 namespace LibraryManagementSystem.Areas.Admin.Controllers
 {
@@ -16,15 +17,18 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         private IUnitOfWork _unitOfWork;
         private IPublisherService _publisherService;
         private ICategoryService _categoryService;
+        private IFieldOfStudyService _fieldOfStudyService;
 
         public JournalController(IJournalService journal, IUnitOfWork unitOfWork, 
-            ILanguageService languageService, IPublisherService publisherService, ICategoryService categoryService)
+            ILanguageService languageService, IPublisherService publisherService, ICategoryService categoryService, 
+            IFieldOfStudyService ofStudyService)
         {
             _journal = journal;
             _unitOfWork = unitOfWork;
             _languageService = languageService;
             _publisherService = publisherService;
             _categoryService = categoryService;
+            _fieldOfStudyService = ofStudyService;
         }
 
         public IActionResult Index(string searchTerm, int pageNumber = 1, int pageSize = 10)
@@ -45,25 +49,56 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var viewModel = _journal.GetJournalById(id);
-            return View(viewModel);
+            var journal = _journal.GetJournalById(id);
+            if (journal == null) return NotFound();  
+
+            var vm = new JournalViewModel
+            {
+                Id = journal.Id,
+                Title = journal.Title,
+                ISSN = journal.ISSN,
+                PublishedYear = journal.PublishedYear,
+                LanguageId = journal.LanguageId,
+                CategoryId = journal.CategoryId,
+                PublisherId = journal.PublisherId,
+                Description = journal.Description,
+                Volume = journal.Volume,
+                Issue = journal.Issue,
+                FieldOfStudyId = journal.FieldOfStudyId,
+                ItemCode = journal.ItemCode,
+
+                Languages = await _languageService.GetAllAsync(),
+                Publishers = await _publisherService.GetAllAsync(),
+                Categories = (await _categoryService.GetAllAsync())
+                    .Where(c => c.ItemType == ItemType.Journal).ToList(),
+                Fields = await _fieldOfStudyService.GetAllAsync()
+
+            };
+            return View(vm);
         }
 
         [HttpPost]
-        public IActionResult Edit(JournalViewModel vm)
+        public async Task<IActionResult> Edit(JournalViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(vm);
+            {
+                vm.Languages = await _languageService.GetAllAsync();
+                vm.Publishers = await _publisherService.GetAllAsync();
+                vm.Categories =(await _categoryService.GetAllAsync())
+                    .Where(c => c.ItemType == ItemType.Journal).ToList();
+                vm.Fields = await _fieldOfStudyService.GetAllAsync();
+
+            }
 
             var journal = _unitOfWork.GenericRepository<Journal>().GetById(vm.Id);
             if (journal == null)
                 return NotFound();
 
-            journal.ItemCode = vm.ItemCode;
+            journal.Id = vm.Id;
             journal.Title = vm.Title;
-            journal.ShelfLocation = vm.ShelfLocation;
+            journal.ItemCode = vm.ItemCode;
             journal.PublishedYear = vm.PublishedYear;
             journal.LanguageId = vm.LanguageId;
             journal.CategoryId = vm.CategoryId;
@@ -72,7 +107,7 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             journal.ISSN = vm.ISSN;
             journal.Volume = vm.Volume;
             journal.Issue = vm.Issue;
-            journal.Field = vm.Field;
+            journal.FieldOfStudyId = vm.FieldOfStudyId;
 
             _unitOfWork.GenericRepository<Journal>().Update(journal);
             _unitOfWork.Save();
@@ -80,7 +115,7 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             ViewBag.UpdateSuccess = $" '{journal.Title}' updated successfully!";
             ViewBag.ShowModal = true;
 
-            return View(vm);
+            return RedirectToAction(nameof(Index));
         }
     
 
@@ -89,10 +124,11 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         {
             var vm = new JournalViewModel
             {
+                ItemCode = _journal.GenerateNextJournalCode(),
                 Languages = await _languageService.GetAllAsync(),
                 Publishers = await _publisherService.GetAllAsync(),
-                Categories = await _categoryService.GetAllAsync()
-
+                Categories = await _categoryService.GetAllAsync(),
+                Fields = await _fieldOfStudyService.GetAllAsync()   
             };
             return View(vm);
 
@@ -101,15 +137,13 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(JournalViewModel vm)
         {
-            //vm.ItemCode = _journal.GenerateNextJournalCode();
+            vm.ItemCode = _journal.GenerateNextJournalCode();
 
             _journal.InsertJournal(vm);
             TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
 
             // PRG: redirect to avoid duplicate submissions
             return RedirectToAction(nameof(Create));
-
-            
 
         }
 

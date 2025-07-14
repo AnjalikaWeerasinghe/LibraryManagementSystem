@@ -43,6 +43,7 @@ builder.Services.AddTransient<IJournalService, JournalService>();
 builder.Services.AddTransient<IEventRegistrationService, EventRegistrationService>();
 builder.Services.AddTransient<IUserCodeService, UserCodeService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddTransient<IFieldOfStudyService, FieldOfStudyService>();
 
 builder.Services.AddRazorPages();
 

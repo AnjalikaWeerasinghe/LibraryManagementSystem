@@ -82,6 +82,7 @@ namespace Library.Services
             var ModelById = _unitOfWork.GenericRepository<Category>().GetById(model.Id);
 
             ModelById.Name = category.Name;
+            ModelById.ItemType = category.ItemType;
 
             _unitOfWork.GenericRepository<Category>().Update(ModelById);
             _unitOfWork.Save();
@@ -94,7 +95,8 @@ namespace Library.Services
             return cats.Select(c => new CategoryViewModel
             {
                 Id = c.Id,
-                Name = c.Name
+                Name = c.Name,
+                ItemType = c.ItemType
             });
         }
     }

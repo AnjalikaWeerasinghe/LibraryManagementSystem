@@ -14,22 +14,20 @@ namespace Library.ViewModels
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(10)]
+        [StringLength(8)]
         [RegularExpression(@"^EID-\d{4}$", ErrorMessage = "Event Code must be in the format EID-0001.")]
-        public string EventCode { get; set; }
+        public string EventCode { get; set; }  // EID-0001
 
         [Required(ErrorMessage = "Include title for event.")]
         [StringLength(100, ErrorMessage = "Title cannot exceed 100 characters.")]
         public string Title { get; set; }
 
         [Required(ErrorMessage = "Add a description.")]
-        [MaxLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
         [DataType(DataType.MultilineText)]
         [Display(Name = "Description")]
         public string Description { get; set; }
 
-        [Url(ErrorMessage = "Enter a valid URL.")]
+        [Url]
         [Display(Name = "Image URL")]
         public string? ImageUrl { get; set; }
 

@@ -4,6 +4,7 @@ using Library.Utilities.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -13,48 +14,55 @@ namespace Library.ViewModels
 {
     public class ApplicationUserViewModel : IUserRoleAccessor
     {
+        public string? Id { get; set; }
+
+        [Required, EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        public string? UserName { get; set; }
+
+        [Required]
+        [Display(Name = "User Code"), ReadOnly(true)]
+        [UserCodeFormat]
+        public string UserCode { get; set; } = string.Empty; // LIB-MEM-00001 , LIB-STF-001
+
+
+        // User Personnel Information
         [Required, StringLength(100)]
         [Display(Name = "Full Name")]
-        public string FullName { get; set; }
+        public string FullName { get; set; } = string.Empty;
 
         [StringLength(50)]
         [Display(Name = "Calling Name")]
         public string? CallingName { get; set; }
-
-        [Required]
-        [Display(Name = "User Code")]
-        [UserCodeFormat]
-        public string UserCode { get; set; } = "";
-
-        [Required]
-        public Gender Gender { get; set; }
-
-        [Required, StringLength(250)]
-        public string Address { get; set; }
-
-        public bool IsMember { get; set; }
 
         [DataType(DataType.Date)]
         [Display(Name = "Date of Birth")]
         public DateTime? DOB { get; set; }
 
         [Required]
-        public UserStatus UserStatus { get; set; }
+        [Display(Name = "Gender")]
+        public Gender Gender { get; set; }
+
+        [Required, StringLength(250)]
+        public string Address { get; set; } = string.Empty;
 
         [Url]
-        [Display(Name = "Photo URL")]
+        [Display(Name = "Profile Picture URL")]
         public string? PictureUrl { get; set; }
 
-        [Required]
+        [Required, StringLength(20)]
         [Display(Name = "Role")]
-        public string SelectedRole {  get; set; } = WebSiteRoles.WebSite_Member;
+        public string UserRole { get; set; } = WebSiteRoles.WebSite_Member;
 
-        string IUserRoleAccessor.UserRole => SelectedRole;
+        [Required]
+        [Display(Name = "User Status")]
+        public UserStatus UserStatus { get; set; } = UserStatus.Active;
+
 
         public IEnumerable<SelectListItem>? GenderList { get; set; }
         public IEnumerable<SelectListItem>? UserStatusList { get; set; }
-
-
+        public IEnumerable<SelectListItem>? RoleList { get; set; }
 
         public ApplicationUserViewModel()
         {
@@ -67,7 +75,6 @@ namespace Library.ViewModels
             CallingName = user.CallingName;
             Gender = user.Gender;
             Address = user.Address;
-            IsMember = user.IsMember;
             DOB = user.DOB;
             UserStatus = user.UserStatus;
             PictureUrl = user.PictureUrl;
@@ -82,7 +89,6 @@ namespace Library.ViewModels
                 CallingName = user.CallingName,
                 Gender = user.Gender,
                 Address = user.Address,
-                IsMember = user.IsMember,
                 DOB = user.DOB,
                 UserStatus = user.UserStatus,
                 PictureUrl = user.PictureUrl,

@@ -1,4 +1,6 @@
-﻿@model Library.ViewModels.PeriodicalViewModel
+﻿@using Library.Models;
+@using Library.ViewModels;
+@model Library.ViewModels.PeriodicalViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -7,76 +9,131 @@
 <h1>Add a new Periodical</h1>
 
 <hr />
-<div class="row">
-    <div class="col-md-5">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-          
-            <div class="form-group">
+<div class="container mt-3">
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-6 form-group">
                 <label asp-for="ItemCode" class="control-label"></label>
-                <input asp-for="ItemCode" class="form-control" />
+                <input asp-for="ItemCode" class="form-control" placeholder="Item Code must be in the format ITD-PD-00001." readonly />
                 <span asp-validation-for="ItemCode" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="LanguageId" class="control-label required">Language<span class="text-danger"> *</span></label>
+                <select asp-for="LanguageId"
+                        asp-items="@(new SelectList(Model.Languages, nameof(LanguageViewModel.Id), nameof(LanguageViewModel.Name)))"
+                        class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Language --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="Title" class="control-label required">Title<span class="text-danger"> *</span></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="PublishedYear" class="control-label"></label>
-                <input asp-for="PublishedYear" class="form-control" />
-                <span asp-validation-for="PublishedYear" class="text-danger"></span>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="CategoryId" class="control-label required">Item Category<span class="text-danger"> *</span></label>
+                <select asp-for="CategoryId"
+                        asp-items="@(new SelectList(Model.Categories.Where(c => c.ItemType == ItemType.Periodical), nameof(CategoryViewModel.Id), nameof(CategoryViewModel.Name)))"
+                        class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Category --</option>
+                </select>
             </div>
-            <div class="form-group">
-                <label asp-for="ShelfLocation" class="control-label"></label>
-                <input asp-for="ShelfLocation" class="form-control" />
-                <span asp-validation-for="ShelfLocation" class="text-danger"></span>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="ISSN" class="control-label required">ISSN<span class="text-danger"> *</span></label>
+                <input asp-for="ISSN" class="form-control" placeholder="e.g.,####-#### " />
+                <span asp-validation-for="ISSN" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="LanguageId" class="control-label"></label>
-                <input asp-for="LanguageId" class="form-control" />
-                <span asp-validation-for="LanguageId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <input asp-for="CategoryId" class="form-control" />
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+
+            <div class="col-md-6 form-group">
                 <label asp-for="PublisherId" class="control-label"></label>
-                <input asp-for="PublisherId" class="form-control" />
-                <span asp-validation-for="PublisherId" class="text-danger"></span>
+                <select asp-for="PublisherId"
+                        asp-items="@(new SelectList(Model.Publishers, nameof(PublisherViewModel.Id), nameof(PublisherViewModel.Name)))"
+                        class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Publisher --</option>
+                </select>
             </div>
-            <div class="form-group">
+
+            <div class="col-md-6 form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <textarea asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ISSN" class="control-label"></label>
-                <input asp-for="ISSN" class="form-control" />
-                <span asp-validation-for="ISSN" class="text-danger"></span>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="PublishedYear" class="control-label"></label>
+                <select asp-for="PublishedYear" class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Published Year --</option>
+                    @for (var y = DateTime.UtcNow.Year; y >= 1900; y--)
+                    {
+                        <option value="@y" selected="@(Model.PublishedYear == y)">
+                            @y
+                        </option>
+                    }
+                </select>
             </div>
-            <div class="form-group">
-                <label asp-for="Frequency" class="control-label"></label>
-                <input asp-for="Frequency" class="form-control" />
+
+            <div class="col-md-6 form-group">
+                <label asp-for="Frequency" class="control-label">Frequency<span class="text-danger"> *</span></label>
+                <select asp-for="Frequency" asp-items="Model.FrequencyList" class="form-control">
+                    <option value="">-- Select Frequency --</option>
+                </select>
                 <span asp-validation-for="Frequency" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Theme" class="control-label"></label>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="Theme" class="control-label">Theme<span class="text-danger"> *</span></label>
                 <input asp-for="Theme" class="form-control" />
                 <span asp-validation-for="Theme" class="text-danger"></span>
             </div>
-            <br />
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-info" />
-                <input type="reset" value="Clear" class="btn btn-info" />
-            </div>
-        </form>
-    </div>
+
+        </div>
+
+        <br />
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-info" />
+            <input type="reset" value="Clear" class="btn btn-info" />
+        </div>
+
+    </form>
 </div>
+
 <br />
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-body">
+                <p id="successText" class="fs-5"></p>
+                <button type="button" class="btn btn-primary mt-3" data-bs-dismiss="modal" onclick="clearForm()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        window.onload = function () {
+            var message = '@TempData["SuccessMessage"]';
+            if (message) {
+                document.getElementById("successText").innerText = message;
+
+                var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+            }
+        };
+
+        function clearForm() {
+            document.querySelector("form").reset();
+        }
+    </script>
+}
 

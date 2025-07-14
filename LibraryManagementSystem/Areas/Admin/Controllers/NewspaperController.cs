@@ -1,54 +1,100 @@
 ﻿using Library.Models;
 using Library.Repositories.Interfaces;
 using Library.Services;
+using Library.Utilities;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagementSystem.Areas.Admin.Controllers
 {
-    [Area("admin")]
+    [Area("Admin")]
     public class NewspaperController : Controller
     {
-        private readonly INewspaperService _newspaper;
+        private INewspaperService _newspaper;
         private IUnitOfWork _unitOfWork;
+        private ILanguageService _languageService;
+        private IPublisherService _publisherService;
+        private ICategoryService _categoryService;
 
-        public NewspaperController(INewspaperService newspaper, IUnitOfWork unitOfWork)
+        public NewspaperController(INewspaperService newspaper, IUnitOfWork unitOfWork, 
+            ILanguageService languageService, IPublisherService publisherService, ICategoryService categoryService)
         {
             _newspaper = newspaper;
             _unitOfWork = unitOfWork;
+            _languageService = languageService;
+            _publisherService = publisherService;
+            _categoryService = categoryService;
         }
-        public IActionResult Index(int pageNumber = 1, int pageSize = 10)
+        public IActionResult Index(string searchTerm, int pageNumber = 1, int pageSize = 10)
         {
-            return View(_newspaper.GetAll(pageNumber, pageSize));
+            PagedResult<NewspaperViewModel> result;
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                result = _newspaper.GetNewspaperByName(searchTerm, pageNumber, pageSize);
+            }
+            else
+            {
+                result = _newspaper.GetAll(pageNumber, pageSize);
+            }
+
+            ViewBag.SearchTerm = searchTerm;
+            return View(result);
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var viewModel = _newspaper.GetNewspaperById(id);
-            return View(viewModel);
+            var newspaper = _newspaper.GetNewspaperById(id);
+            if (newspaper == null) return NotFound();
+
+            var vm = new NewspaperViewModel
+            {
+                Id = newspaper.Id,
+                Title = newspaper.Title,
+                ISSN = newspaper.ISSN,
+                IssuedDate = newspaper.IssuedDate,
+                IssueNumber = newspaper.IssueNumber,
+                LanguageId = newspaper.LanguageId,
+                CategoryId = newspaper.CategoryId,
+                PublisherId = newspaper.PublisherId,
+                Description = newspaper.Description,
+                ItemCode = newspaper.ItemCode,
+
+                Languages = await _languageService.GetAllAsync(),
+                Publishers = await _publisherService.GetAllAsync(),
+                Categories = (await _categoryService.GetAllAsync())
+                    .Where(c => c.ItemType == ItemType.Newspaper).ToList(),
+
+            };
+            return View(vm);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(int id, NewspaperViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(vm);
+            {
+                vm.Languages = await _languageService.GetAllAsync();
+                vm.Publishers = await _publisherService.GetAllAsync();
+                vm.Categories = (await _categoryService.GetAllAsync())
+                    .Where(c => c.ItemType == ItemType.Newspaper).ToList();
+
+            }
 
             var newspaper = _unitOfWork.GenericRepository<Newspaper>().GetById(vm.Id);
             if (newspaper == null)
                 return NotFound();
 
+            newspaper.Id = vm.Id;
             newspaper.Title = vm.Title;
+            newspaper.ItemCode = vm.ItemCode;
+            newspaper.LanguageId = vm.LanguageId;
+            newspaper.CategoryId = vm.CategoryId;
+            newspaper.PublisherId = vm.PublisherId;
             newspaper.Description = vm.Description;
             newspaper.ISSN = vm.ISSN;
-            newspaper.ItemCode = vm.ItemCode;
-            newspaper.CategoryId = vm.CategoryId;
-            newspaper.PublishedYear = vm.PublishedYear;
-            newspaper.PublisherId = vm.PublisherId;
-            newspaper.LanguageId = vm.LanguageId;
             newspaper.IssuedDate = vm.IssuedDate;
-            newspaper.ShelfLocation = vm.ShelfLocation;
             newspaper.IssueNumber = vm.IssueNumber;
 
             _unitOfWork.GenericRepository<Newspaper>().Update(newspaper);
@@ -57,23 +103,33 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             ViewBag.UpdateSuccess = $" '{newspaper.Title}' updated successfully!";
             ViewBag.ShowModal = true;
 
-            return View(vm);
+            return RedirectToAction(nameof(Index)); ;
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
 
-            return View();
+            var vm = new NewspaperViewModel
+            {
+                ItemCode = _newspaper.GenerateNextNewspaperCode(),
+                Languages = await _languageService.GetAllAsync(),
+                Publishers = await _publisherService.GetAllAsync(),
+                Categories = await _categoryService.GetAllAsync()
+
+            };
+            return View(vm);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(NewspaperViewModel vm)
         {
+            vm.ItemCode = _newspaper.GenerateNextNewspaperCode();
+
             _newspaper.InsertNewspaper(vm);
             TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
 
-            return View(new NewspaperViewModel());
+            return RedirectToAction(nameof(Create));
 
         }
 

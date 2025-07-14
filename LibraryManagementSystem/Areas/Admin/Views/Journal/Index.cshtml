@@ -10,9 +10,8 @@
 <h1>Journals</h1>
 
 <br />
-
 <form asp-action="Index" method="get">
-    <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" style="width: 400px" placeholder="Search by Journal Tile" />
+    <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" style="width: 400px" placeholder="Search by Journal Title" />
     <button type="submit" class="btn btn-primary">Search</button>
     <a asp-action="Index" class="btn btn-primary">Clear</a>
 </form>
@@ -24,7 +23,6 @@
 <table class="table">
     <thead>
         <tr>
-            
             <th>
                 ItemCode
             </th>
@@ -36,12 +34,6 @@
             </th>
             <th>
                 Description
-            </th>
-            <th>
-                YearPublished
-            </th>
-            <th>
-                ShelfLocation
             </th>
             <th>
                 Language
@@ -81,12 +73,6 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.PublishedYear)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ShelfLocation)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Language.Name)
             </td>
             <td>
@@ -102,7 +88,7 @@
                 @Html.DisplayFor(modelItem => item.Issue)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Field)
+                @Html.DisplayFor(modelItem => item.FieldOfStudy.Name)
             </td>
             <td>
                 <div class="d-flex gap-2">

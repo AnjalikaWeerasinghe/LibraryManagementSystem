@@ -7,9 +7,6 @@
 
 <h1>User Details</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-secondary">Create a new User</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -29,9 +26,6 @@
             
             <th>
                 Address
-            </th>
-            <th>
-                Is Member
             </th>
             <th>
                 DOB
@@ -67,9 +61,6 @@
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsMember)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.DOB)
             </td>
             <td>
@@ -82,7 +73,6 @@
             <td>
                 <div d-flex gap-2>
                 <a asp-action="Edit" asp-route-id="@item.UserCode" class="btn btn-dark btn-sm">Edit</a>
-                <button class="btn btn-danger btn-sm" onclick="openDeleteModal(@item.UserCode, '@item.CallingName')">Delete</button>
                 </div>
             </td> 
         </tr>

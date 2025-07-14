@@ -16,6 +16,6 @@ namespace Library.Services
         void UpdateJournal(JournalViewModel journal);
         void InsertJournal(JournalViewModel journal);
         void DeleteJournal(int id);
-        //string GenerateNextJournalCode();
+        string GenerateNextJournalCode();
     }
 }

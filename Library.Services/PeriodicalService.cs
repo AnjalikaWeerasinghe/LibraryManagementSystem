@@ -93,14 +93,13 @@ namespace Library.Services
 
         public void UpdatePeriodical(PeriodicalViewModel periodical)
         {
-            var model = new PeriodicalViewModel().ConvertToViewModelToModel(periodical);
-            var ModelById = _unitOfWork.GenericRepository<Periodical>().GetById(model.Id);
+            var ModelById = _unitOfWork.GenericRepository<Periodical>().GetById(periodical.Id);
+            if (periodical == null)
+                throw new KeyNotFoundException($"Periodical with Id {periodical.Id} not found.");
 
-            ModelById.ItemCode = periodical.ItemCode;
             ModelById.Title = periodical.Title;
             ModelById.Description = periodical.Description;
             ModelById.PublishedYear = periodical.PublishedYear;
-            ModelById.ShelfLocation = periodical.ShelfLocation;
             ModelById.LanguageId = periodical.LanguageId;
             ModelById.PublisherId = periodical.PublisherId;
             ModelById.CategoryId = periodical.CategoryId;
@@ -114,20 +113,59 @@ namespace Library.Services
 
         public string GenerateNextPeriodicalCode()
         {
-            var lastJournal = _unitOfWork.GenericRepository<Periodical>()
+            var lastPeriodical = _unitOfWork.GenericRepository<Periodical>()
             .GetAll()
             .OrderByDescending(e => e.Id)
             .FirstOrDefault();
 
             int lastNumber = 0;
 
-            if (lastJournal != null && Regex.IsMatch(lastJournal.ItemCode ?? "", @"^ITD-(\d{4})$"))
+            if (lastPeriodical != null && Regex.IsMatch(lastPeriodical.ItemCode ?? "", @"^ITD-PR-(\d{5})$"))
             {
-                var match = Regex.Match(lastJournal.ItemCode, @"^ITD-(\d{4})$");
+                var match = Regex.Match(lastPeriodical.ItemCode, @"^ITD-PR-(\d{5})$");
                 lastNumber = int.Parse(match.Groups[1].Value);
             }
 
-            return $"ITD-{(lastNumber + 1).ToString("D4")}";
+            return $"ITD-PR-{(lastNumber + 1).ToString("D5")}";
+        }
+
+        public PagedResult<PeriodicalViewModel> GetPeriodicalByName(string name, int pageNumber, int pageSize)
+        {
+            var query = _unitOfWork.GenericRepository<Periodical>()
+                .GetAll(includeProperties: "Language,Category,Publisher")
+                .Where(p => p.Title.Contains(name))
+                .AsQueryable();
+
+            int totalCount = query.Count();
+
+            var data = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var viewModels = data.Select(p => new PeriodicalViewModel
+            {
+                Id = p.Id,
+                Title = p.Title,
+                ItemCode = p.ItemCode,
+                ISSN = p.ISSN,
+                PublishedYear = p.PublishedYear,
+                Frequency = p.Frequency,
+                Theme = p.Theme,
+                LanguageId = p.LanguageId,
+                CategoryId = p.CategoryId,
+                PublisherId = p.PublisherId,
+                Description = p.Description,
+
+            }).ToList();
+
+            return new PagedResult<PeriodicalViewModel>
+            {
+                Data = viewModels,
+                TotalItems = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
     }
 }

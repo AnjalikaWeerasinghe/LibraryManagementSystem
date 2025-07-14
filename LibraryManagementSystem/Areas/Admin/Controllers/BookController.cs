@@ -1,6 +1,7 @@
 ﻿using Library.Models;
 using Library.Repositories.Interfaces;
 using Library.Services;
+using Library.Utilities;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,40 +9,93 @@ using System.Security.Policy;
 
 namespace LibraryManagementSystem.Areas.Admin.Controllers
 {
-    [Area("admin")]
+    [Area("Admin")]
     public class BookController : Controller
     {
-        private readonly IBookService _book;
+        private IBookService _book;
         private IUnitOfWork _unitOfWork;
+        private ILanguageService _languageService;
+        private IPublisherService _publisherService;
+        private ICategoryService _categoryService;
+        private IGenreService _genreService;
 
-        public BookController(IBookService book, IUnitOfWork unitOfWork)
+        public BookController(IBookService book, IUnitOfWork unitOfWork, 
+            ILanguageService languageService, IPublisherService publisherService, ICategoryService categoryService, 
+            IGenreService genreService)
         {
             _book = book;
             _unitOfWork = unitOfWork;
+            _languageService = languageService;
+            _publisherService = publisherService;
+            _categoryService = categoryService;
+            _genreService = genreService;
         }
 
-        public IActionResult Index(int pageNumber = 1, int pageSize = 10)
+        public IActionResult Index(string searchTerm, int pageNumber = 1, int pageSize = 10)
         {
-            return View(_book.GetAll(pageNumber, pageSize));
+            PagedResult<BookViewModel> result;
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                result = _book.GetBookByName(searchTerm, pageNumber, pageSize);
+            }
+            else
+            {
+                result = _book.GetAll(pageNumber, pageSize);
+            }
+
+            ViewBag.SearchTerm = searchTerm;
+            return View(result);
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var viewModel = _book.GetBookById(id);
-            return View(viewModel);
+            var book = _book.GetBookById(id);
+            if (book == null) return NotFound();
+
+            var vm = new BookViewModel
+            {
+                Id = book.Id,
+                Title = book.Title,
+                ISBN = book.ISBN,
+                PublishedYear = book.PublishedYear,
+                LanguageId = book.LanguageId,
+                CategoryId = book.CategoryId,
+                PublisherId = book.PublisherId,
+                Description = book.Description,
+                Edition = book.Edition,
+                GenreId = book.GenreId,
+                ItemCode = book.ItemCode,
+
+                Languages = await _languageService.GetAllAsync(),
+                Publishers = await _publisherService.GetAllAsync(),
+                Categories = (await _categoryService.GetAllAsync())
+                    .Where(c => c.ItemType == ItemType.Book).ToList(),
+                Genres = await _genreService.GetAllAsync(),
+
+            };
+            return View(vm);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(int id, BookViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(vm);
+            {
+                vm.Languages = await _languageService.GetAllAsync();
+                vm.Publishers = await _publisherService.GetAllAsync();
+                vm.Categories = (await _categoryService.GetAllAsync())
+                    .Where(c => c.ItemType == ItemType.Journal).ToList();
+                vm.Genres = await _genreService.GetAllAsync();
+
+            }
 
             var book = _unitOfWork.GenericRepository<Book>().GetById(vm.Id);
             if (book == null)
                 return NotFound();
 
+            book.Id = vm.Id; // Ensure the ID is set correctly
             book.Title = vm.Title;
             book.Description = vm.Description;
             book.ISBN = vm.ISBN;
@@ -51,7 +105,6 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             book.PublisherId = vm.PublisherId;
             book.LanguageId = vm.LanguageId;
             book.GenreId = vm.GenreId;
-            book.ShelfLocation = vm.ShelfLocation;
             book.Edition = vm.Edition;
 
             _unitOfWork.GenericRepository<Book>().Update(book);
@@ -64,21 +117,32 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            
-            return View();
+
+            var vm = new BookViewModel
+            {
+                ItemCode = _book.GenerateNextBookCode(),
+                Languages = await _languageService.GetAllAsync(),
+                Publishers = await _publisherService.GetAllAsync(),
+                Categories = await _categoryService.GetAllAsync(),
+                Genres = await _genreService.GetAllAsync()
+
+            };
+            return View(vm);
+
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(BookViewModel vm)
         {
-            if (!ModelState.IsValid) return View(vm); 
+            vm.ItemCode = _book.GenerateNextBookCode();
 
-            await _book.InsertBookAsync(vm);
+            _book.InsertBook(vm);
             TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
 
-            return View(new BookViewModel());
+            // PRG: redirect to avoid duplicate submissions
+            return RedirectToAction(nameof(Create));
 
         }
 

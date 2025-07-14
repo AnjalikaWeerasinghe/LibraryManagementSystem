@@ -52,6 +52,7 @@ namespace Library.Repositories
         public DbSet<Journal> Journals { get; set; }
         public DbSet<Periodical> Periodicals { get; set; }
         public DbSet<UserCodeCounter> UserCodeCounters { get; set; }
+        public DbSet<FieldOfStudy> FieldOfStudies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelbuilder)
         {

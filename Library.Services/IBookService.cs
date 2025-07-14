@@ -11,10 +11,11 @@ namespace Library.Services
     public interface IBookService
     {
         PagedResult<BookViewModel> GetAll(int pageNumber, int pageSize);
+        PagedResult<BookViewModel> GetBookByName(string name, int pageNumber, int pageSize);
         BookViewModel GetBookById(int bookId);
         void UpdateBook(BookViewModel book);
-        //void InsertBook(BookViewModel book);
-        Task InsertBookAsync(BookViewModel book);
+        void InsertBook(BookViewModel book);
         void DeleteBook(int id);
+        string GenerateNextBookCode();
     }
 }

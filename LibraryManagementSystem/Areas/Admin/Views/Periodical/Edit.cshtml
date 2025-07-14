@@ -1,0 +1,144 @@
+﻿@using Library.Models;
+@using Library.ViewModels;
+@model Library.ViewModels.PeriodicalViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<style>
+    .placeholder-option {
+        color: #6c757d;
+    }
+</style>
+
+<h1>Edit Periodical details</h1>
+
+<hr />
+<div class="container mt-3">
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label asp-for="ItemCode" class="control-label"></label>
+                <input asp-for="ItemCode" class="form-control" placeholder="Item Code must be in the format ITD-PD-00001." readonly />
+                <span asp-validation-for="ItemCode" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="LanguageId" class="control-label required">Language<span class="text-danger"> *</span></label>
+                <select asp-for="LanguageId"
+                        asp-items="@(new SelectList(Model.Languages, nameof(LanguageViewModel.Id), nameof(LanguageViewModel.Name)))"
+                        class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Language --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="Title" class="control-label required">Title<span class="text-danger"> *</span></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="CategoryId" class="control-label required">Item Category<span class="text-danger"> *</span></label>
+                <select asp-for="CategoryId"
+                        asp-items="@(new SelectList(Model.Categories.Where(c => c.ItemType == ItemType.Periodical), nameof(CategoryViewModel.Id), nameof(CategoryViewModel.Name)))"
+                        class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Category --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="ISSN" class="control-label required">ISSN<span class="text-danger"> *</span></label>
+                <input asp-for="ISSN" class="form-control" placeholder="e.g.,####-#### " />
+                <span asp-validation-for="ISSN" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="PublisherId" class="control-label"></label>
+                <select asp-for="PublisherId"
+                        asp-items="@(new SelectList(Model.Publishers, nameof(PublisherViewModel.Id), nameof(PublisherViewModel.Name)))"
+                        class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Publisher --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="PublishedYear" class="control-label"></label>
+                <select asp-for="PublishedYear" class="form-control">
+                    <option value="" disabled selected class="placeholder-option">-- Select Published Year --</option>
+                    @for (var y = DateTime.UtcNow.Year; y >= 1900; y--)
+                    {
+                        <option value="@y" selected="@(Model.PublishedYear == y)">
+                            @y
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="Frequency" class="control-label">Frequency<span class="text-danger"> *</span></label>
+                <select asp-for="Frequency" asp-items="Model.FrequencyList" class="form-control">
+                    <option value="">-- Select Frequency --</option>
+                </select>
+                <span asp-validation-for="Frequency" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="Theme" class="control-label">Theme<span class="text-danger"> *</span></label>
+                <input asp-for="Theme" class="form-control" />
+                <span asp-validation-for="Theme" class="text-danger"></span>
+            </div>
+
+        </div>
+
+        <br />
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-info" />
+        </div>
+
+    </form>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@if (ViewBag.ShowModal != null && (bool)ViewBag.ShowModal)
+{
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-black">
+                    <h5 class="modal-title" id="updateModalLabel">Update Successful!</h5>
+                </div>
+                <div class="modal-body">
+                    @ViewBag.UpdateSuccess
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" id="confirmRedirectBtn">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function () {
+            var modal = new bootstrap.Modal(document.getElementById('updateModal'));
+            modal.show();
+
+            document.getElementById('confirmRedirectBtn').addEventListener('click', function () {
+                window.location.href = '@Url.Action("Index", "Periodical")';
+            });
+        });
+    </script>
+}
+

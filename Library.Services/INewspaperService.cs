@@ -11,9 +11,11 @@ namespace Library.Services
     public interface INewspaperService
     {
         PagedResult<NewspaperViewModel> GetAll(int pageNumber, int pageSize);
+        PagedResult<NewspaperViewModel> GetNewspaperByName(string name, int pageNumber, int pageSize);
         NewspaperViewModel GetNewspaperById(int newspaperId);
         void UpdateNewspaper(NewspaperViewModel newspaper);
         void InsertNewspaper(NewspaperViewModel newspaper);
         void DeleteNewspaper(int id);
+        string GenerateNextNewspaperCode();
     }
 }

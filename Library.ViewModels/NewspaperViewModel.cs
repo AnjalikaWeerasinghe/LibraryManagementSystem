@@ -14,49 +14,45 @@ namespace Library.ViewModels
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        [StringLength(10)]
-        [RegularExpression(@"^ITD\d{4}$", ErrorMessage = "Item Code must be in the format ITD0001.")]
-        public string ItemCode { get; set; }
-        [Required]
+        [StringLength(12)]
+        public string ItemCode { get; set; } // ITD-NW-XXXXX
+        [Required(ErrorMessage = "Enter a Title.")]
         [StringLength(100)]
         public string Title { get; set; }
-        [Required]
-        [DataType("Year")]
-        public int PublishedYear { get; set; }
-        [Required]
-        public string ShelfLocation { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Enter ISSN Number.")]
+        [StringLength(9)]
+        [RegularExpression(@"^\d{4}-\d{3}[\dXx]$", ErrorMessage = "Invalid ISSN format. Use XXXX-XXXX format.")]
+        public string ISSN { get; set; }
+        [Required(ErrorMessage = "Select a language.")]
         [Display(Name = "Language")]
         [ForeignKey("Language")]
         public int LanguageId { get; set; }
-        public List<Language> Languages { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Select a category.")]
         [Display(Name = "Category")]
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
-        public List<SelectListItem> CategoryList { get; set; }
-        [Required]
         [Display(Name = "Publisher")]
         [ForeignKey("Publisher")]
-        public int PublisherId { get; set; }
-        public List<SelectListItem> PublisherList { get; set; }
-        [Required]
+        public int? PublisherId { get; set; }
         [MaxLength(1000)]
         [DataType(DataType.MultilineText)]
         [Display(Name = "Description")]
-        public string Description { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string ISSN { get; set; }
+        public string? Description { get; set; }
+        [Required(ErrorMessage = "Select Issued Date.")]
+        [Display(Name = "Issued Date")]
+        [DataType(DataType.Date)]
         public DateTime IssuedDate { get; set; }
+        [Required(ErrorMessage = "Select Issue Number.")]
+        [Display(Name = "Issue Number")]
         public string IssueNumber { get; set; }
 
         public Language Language { get; set; }
         public Category Category { get; set; }
         public Publisher Publisher { get; set; }
 
+        public IEnumerable<LanguageViewModel> Languages { get; set; }
+        public IEnumerable<CategoryViewModel> Categories { get; set; }
+        public IEnumerable<PublisherViewModel> Publishers { get; set; }
 
         public NewspaperViewModel()
         {
@@ -67,8 +63,6 @@ namespace Library.ViewModels
             Id = model.Id;
             ItemCode = model.ItemCode;
             Title = model.Title;
-            PublishedYear = model.PublishedYear;
-            ShelfLocation = model.ShelfLocation;
             LanguageId = model.LanguageId;
             Language = model.Language;
             CategoryId = model.CategoryId;
@@ -90,8 +84,6 @@ namespace Library.ViewModels
                 Id = model.Id,
                 ItemCode = model.ItemCode,
                 Title = model.Title,
-                PublishedYear = model.PublishedYear,
-                ShelfLocation = model.ShelfLocation,
                 LanguageId = model.LanguageId,
                 Language = model.Language,
                 CategoryId = model.CategoryId,

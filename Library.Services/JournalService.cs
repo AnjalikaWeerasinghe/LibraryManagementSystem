@@ -29,34 +29,35 @@ namespace Library.Services
 
         public PagedResult<JournalViewModel> GetAll(int pageNumber, int pageSize)
         {
-            var vm = new JournalViewModel();
             int totalCount;
+            var vm = new JournalViewModel();
             List<JournalViewModel> vmList = new List<JournalViewModel>();
             try
             {
                 int ExcludeRecords = (pageSize * pageNumber) - pageSize;
 
                 var modelList = _unitOfWork.GenericRepository<Journal>()
-                    .GetAll(includeProperties: "Language,Category,Publisher")
+                    .GetAll(includeProperties: "Language,Category,Publisher,FieldOfStudy")
                     .Skip(ExcludeRecords).Take(pageSize).ToList();
 
                 totalCount = _unitOfWork.GenericRepository<Journal>().GetAll().ToList().Count;
 
                 vmList = ConvertModelToViewModelList(modelList);
+
+                var result = new PagedResult<JournalViewModel>
+                {
+                    Data = vmList,
+                    TotalItems = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                return result;
             }
             catch (Exception)
             {
                 throw;
             }
-
-            var result = new PagedResult<JournalViewModel>
-            {
-                Data = vmList,
-                TotalItems = totalCount,
-                PageNumber = pageNumber,
-                PageSize = pageSize
-            };
-            return result;
         }
 
         private List<JournalViewModel> ConvertModelToViewModelList(List<Journal> modelList)
@@ -80,21 +81,22 @@ namespace Library.Services
 
         public void UpdateJournal(JournalViewModel journal)
         {
-            var model = new JournalViewModel().ConvertToViewModelToModel(journal);
-            var ModelById = _unitOfWork.GenericRepository<Journal>().GetById(model.Id);
+           
+            var ModelById = _unitOfWork.GenericRepository<Journal>().GetById(journal.Id);
+            if (journal == null)
+                throw new KeyNotFoundException($"Journal with Id {journal.Id} not found.");
 
-            ModelById.ItemCode = journal.ItemCode;
+
             ModelById.Title = journal.Title;
             ModelById.Description = journal.Description;
             ModelById.PublishedYear = journal.PublishedYear;
-            ModelById.ShelfLocation = journal.ShelfLocation;
             ModelById.Volume = journal.Volume;
             ModelById.Issue = journal.Volume;
             ModelById.LanguageId = journal.LanguageId;
             ModelById.PublisherId = journal.PublisherId;
             ModelById.CategoryId = journal.CategoryId;
             ModelById.ISSN = journal.ISSN;
-            ModelById.Field = journal.Field;
+            ModelById.FieldOfStudyId = journal.FieldOfStudyId;
 
             _unitOfWork.GenericRepository<Journal>().Update(ModelById);
             _unitOfWork.Save();
@@ -103,7 +105,7 @@ namespace Library.Services
         public PagedResult<JournalViewModel> GetJournalByName(string name, int pageNumber, int pageSize)
         {
             var query = _unitOfWork.GenericRepository<Journal>()
-                .GetAll()
+                .GetAll(includeProperties: "Language,Category,Publisher,FieldOfStudy")
                 .Where(p => p.Title.Contains(name))
                 .AsQueryable();
 
@@ -122,11 +124,11 @@ namespace Library.Services
                 ISSN = p.ISSN,
                 Volume = p.Volume,
                 Issue = p.Issue,
-                ShelfLocation = p.ShelfLocation,
                 LanguageId = p.LanguageId,
                 CategoryId = p.CategoryId,
                 PublisherId = p.PublisherId,
                 Description = p.Description,
+                FieldOfStudyId = p.FieldOfStudyId,
 
             }).ToList();
 
@@ -139,22 +141,22 @@ namespace Library.Services
             };
         }
 
-        //public string GenerateNextJournalCode()
-        //{
-        //    var lastJournal = _unitOfWork.GenericRepository<Journal>()
-        //    .GetAll()
-        //    .OrderByDescending(e => e.Id)
-        //    .FirstOrDefault();
+        public string GenerateNextJournalCode()
+        {
+            var lastJournal = _unitOfWork.GenericRepository<Journal>()
+            .GetAll()
+            .OrderByDescending(e => e.Id)
+            .FirstOrDefault();
 
-        //    int lastNumber = 0;
+            int lastNumber = 0;
 
-        //    if (lastJournal != null && Regex.IsMatch(lastJournal.ItemCode ?? "", @"^ITD(\d{4})$"))
-        //    {
-        //        var match = Regex.Match(lastJournal.ItemCode, @"^ITD-(\d{4})$");
-        //        lastNumber = int.Parse(match.Groups[1].Value);
-        //    }
+            if (lastJournal != null && Regex.IsMatch(lastJournal.ItemCode ?? "", @"^ITD-JR-(\d{5})$"))
+            {
+                var match = Regex.Match(lastJournal.ItemCode, @"^ITD-JR-(\d{5})$");
+                lastNumber = int.Parse(match.Groups[1].Value);
+            }
 
-        //    return $"ITD-{(lastNumber + 1).ToString("D4")}";
-        //}
+            return $"ITD-JR-{(lastNumber + 1).ToString("D5")}";
+        }
     }
 }

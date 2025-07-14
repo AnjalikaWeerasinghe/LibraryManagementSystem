@@ -14,49 +14,52 @@ namespace Library.ViewModels
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        [StringLength(10)]
-        //[RegularExpression(@"^ITD\d{4}$", ErrorMessage = "Item Code must be in the format ITD0001.")]
-        public string ItemCode { get; set; }
-        [Required]
+        [StringLength(12)]
+         public string ItemCode { get; set; } // ITD-JR-XXXXX
+        [Required(ErrorMessage = "Enter a Title.")]
         [StringLength(100)]
         public string Title { get; set; }
-        [Required]
-        [StringLength(50)]
+        [Required(ErrorMessage = "Enter a ISSN Number.")]
+        [StringLength(9)]
+        [RegularExpression(@"^\d{4}-\d{3}[\dXx]$", ErrorMessage = "Invalid ISSN format. Use XXXX-XXXX format.")]
         public string ISSN { get; set; }
-        [Required]
         [MaxLength(1000)]
         [DataType(DataType.MultilineText)]
         [Display(Name = "Description")]
-        public string Description { get; set; }
-        [Required]
-        public int PublishedYear { get; set; }
-        [Required]
-        public string ShelfLocation { get; set; }
-        [Required]
+        public string? Description { get; set; }
+        [Range(1900, 2100, ErrorMessage = "Enter a year between 1900 and Present.")]
+        [Display(Name = "Published Year")]
+        public int? PublishedYear { get; set; }
+        [Required(ErrorMessage = "Select a language.")]
         [Display(Name = "Language")]
         [ForeignKey("Language")]
         public int LanguageId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Select a category.")]
         [Display(Name = "Category")]
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
-        [Required]
         [Display(Name = "Publisher")]
         [ForeignKey("Publisher")]
-        public int PublisherId { get; set; }
-      
+        public int? PublisherId { get; set; }
+        [Required(ErrorMessage = "Select a field.")]
+        [Display(Name = "Field")]
+        [ForeignKey("FieldOfStudy")]
+        public int FieldOfStudyId { get; set; }
+        [Required(ErrorMessage = "Select a Volume.")]
         public string Volume { get; set; }
+        [Required(ErrorMessage ="Select an Issue.")]
         public string Issue { get; set; }
-        public string Field { get; set; }
+        
 
         public Language Language { get; set; }
         public Category Category { get; set; }
         public Publisher Publisher { get; set; }
+        public FieldOfStudy FieldOfStudy { get; set; }
 
         public IEnumerable<LanguageViewModel> Languages { get; set; }
         public IEnumerable<CategoryViewModel> Categories { get; set; }
         public IEnumerable<PublisherViewModel> Publishers { get; set; }
+        public IEnumerable<FieldOfStudyViewModel> Fields { get; set; }
 
         public JournalViewModel()
         {
@@ -68,7 +71,6 @@ namespace Library.ViewModels
             ItemCode = model.ItemCode;
             Title = model.Title;
             PublishedYear = model.PublishedYear;
-            ShelfLocation = model.ShelfLocation;
             LanguageId = model.LanguageId;
             Language = model.Language;
             CategoryId = model.CategoryId;
@@ -80,7 +82,8 @@ namespace Library.ViewModels
             ISSN = model.ISSN;
             Volume = model.Volume;
             Issue = model.Issue;
-            Field = model.Field;
+            FieldOfStudyId = model.FieldOfStudyId;
+            FieldOfStudy = model.FieldOfStudy;
         }
 
         public Journal ConvertToViewModelToModel(JournalViewModel model)
@@ -91,16 +94,19 @@ namespace Library.ViewModels
                 ItemCode = model.ItemCode,
                 Title = model.Title,
                 PublishedYear = model.PublishedYear,
-                ShelfLocation = model.ShelfLocation,
                 LanguageId = model.LanguageId,
+                Language = model.Language,
                 CategoryId = model.CategoryId,
+                Category = model.Category,
                 PublisherId = model.PublisherId,
+                Publisher = model.Publisher,
                 Description = model.Description,
 
                 ISSN = model.ISSN,
                 Volume = model.Volume,
                 Issue = model.Issue,
-                Field = model.Field
+                FieldOfStudyId = model.FieldOfStudyId,
+                FieldOfStudy = model.FieldOfStudy
             };
         }
     }

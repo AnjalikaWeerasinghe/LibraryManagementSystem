@@ -37,14 +37,94 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-    .profile-section label {
-        font-weight: 500;
-        color: #333;
+.profile-section label {
+    font-weight: 500;
+    color: #333;
+}
+
+.profile-section input,
+.profile-section select {
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 0.95rem;
+}
+
+/* new part*/
+
+/* ??? variables so it’s easy to tweak ?? */
+:root {
+    --sidebar-full: 240px;
+    --sidebar-mini: 72px;
+    --navbar-h: 56px; /* matches Bootstrap default */
+}
+
+/* ??? top bar always on top ?? */
+#topbar {
+    height: var(--navbar-h);
+    z-index: 1030; /* above sidebar */
+}
+
+/* ??? sidebar ?? */
+#sidebar {
+    width: var(--sidebar-full);
+    background: #fff;
+    border-right: 1px solid #e1e4e8;
+    transition: width .25s ease;
+}
+
+    /* collapsed mode */
+    #sidebar.collapsed {
+        width: var(--sidebar-mini);
     }
 
-    .profile-section input,
-    .profile-section select {
-        border-radius: 6px;
-        padding: 8px 10px;
-        font-size: 0.95rem;
+        #sidebar.collapsed .nav-link span,
+        #sidebar.collapsed .section-title {
+            display: none;
+        }
+
+    /* keep icons centered when collapsed */
+    #sidebar .nav-link i {
+        width: 1.5rem;
+        text-align: center;
     }
+
+    /* hover tooltip when collapsed */
+    #sidebar.collapsed .nav-link {
+        position: relative;
+    }
+
+        #sidebar.collapsed .nav-link:hover::after {
+            content: attr(data-bs-title);
+            position: absolute;
+            left: calc(var(--sidebar-mini) + .25rem);
+            top: 50%;
+            translate: 0 -50%;
+            background: #000;
+            color: #fff;
+            font-size: .75rem;
+            padding: .15rem .4rem;
+            border-radius: .2rem;
+            white-space: nowrap;
+        }
+
+.section-title {
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #6c757d;
+    padding: 1rem 1rem .5rem;
+}
+
+/* page content shifts right equal to sidebar width */
+#page-content {
+    transition: margin-left .25s ease;
+}
+
+    #page-content.sidebar-on {
+        margin-left: var(--sidebar-full);
+    }
+
+    #page-content.sidebar-mini {
+        margin-left: var(--sidebar-mini);
+    }
+

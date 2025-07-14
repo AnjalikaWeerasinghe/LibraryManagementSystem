@@ -123,13 +123,6 @@ namespace Library.Services
             _unitOfWork.Save();
         }
 
-        public void DeleteApplicationUser(int id)
-        {
-            var model = _unitOfWork.GenericRepository<ApplicationUser>().GetById(id);
-            _unitOfWork.GenericRepository<ApplicationUser>().Delete(model);
-            _unitOfWork.Save();
-        }
-
         public PagedResult<ApplicationUserViewModel> GetUserByUserCode(string usercode, int pageNumber, int pageSize)
         {
             var query = _unitOfWork.GenericRepository<ApplicationUser>()

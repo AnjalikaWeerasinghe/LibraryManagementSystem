@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -10,17 +11,22 @@ namespace Library.Models
 {
     public abstract class LibraryItem
     {
+        [Key]
         public int Id { get; set; }
+        [StringLength(12)]
         public string ItemCode { get; set; }
+        [Required(ErrorMessage = "Enter a Title.")]
+        [StringLength(100)]
         public string Title { get; set; }
-        public int PublishedYear { get; set; }
+        public int? PublishedYear { get; set; }
         public ItemType ItemType { get; set; }
-        public string ShelfLocation { get; set; }
+        [Required(ErrorMessage = "Select a language.")]
         public int LanguageId { get; set; }
+        [Required(ErrorMessage = "Select a category.")]
         public int CategoryId { get; set; }
-        public int PublisherId { get; set; }
+        public int? PublisherId { get; set; }
         public int? GenreId { get; set; } // Field can be optional
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public Genre Genre { get; set; }
         public Language Language { get; set; }

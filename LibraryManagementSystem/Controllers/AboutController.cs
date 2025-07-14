@@ -23,5 +23,7 @@ namespace LibraryManagementSystem.Controllers
         public IActionResult VisionMission() => PartialView("_AboutVisionMission");
         public IActionResult AimsObjectives() => PartialView("_AboutAimsObjectives");
         public IActionResult Background() => PartialView("_AboutBackground");
+        public IActionResult OurServices() => PartialView("_AboutOurServices");
+
     }
 }

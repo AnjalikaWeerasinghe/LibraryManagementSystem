@@ -15,6 +15,8 @@
     <button type="submit" class="btn btn-primary">Search</button>
     <a asp-action="Index" class="btn btn-primary">Clear</a>
 </form>
+<br />
+
 <p>
     <a asp-action="Create" class="btn btn-secondary">Add a New Newspaper</a>
 </p>
@@ -22,31 +24,10 @@
     <thead>
         <tr>
             <th>
-                Id
-            </th>
-            <th>
                 ItemCode
             </th>
             <th>
                 Title
-            </th>
-            <th>
-                YearPublished
-            </th>
-            <th>
-                ShelfLocation
-            </th>
-            <th>
-                Language
-            </th>
-            <th>
-                Category
-            </th>
-            <th>
-                Publisher
-            </th>
-            <th>
-                Description
             </th>
             <th>
                 ISSN
@@ -57,6 +38,18 @@
             <th>
                 Issue Number
             </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Language
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Publisher
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -64,31 +57,10 @@
 @foreach (var item in Model.Data) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.ItemCode)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.PublishedYear)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ShelfLocation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Language.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Publisher.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ISSN)
@@ -98,6 +70,18 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IssueNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Language.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Publisher.Name)
             </td>
             <td>
                 <div class="d-flex gap-2">

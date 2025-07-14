@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Library.Services
@@ -29,8 +30,8 @@ namespace Library.Services
 
         public PagedResult<BookViewModel> GetAll(int pageNumber, int pageSize)
         {
-            var vm = new BookViewModel();
             int totalCount;
+            var vm = new BookViewModel();
             List<BookViewModel> vmList = new List<BookViewModel>();
             try
             {
@@ -71,24 +72,23 @@ namespace Library.Services
             return vm;
         }
 
-        public async Task InsertBookAsync(BookViewModel book)
+        public void InsertBook(BookViewModel book)
         {
-            var entity = new BookViewModel().ConvertToViewModelToModel(book);
-            _unitOfWork.GenericRepository<Book>().Add(entity);
-            await _unitOfWork.SaveAsync();
+            var model = new BookViewModel().ConvertToViewModelToModel(book);
+            _unitOfWork.GenericRepository<Book>().Add(model);
+            _unitOfWork.Save();
         }
 
 
         public void UpdateBook(BookViewModel book)
         {
-            var model = new BookViewModel().ConvertToViewModelToModel(book);
-            var ModelById = _unitOfWork.GenericRepository<Book>().GetById(model.Id);
+            var ModelById = _unitOfWork.GenericRepository<Book>().GetById(book.Id);
+            if (book == null)
+                throw new KeyNotFoundException($"Book with Id {book.Id} not found.");
 
-            ModelById.ItemCode = book.ItemCode;
             ModelById.Title = book.Title;
             ModelById.Description = book.Description;
             ModelById.PublishedYear = book.PublishedYear;
-            ModelById.ShelfLocation = book.ShelfLocation;
             ModelById.Edition = book.Edition;
             ModelById.LanguageId = book.LanguageId;
             ModelById.PublisherId = book.PublisherId;
@@ -98,6 +98,63 @@ namespace Library.Services
 
             _unitOfWork.GenericRepository<Book>().Update(ModelById);
             _unitOfWork.Save();
+        }
+
+        public PagedResult<BookViewModel> GetBookByName(string name, int pageNumber, int pageSize)
+        {
+            var query = _unitOfWork.GenericRepository<Book>()
+                 .GetAll(includeProperties: "Language,Category,Publisher,Genre")
+                 .Where(p => p.Title.Contains(name))
+                 .AsQueryable();
+
+            int totalCount = query.Count();
+
+            var data = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var viewModels = data.Select(p => new BookViewModel
+            {
+                Id = p.Id,
+                Title = p.Title,
+                ItemCode = p.ItemCode,
+                ISBN = p.ISBN,
+                PublishedYear = p.PublishedYear,
+                Edition = p.Edition,
+                LanguageId = p.LanguageId,
+                CategoryId = p.CategoryId,
+                PublisherId = p.PublisherId,
+                GenreId = p.GenreId,
+                Description = p.Description,
+
+            }).ToList();
+
+            return new PagedResult<BookViewModel>
+            {
+                Data = viewModels,
+                TotalItems = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
+        public string GenerateNextBookCode()
+        {
+            var lastbook = _unitOfWork.GenericRepository<Book>()
+           .GetAll()
+           .OrderByDescending(e => e.Id)
+           .FirstOrDefault();
+
+            int lastNumber = 0;
+
+            if (lastbook != null && Regex.IsMatch(lastbook.ItemCode ?? "", @"^ITD-BK-(\d{5})$"))
+            {
+                var match = Regex.Match(lastbook.ItemCode, @"^ITD-BK-(\d{5})$");
+                lastNumber = int.Parse(match.Groups[1].Value);
+            }
+
+            return $"ITD-BK-{(lastNumber + 1).ToString("D5")}";
         }
     }
 }

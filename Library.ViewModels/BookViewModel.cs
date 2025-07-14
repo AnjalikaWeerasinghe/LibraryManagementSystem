@@ -15,56 +15,47 @@ namespace Library.ViewModels
         //Library Item Properties
         [Key]
         public int Id { get; set; }
-        [Required]
-        [StringLength(10)]
-        [RegularExpression(@"^ITD\d{4}$", ErrorMessage = "Item Code must be in the format ITD0001.")]
-        public string ItemCode { get; set; }
-        [Required]
+        [StringLength(12)]
+        public string ItemCode { get; set; } // ITD-BK-XXXXX
+        [Required(ErrorMessage = "Enter a Title.")]
         [StringLength(100)]
         public string Title { get; set; }
-        [Required]
-        [DataType("Year")]
-        public int PublishedYear { get; set; }
-        [Required]
-        public string ShelfLocation { get; set; }
-        [Required]
-        [Display(Name = "Language")]
-        [ForeignKey("Language")]
-        public int LanguageId { get; set; }
-        public List<SelectListItem> Languages { get; set; }
-        [Required]
-        [Display(Name = "Category")]
-        [ForeignKey("Category")]
-        public int CategoryId { get; set; }
-        public List<SelectListItem> CategoryList { get; set; }
-        [Required]
-        [Display(Name = "Publisher")]
-        [ForeignKey("Publisher")]
-        public int PublisherId { get; set; }
-        public List<SelectListItem> PublisherList { get; set; }
-        [Required]
-        [Display(Name = "Genre")]
-        [ForeignKey("Genre")]
-        public int? GenreId { get; set; }
-        public List<SelectListItem> GenreList { get; set; }
-        [Required]
-        [MaxLength(1000)]
-        [DataType(DataType.MultilineText)]
-        [Display(Name = "Description")]
-        public string Description { get; set; }
-
-        // Properties of Book
-        [Required]
+        [Required(ErrorMessage = "Enter ISBN Number.")]
         [StringLength(50)]
         [RegularExpression(@"^(?i:ISBN)\s((?:\d[-]?){12}\d)$", ErrorMessage = "ISBN Number must start with 'ISBN', followed by 13 digits.")]
         public string ISBN { get; set; }
-        [Required]
+        [DataType("Published Year")]
+        public int? PublishedYear { get; set; }
+        [Required(ErrorMessage = "Select Edition.")]
         public string Edition { get; set; }
+        [Required(ErrorMessage = "Select a language.")]
+        [Display(Name = "Language")]
+        [ForeignKey("Language")]
+        public int LanguageId { get; set; }
+        [Required(ErrorMessage = "Select a category.")]
+        [Display(Name = "Category")]
+        [ForeignKey("Category")]
+        public int CategoryId { get; set; }
+        [Display(Name = "Publisher")]
+        [ForeignKey("Publisher")]
+        public int? PublisherId { get; set; }
+        [Display(Name = "Genre")]
+        [ForeignKey("Genre")]
+        public int? GenreId { get; set; }
+        [MaxLength(1000)]
+        [DataType(DataType.MultilineText)]
+        [Display(Name = "Description")]
+        public string? Description { get; set; }
 
         public Genre Genre { get; set; }
         public Language Language { get; set; }
         public Category Category { get; set; }
         public Publisher Publisher { get; set; }
+
+        public IEnumerable<LanguageViewModel> Languages { get; set; }
+        public IEnumerable<CategoryViewModel> Categories { get; set; }
+        public IEnumerable<PublisherViewModel> Publishers { get; set; }
+        public IEnumerable<GenreViewModel> Genres { get; set; }
 
         public BookViewModel()
         {
@@ -76,7 +67,6 @@ namespace Library.ViewModels
             ItemCode = model.ItemCode;
             Title = model.Title;
             PublishedYear = model.PublishedYear;
-            ShelfLocation = model.ShelfLocation;
             LanguageId = model.LanguageId;
             Language = model.Language;
             CategoryId = model.CategoryId;
@@ -98,7 +88,6 @@ namespace Library.ViewModels
                 ItemCode = model.ItemCode,
                 Title = model.Title,
                 PublishedYear = model.PublishedYear,
-                ShelfLocation = model.ShelfLocation,
                 LanguageId = model.LanguageId,
                 Language = model.Language,
                 CategoryId = model.CategoryId,

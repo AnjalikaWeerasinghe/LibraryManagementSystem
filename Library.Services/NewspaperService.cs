@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Library.Services
@@ -80,14 +81,12 @@ namespace Library.Services
 
         public void UpdateNewspaper(NewspaperViewModel newspaper)
         {
-            var model = new NewspaperViewModel().ConvertToViewModelToModel(newspaper);
-            var ModelById = _unitOfWork.GenericRepository<Newspaper>().GetById(model.Id);
+            var ModelById = _unitOfWork.GenericRepository<Newspaper>().GetById(newspaper.Id);
+            if (newspaper == null)
+                throw new KeyNotFoundException($"Newspaper with Id {newspaper.Id} not found.");
 
-            ModelById.ItemCode = newspaper.ItemCode;
             ModelById.Title = newspaper.Title;
             ModelById.Description = newspaper.Description;
-            ModelById.PublishedYear = newspaper.PublishedYear;
-            ModelById.ShelfLocation = newspaper.ShelfLocation;
             ModelById.IssuedDate = newspaper.IssuedDate;
             ModelById.IssueNumber = newspaper.IssueNumber;
             ModelById.LanguageId = newspaper.LanguageId;
@@ -97,6 +96,62 @@ namespace Library.Services
 
             _unitOfWork.GenericRepository<Newspaper>().Update(ModelById);
             _unitOfWork.Save();
+        }
+
+        public PagedResult<NewspaperViewModel> GetNewspaperByName(string name, int pageNumber, int pageSize)
+        {
+            var query = _unitOfWork.GenericRepository<Newspaper>()
+                .GetAll(includeProperties: "Language,Category,Publisher")
+                .Where(p => p.Title.Contains(name))
+                .AsQueryable();
+
+            int totalCount = query.Count();
+
+            var data = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var viewModels = data.Select(p => new NewspaperViewModel
+            {
+                Id = p.Id,
+                Title = p.Title,
+                ItemCode = p.ItemCode,
+                ISSN = p.ISSN,
+                IssuedDate = p.IssuedDate,
+                IssueNumber = p.IssueNumber,
+                LanguageId = p.LanguageId,
+                CategoryId = p.CategoryId,
+                PublisherId = p.PublisherId,
+                Description = p.Description,
+
+            }).ToList();
+
+            return new PagedResult<NewspaperViewModel>
+            {
+                Data = viewModels,
+                TotalItems = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
+        public string GenerateNextNewspaperCode()
+        {
+            var lastnewspaper = _unitOfWork.GenericRepository<Newspaper>()
+            .GetAll()
+            .OrderByDescending(e => e.Id)
+            .FirstOrDefault();
+
+            int lastNumber = 0;
+
+            if (lastnewspaper != null && Regex.IsMatch(lastnewspaper.ItemCode ?? "", @"^ITD-NW-(\d{5})$"))
+            {
+                var match = Regex.Match(lastnewspaper.ItemCode, @"^ITD-NW-(\d{5})$");
+                lastNumber = int.Parse(match.Groups[1].Value);
+            }
+
+            return $"ITD-NW-{(lastNumber + 1).ToString("D5")}";
         }
     }
 }

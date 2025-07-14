@@ -7,54 +7,65 @@
 <h1>Create a New Event</h1>
 
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+
+<div class="container mt-3">
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+
+            <div class="col-md-6 form-group">
                 <label asp-for="EventCode" class="control-label"></label>
-                <input asp-for="EventCode" class="form-control" />
+                <input asp-for="EventCode" class="form-control" readonly />
                 <span asp-validation-for="EventCode" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Upload Event Image</label>
-                <input type="file" name="ImageFile" class="form-control" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="StartDate" class="control-label">Start Date<span class="text-danger"> *</label>
                 <input asp-for="StartDate" class="form-control" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="col-md-6 form-group">
+                <label asp-for="Title" class="control-label required">Title<span class="text-danger"> *</span></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
                 <label asp-for="EndDate" class="control-label"></label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Location" class="control-label"></label>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="Description" class="control-label">Description<span class="text-danger"> *</label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="Location" class="control-label">Location<span class="text-danger"> *</label>
                 <input asp-for="Location" class="form-control" />
                 <span asp-validation-for="Location" class="text-danger"></span>
             </div>
-            
-            <br />
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-info" />
-                <input type="reset" value="Clear" class="btn btn-info" />
+
+            <div class="col-md-6 form-group">
+                <label class="control-label">Upload Event Image</label>
+                <input type="file" name="ImageFile" class="form-control" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
             </div>
-        </form>
-    </div>
+        
+        </div> 
+
+        <br />
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-info" />
+            <input type="reset" value="Clear" class="btn btn-info" />
+        </div>
+    </form>
 </div>
+
 <br />
 <div>
     <a asp-action="Index">Back to List</a>

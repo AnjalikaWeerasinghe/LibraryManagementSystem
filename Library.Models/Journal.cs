@@ -11,6 +11,8 @@ namespace Library.Models
         public string ISSN { get; set; }
         public string Volume { get; set; }
         public string Issue { get; set; }
-        public string Field { get; set; }
+        public int FieldOfStudyId { get; set; }
+
+        public FieldOfStudy FieldOfStudy { get; set; }
     }
 }

@@ -3,11 +3,11 @@
     public class Member
     {
         public int Id { get; set; }
-        public string MemberCode { get; set; }
         public DateTime MembershipDate { get; set; }
         public int? MembershipTypeId { get; set; }
 
         public string ApplicatioUserId { get; set; }
+
         public ApplicationUser ApplicationUser { get; set; }
         public MembershipType MembershipType { get; set; }
 
