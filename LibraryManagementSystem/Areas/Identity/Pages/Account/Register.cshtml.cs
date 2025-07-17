@@ -29,6 +29,7 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IApplicationUserService _appUserService;
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
@@ -37,7 +38,8 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
-            IUserStore<ApplicationUser> userStore,
+            IUserStore<ApplicationUser> userStore, 
+            IApplicationUserService appUserService,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
@@ -50,6 +52,7 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _codeSvc = codeSvc;
+            _appUserService = appUserService;
         }
 
 
@@ -70,31 +73,28 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account
             //[StringLength(20)]
             //public string UserName { get; set; }
 
+            [Required, StringLength(100)]
+            [Display(Name = "Full Name")]
+            public string FullName { get; set; } = string.Empty;
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
-            public string Email { get; set; }
+            public string Email { get; set; } = string.Empty;
 
             [Required]
             [StringLength(20, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
-            public string Password { get; set; }
+            public string Password { get; set; } = string.Empty;
 
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
+            public string ConfirmPassword { get; set; } = string.Empty;
 
-            [Display(Name = "Register as a Library member.")]
-            public bool IsMember { get; set; }
-
-            [UserCodeFormat]
-            public string UserCode { get; set; } = string.Empty;
-
-            public string? UserRole => IsMember ? "Member" : "Staff";
+            
         }
-
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -102,43 +102,40 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync()
         {
-            returnUrl ??= Url.Content("~/");
-
-            if (ModelState.IsValid)
+           
+            if (!ModelState.IsValid)
                 return Page();
 
-            string roleKey = Input.IsMember ? WebSiteRoles.WebSite_Member
-                                            : WebSiteRoles.WebSite_Staff;
-
-            string userCode = await _codeSvc.GenerateNextAsync(roleKey);
-
-            Input.UserCode = userCode;
-            TryValidateModel(Input);
-            if (!ModelState.IsValid) return Page();
+            
+            var userCode = await _appUserService.GenerateNextUserCodeAsync(isMember: true);
 
             var user = new ApplicationUser
             {
                 UserName = Input.Email,
                 Email = Input.Email,
+                FullName = Input.FullName,
+                UserRole = WebSiteRoles.WebSite_Member,
+                UserStatus = UserStatus.Active,
                 UserCode = userCode
             };
 
-            IdentityResult result = await _userManager.CreateAsync(user, Input.Password);
+            var result = await _userManager.CreateAsync(user, Input.Password);
             if (!result.Succeeded)
             {
-                foreach (var e in result.Errors) ModelState.AddModelError(string.Empty, e.Description);
+                foreach (var e in result.Errors)
+                    ModelState.AddModelError(string.Empty, e.Description);
                 return Page();
             }
 
-            await _userManager.AddToRoleAsync(user, Input.IsMember ? "Member" : "Staff");
-
-            _logger.LogInformation("New user registered with code {Code}", userCode);
-
+            await _userManager.AddToRoleAsync(user, WebSiteRoles.WebSite_Member);
 
             await _signInManager.SignInAsync(user, isPersistent: false);
-            return LocalRedirect(returnUrl);
+
+            TempData["SuccessMessage"] = "Registration successful! Welcome to the Gampola UC Library System.";
+            return LocalRedirect(Url.Content("~/"));
+
         }
 
         private ApplicationUser CreateUser()

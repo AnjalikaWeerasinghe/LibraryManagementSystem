@@ -1,5 +1,7 @@
-﻿using Library.Utilities;
+﻿using Library.Models;
+using Library.Utilities;
 using Library.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,19 +12,22 @@ namespace Library.Services
 {
     public interface IApplicationUserService
     {
-        PagedResult<ApplicationUserViewModel> GetAll(int pageNumber, int pageSize);
+        Task<PagedResult<ApplicationUserViewModel>> GetAllAsync(int pageNumber, int pageSize);
 
-        PagedResult<ApplicationUserViewModel> GetAllMember(int pageNumber, int pageSize);
-        PagedResult<ApplicationUserViewModel> GetAllStaff(int pageNumber, int pageSize);
+        Task<PagedResult<ApplicationUserViewModel>> GetAllMembersAsync(int pageNumber, int pageSize);
+        Task<PagedResult<ApplicationUserViewModel>> GetAllStaffAsync(int pageNumber, int pageSize);
 
-        PagedResult<ApplicationUserViewModel> SearchMember(int pageNumber, int pageSize, string name);
+        Task<PagedResult<ApplicationUserViewModel>> SearchMemberAsync(int pageNumber, int pageSize, string name);
+        Task<PagedResult<ApplicationUserViewModel>> GetUserByUserCodeAsync(string usercode, int pageNumber, int pageSize);
+        Task<IdentityResult> CreateWithPasswordAsync(ApplicationUserViewModel user, string password);
 
-        PagedResult<ApplicationUserViewModel> GetUserByUserCode(string usercode, int pageNumber, int pageSize);
-        
+        Task UpdateApplicationUserAsync(ApplicationUserViewModel user);
+        Task<IdentityResult> InsertApplicationUserAsync(ApplicationUserViewModel user, string? password = null);
 
-        void UpdateApplicationUser(ApplicationUserViewModel user);
-        void InsertApplicationUser(ApplicationUserViewModel user);
+        Task<ApplicationUserViewModel?> GetByIdAsync(string userId);
+        Task<string> GenerateNextUserCodeAsync(bool isMember);
 
-        Task<string> GenerateNextUserCode(bool ismember);
+        Task AssignRoleAsync(string userId, string roleName);
+        Task SetUserStatusAsync(string userId, UserStatus status);
     }
 }

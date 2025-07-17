@@ -1,4 +1,162 @@
-﻿
+﻿<h2 class="mb-3">Who We Are</h2>
 
-<h3>Who We Are</h3>
-<p>We are a community‑driven public library established in 1964…</p>
+<p>
+    The Gampola Urban Council Public Library is the hill‑country’s principal knowledge
+    hub, proudly serving the multi‑ethnic community of Gampola and its surrounding
+    villages since the mid‑20<sup>th</sup> century.  Our Grade I accreditation from the
+    National Library &amp; Documentation Services Board reflects both the breadth of our
+    collections and the professionalism of our staff.
+</p>
+
+<p>
+    Today we curate more than <strong>45 000 physical items</strong>—books, newspapers,
+    journals and local‐history archives—in Sinhala, Tamil and English, and we have
+    embraced modern library science through a fully‑featured digital LMS.
+</p>
+
+<p>
+    A team of qualified librarians, IT specialists and community volunteers works
+    together to keep the doors (and the Wi‑Fi) open seven days a week, fostering an
+    inclusive, welcoming space for readers of every age and background.
+</p>
+
+<h3 class="fw-semibold mt-5 mb-3">Divisions of the Library</h3>
+
+<div class="accordion" id="divisionAccordion">
+    <!-- Lending Division -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingLending">
+            <button class="accordion-button collapsed d-flex align-items-center"
+                    type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseLending" aria-expanded="false"
+                    aria-controls="collapseLending">
+                <i class="bi bi-plus-lg me-2"></i> Lending Division
+            </button>
+        </h2>
+        <div id="collapseLending" class="accordion-collapse collapse"
+             aria-labelledby="headingLending"
+             data-bs-parent="#divisionAccordion">
+            <div class="accordion-body">
+                <p>The Lending Division is the heart of our circulation service, enabling members to borrow books, return or renew them, 
+                    and manage their borrowing accounts. Equipped with RFID and barcode systems, this division ensures efficient, user-friendly 
+                    lending operations, including SMS reminders and overdue tracking</p>
+            </div>
+        </div>
+    </div>
+    <br />
+
+    <!-- Research Division -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingResearch">
+            <button class="accordion-button collapsed d-flex align-items-center"
+                    type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseResearch" aria-expanded="false"
+                    aria-controls="collapseResearch">
+                <i class="bi bi-plus-lg me-2"></i> Research Division
+            </button>
+        </h2>
+        <div id="collapseResearch" class="accordion-collapse collapse"
+             aria-labelledby="headingResearch"
+             data-bs-parent="#divisionAccordion">
+            <div class="accordion-body">
+                <p>Our Research Division is tailored for students, scholars, and professionals who require access to academic resources, 
+                   government publications, and historical records. With quiet study spaces and trained staff to assist with referencing, 
+                   it's the go-to spot for focused academic work.</p>
+            </div>
+        </div>
+    </div>
+    <br />
+
+    <!-- Kids Division -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingKids">
+            <button class="accordion-button collapsed d-flex align-items-center"
+                    type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseKids" aria-expanded="false"
+                    aria-controls="collapseKids">
+                <i class="bi bi-plus-lg me-2"></i> Kids Division
+            </button>
+        </h2>
+        <div id="collapseKids" class="accordion-collapse collapse"
+             aria-labelledby="headingKids"
+             data-bs-parent="#divisionAccordion">
+            <div class="accordion-body">
+                <p>The Kids Division offers a welcoming space where children can discover the joy of reading through colorful storybooks, 
+                    engaging storytelling sessions, and fun learning activities. It’s designed to nurture curiosity and creativity in early 
+                    learners, with special programs during school holidays.</p>
+            </div>
+        </div>
+    </div>
+    <br />
+
+    <!-- Newspaper Division -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingNews">
+            <button class="accordion-button collapsed d-flex justify-content-between align-items-center"
+                    type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseNews" aria-expanded="false"
+                    aria-controls="collapseNews">
+                <span class="fw-semibold">Newspaper Reading Division</span>
+                <i class="bi bi-plus-lg toggle-icon ms-auto"></i>
+            </button>
+        </h2>
+        <div id="collapseNews" class="accordion-collapse collapse"
+             aria-labelledby="headingNews" data-bs-parent="#divisionAccordion">
+            <div class="accordion-body">
+                <p>
+                    The Newspaper Reading Division provides access to daily newspapers in Sinhala, Tamil, and English. Visitors can stay 
+                    informed in a peaceful reading lounge that offers both current and archived editions, making it a favorite spot for 
+                    senior readers and news enthusiasts alike.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <br />
+
+    <!-- IT Division -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingIT">
+            <button class="accordion-button collapsed d-flex align-items-center"
+                    type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseIT" aria-expanded="false"
+                    aria-controls="collapseIT">
+                <i class="bi bi-plus-lg me-2"></i> IT Division
+            </button>
+        </h2>
+        <div id="collapseIT" class="accordion-collapse collapse"
+             aria-labelledby="headingIT"
+             data-bs-parent="#divisionAccordion">
+            <div class="accordion-body">
+                <p>The IT Division supports the library’s digital infrastructure, including the Library Management System, public 
+                   access computers, Wi-Fi services, and online OPAC access. It also conducts digital literacy workshops and helps 
+                   bridge the digital divide in the Gampola region.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            const accordion = document.getElementById("divisionAccordion");
+
+            accordion.addEventListener("show.bs.collapse", (e) => {
+                const icon = e.target
+                    .previousElementSibling   
+                    .querySelector("i");
+                icon.classList.replace("bi-plus-lg", "bi-dash-lg");
+            });
+
+            accordion.addEventListener("hide.bs.collapse", (e) => {
+                const icon = e.target
+                    .previousElementSibling
+                    .querySelector("i");
+                icon.classList.replace("bi-dash-lg", "bi-plus-lg");
+            });
+        });
+    </script>
+}

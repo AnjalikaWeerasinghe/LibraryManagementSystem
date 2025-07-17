@@ -1,67 +1,21 @@
 ﻿@model Library.ViewModels.ApplicationUserViewModel
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create User";
 }
 
-<h1>Create a new User</h1>
+<h2>Create User</h2>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CallingName" class="control-label"></label>
-                <input asp-for="CallingName" class="form-control" />
-                <span asp-validation-for="CallingName" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="UserCode" class="control-label"></label>
-                <input asp-for="UserCode" class="form-control" />
-                <span asp-validation-for="UserCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
-                <span asp-validation-for="Gender" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DOB" class="control-label"></label>
-                <input asp-for="DOB" class="form-control" />
-                <span asp-validation-for="DOB" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserStatus" class="control-label"></label>
-                <input asp-for="UserStatus" class="form-control" />
-                <span asp-validation-for="UserStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PictureUrl" class="control-label"></label>
-                <input asp-for="PictureUrl" class="form-control" />
-                <span asp-validation-for="PictureUrl" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-info" />
-            </div>
-        </form>
+<form asp-action="Create" method="post">
+    <partial name="_UserForm" />
+    <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input name="password" type="password" class="form-control" required />
     </div>
-</div>
+    <button class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
 

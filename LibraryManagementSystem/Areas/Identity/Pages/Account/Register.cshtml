@@ -4,46 +4,62 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>User Registration </h1>
-<br />
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
 
-<div class="row">
-    <div class="col-md-5">
+    .registration-box {
+        max-width: 500px;
+        margin: auto;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .register-title {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="registration-box">
+        <h2 class="register-title">Member Registration</h2>
+
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new user account in the LMS</h2>
-            <br />
-            <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            @* <div class="form-floating mb-3"> *@
-            @*     <input asp-for="Input.UserName" class="form-control" autocomplete="username" aria-required="true" placeholder="UserName" /> *@
-            @*     <label asp-for="Input.UserName">UserName</label> *@
-            @*     <span asp-validation-for="Input.UserName" class="text-danger"></span> *@
-            @* </div> *@
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.FullName" class="form-control" aria-required="true" placeholder="Full Name" />
+                <label asp-for="Input.FullName">Full Name</label>
+                <span asp-validation-for="Input.FullName" class="text-danger"></span>
+            </div>
+
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="Email" />
                 <label asp-for="Input.Email">Email</label>
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
+
             <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Password" />
                 <label asp-for="Input.Password">Password</label>
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
+
             <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Confirm Password" />
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
 
-            <div class="form-check mb-3">
-                <input asp-for="Input.IsMember" class="form-check-input" />
-                <label asp-for="Input.IsMember" class="form-check-label"></label>
-            </div>
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>
+</div>
 
-
-@* @section Scripts { *@
-@*     <partial name="_ValidationScriptsPartial" /> *@
-@* } *@
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

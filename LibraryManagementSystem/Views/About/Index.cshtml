@@ -2,27 +2,73 @@
     ViewData["Title"] = "About";
 }
 
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<div class="container mt-4">
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Gampola Urban Council Public Library</h2>
+
     <div class="row">
-        <!-- LEFT: placeholder that will be filled via AJAX -->
-        <div class="col-md-9" id="aboutContent">
-            <h3>Welcome to our Library</h3>
-            <p>Please pick a section on the right.</p>
+
+        <!-- Content Display -->
+        <div class="col-md-9">
+            <div id="contentArea" class="p-4 bg-light rounded shadow-sm">
+                @await Html.PartialAsync("_AboutWhoWeAre")
+            </div>
         </div>
 
-        <!-- RIGHT: list of buttons/links -->
-        <div class="col-md-3" id="aboutLinks">
-            <button data-url="~/About/WhoWeAre" class="btn btn-secondary w-100 my-1">WHO WE ARE</button>
-            <button data-url="~/About/VisionMission" class="btn btn-secondary w-100 my-1">VISION &amp; MISSION</button>
-            <button data-url="~/About/AimsObjectives" class="btn btn-secondary w-100 my-1">AIMS &amp; OBJECTIVES</button>
-            <button data-url="~/About/Background" class="btn btn-secondary w-100 my-1">BACKGROUND</button>
-            <button data-url="~/About/OurServices" class="btn btn-secondary w-100 my-1">OUR SERVICES</button>
+        <!-- Sidebar Navigation -->
+        <div class="col-md-3 mb-4">
+            <div class="list-group shadow-sm" id="aboutNav">
+                <button class="btn btn-secondary w-100 my-1">
+                    <a href="@Url.Action("WhoWeAre")" class="list-group-item list-group-item-action active" data-partial="true">
+                        📘 Who We Are
+                    </a>
+                </button>
+                <button class="btn btn-secondary w-100 my-1">
+                    <a href="@Url.Action("Background")" class="list-group-item list-group-item-action" data-partial="true">
+                        🕰️ Background
+                    </a>
+                </button>
+                <button class="btn btn-secondary w-100 my-1">
+                    <a href="@Url.Action("VisionMission")" class="list-group-item list-group-item-action" data-partial="true">
+                        🎯 Vision & Mission
+                    </a>
+                </button>
+                <button class="btn btn-secondary w-100 my-1">
+                    <a href="@Url.Action("AimsObjectives")" class="list-group-item list-group-item-action" data-partial="true">
+                        🎓 Aims & Objectives
+                    </a>
+                </button>
+                <button class="btn btn-secondary w-100 my-1">
+                    <a href="@Url.Action("OurServices")" class="list-group-item list-group-item-action" data-partial="true">
+                        🛠️ Our Services
+                    </a>
+                </button>  
+            </div>
         </div>
+
+        
     </div>
 </div>
 
-@section Scripts
-{
-    <script src="~/js/link-loader.js"></script>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const navLinks = document.querySelectorAll("#aboutNav a[data-partial='true']");
+            const contentArea = document.getElementById("contentArea");
+
+            navLinks.forEach(link => {
+                link.addEventListener("click", async function (event) {
+                    event.preventDefault();
+
+                    navLinks.forEach(l => l.classList.remove("active"));
+                    this.classList.add("active");
+
+                    const response = await fetch(this.href);
+                    const html = await response.text();
+                    contentArea.innerHTML = html;
+                });
+            });
+        });
+    </script>
 }

@@ -1,84 +1,74 @@
-﻿@using Library.Utilities
+﻿@using Library.Models
+@using Library.Utilities
 @model PagedResult<Library.ViewModels.ApplicationUserViewModel>
 
-@{
-    ViewData["Title"] = "Index";
-}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<h1>User Details</h1>
+<h2 class="mb-3"> Users (@Model.TotalItems)</h2>
 
-<table class="table">
-    <thead>
+<table class="table table-hover table-sm align-middle">
+    <thead class="table-light">
         <tr>
-            <th>
-                FullName
-            </th>
-            <th>
-                Calling Name
-            </th>
-            
-            <th>
-                UserCode
-            </th>
-            <th>
-                Gender
-            </th>
-            
-            <th>
-                Address
-            </th>
-            <th>
-                DOB
-            </th>
-            <th>
-                User Status
-            </th>
-            <th>
-                Picture Url
-            </th>
-            
-            <th></th>
+            <th>User Code</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th style="width:140px;"></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Data) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CallingName)
-            </td>
-           
-            <td>
-                @Html.DisplayFor(modelItem => item.UserCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
-            
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DOB)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PictureUrl)
-            </td>
-            
-            <td>
-                <div d-flex gap-2>
-                <a asp-action="Edit" asp-route-id="@item.UserCode" class="btn btn-dark btn-sm">Edit</a>
-                </div>
-            </td> 
-        </tr>
-}
+        @foreach (var u in Model.Data)
+        {
+            <tr>
+                <td>@u.UserCode</td>
+                <td>@u.FullName</td>
+                <td>@u.Email</td>
+                <td>@u.UserRole</td>
+                <td>
+                    <span class="badge bg-@(u.UserStatus == UserStatus.Active ? "success" : "secondary")">
+                        @u.UserStatus
+                    </span>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-sm btn-outline-primary me-1">
+                        
+                    </a>
+
+
+                    <form asp-action="ToggleStatus" asp-route-id="@u.Id"
+                          method="post" class="d-inline">
+                        <button type="submit"
+                                class="btn btn-sm @(u.UserStatus==UserStatus.Active?"btn-warning":"btn-success")"
+                                title="Toggle Active / Inactive">
+                            <i class="bi @(u.UserStatus==UserStatus.Active?"bi-slash-circle":"bi-check-circle")"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<!-- Pager -->
+<nav>
+    <ul class="pagination">
+        @{
+            int totalPages = (int)Math.Ceiling(Model.TotalItems / (double)Model.PageSize);
+        }
+        @for (int p = 1; p <= totalPages; p++)
+        {
+            <li class="page-item @(p == Model.PageNumber ? "active" : "")">
+                <a class="page-link" asp-route-page="@p">@p</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+<a asp-action="Create" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-1"></i> New User
+</a>
+
 
 <cs-pager cs-paging-pagesize=(int)Model.PageSize
           cs-paging-pagenumber=(int)Model.PageNumber
