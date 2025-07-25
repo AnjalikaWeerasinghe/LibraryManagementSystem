@@ -79,16 +79,33 @@ namespace Library.Services
             return vm;
         }
 
-        public void InsertPeriodical(PeriodicalViewModel periodical)
+        public string InsertPeriodical(PeriodicalViewModel periodical)
         {
-            if (PeriodicalExists(periodical.Title, periodical.ItemCode, periodical.ISSN))
-            {
-                throw new Exception("Periodical already exists.");
-            }
+            var existing = _unitOfWork.GenericRepository<Periodical>()
+                .GetAll()
+                .FirstOrDefault(c => c.Title == periodical.Title && c.ISSN == periodical.ISSN);
 
-            var model = new PeriodicalViewModel().ConvertToViewModelToModel(periodical);
+            if (existing != null)
+                return "Periodical already exists.";
+
+            var model = new Periodical
+            {
+                Title = periodical.Title,
+                Description = periodical.Description,
+                PublishedYear = periodical.PublishedYear,
+                LanguageId = periodical.LanguageId,
+                PublisherId = periodical.PublisherId,
+                CategoryId = periodical.CategoryId,
+                ISSN = periodical.ISSN,
+                ItemCode = periodical.ItemCode,
+                Frequency = periodical.Frequency,
+                Theme = periodical.Theme
+            };
+            
             _unitOfWork.GenericRepository<Periodical>().Add(model);
             _unitOfWork.Save();
+
+            return "Periodical added successfully.";
         }
 
         public void UpdatePeriodical(PeriodicalViewModel periodical)

@@ -3,6 +3,7 @@ using Library.Repositories.Interfaces;
 using Library.Services;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LibraryManagementSystem.Areas.Admin.Controllers
 {
@@ -20,66 +21,63 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
 
         public IActionResult Index(int pageNumber = 1, int pageSize = 10)
         {
-            return View(_fieldOfStudyService.GetAll(pageNumber, pageSize));
-        }
+            var vm = new FieldOfStudyViewModel
+            {
+                PagedFields = _fieldOfStudyService.GetAll(pageNumber, pageSize)
+            };
 
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
+            return View(vm);
         }
 
         [HttpPost]
-        public IActionResult Create(FieldOfStudyViewModel vm)
+        public IActionResult CreateorUpdate(FieldOfStudyViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(vm);
-
-            try
             {
-                _unitOfWork.GenericRepository<FieldOfStudy>().Add(new FieldOfStudy
+                vm.PagedFields = _fieldOfStudyService.GetAll(1, 10);
+                
+            }
+
+            if (vm.Id == 0)
+            {
+                var result = _fieldOfStudyService.InsertField(vm);
+                if (result == "Field already exists.")
                 {
-                    Name = vm.Name
-                });
-                _unitOfWork.Save();
+                    TempData["ErrorMessage"] = result;
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = $"{vm.Name} successfully Added!";
+                }
 
-                TempData["SuccessMessage"] = $"{vm.Name} successfully Added !";
-                ModelState.Clear(); // clear input fields
-                return View();
+                ModelState.Clear();
             }
-            catch
+            else
             {
-                ModelState.AddModelError("", "An error occurred while saving.");
-                return View(vm);
+                _fieldOfStudyService.UpdateField(vm);
+                TempData["SuccessMessage"] = $"{vm.Name} updated successfully !";
+                ModelState.Clear();
             }
+
+            return RedirectToAction("Index");
         }
 
-        [HttpGet]
         public IActionResult Edit(int id)
         {
-            var viewModel = _fieldOfStudyService.GetFieldById(id);
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(FieldOfStudyViewModel vm)
-        {
-            if (!ModelState.IsValid)
-                return View(vm);
-
-            var field = _unitOfWork.GenericRepository<FieldOfStudy>().GetById(vm.Id);
+            var field = _fieldOfStudyService.GetFieldById(id);
             if (field == null)
                 return NotFound();
 
-            field.Name = vm.Name;
+            var pagedData = _fieldOfStudyService.GetAll(1, 10);
 
-            _unitOfWork.GenericRepository<FieldOfStudy>().Update(field);
-            _unitOfWork.Save();
+            var vm = new FieldOfStudyViewModel
+            {
+                Id = field.Id,
+                Name = field.Name,
+                PagedFields = pagedData
+            };
 
-            ViewBag.UpdateSuccess = $" '{field.Name}' updated successfully!";
-            ViewBag.ShowModal = true;
-
-            return View(vm);
+            return View("Index", vm);
         }
 
         public IActionResult Delete(int id)

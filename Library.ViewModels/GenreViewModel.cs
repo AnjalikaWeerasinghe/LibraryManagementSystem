@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Library.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +21,8 @@ namespace Library.ViewModels
         [DataType(DataType.MultilineText)]
         [Display(Name = "Description")]
         public string Description { get; set; }
+
+        public PagedResult<GenreViewModel> PagedGenres { get; set; }
 
         public GenreViewModel()
         {

@@ -100,8 +100,7 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             _unitOfWork.GenericRepository<Newspaper>().Update(newspaper);
             _unitOfWork.Save();
 
-            ViewBag.UpdateSuccess = $" '{newspaper.Title}' updated successfully!";
-            ViewBag.ShowModal = true;
+            TempData["SuccessMessage"] = $"{vm.Title} updated successfully !";
 
             return RedirectToAction(nameof(Index)); ;
         }
@@ -124,10 +123,24 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(NewspaperViewModel vm)
         {
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdowns(vm);
+            }
+
             vm.ItemCode = _newspaper.GenerateNextNewspaperCode();
 
-            _newspaper.InsertNewspaper(vm);
-            TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
+            string result = _newspaper.InsertNewspaper(vm);
+
+            if (result == "Newspaper already exists.")
+            {
+                TempData["ErrorMessage"] = result;
+            }
+            else
+            {
+                TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
+            }
 
             return RedirectToAction(nameof(Create));
 
@@ -143,6 +156,14 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             _unitOfWork.Save();
 
             return Ok();
+        }
+
+        private async Task PopulateDropdowns(NewspaperViewModel vm)
+        {
+            vm.Languages = await _languageService.GetAllAsync();
+            vm.Publishers = await _publisherService.GetAllAsync();
+            vm.Categories = await _categoryService.GetAllAsync();
+            
         }
     }
 }

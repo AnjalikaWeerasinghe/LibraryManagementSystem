@@ -14,7 +14,7 @@ namespace Library.Services
         PagedResult<BookViewModel> GetBookByName(string name, int pageNumber, int pageSize);
         BookViewModel GetBookById(int bookId);
         void UpdateBook(BookViewModel book);
-        void InsertBook(BookViewModel book);
+        string InsertBook(BookViewModel book);
         void DeleteBook(int id);
         string GenerateNextBookCode();
     }

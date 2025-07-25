@@ -10,5 +10,7 @@ namespace Library.Services
     public interface IReportService
     {
         Task<List<ItemCategoryCountViewModel>> GetCountsAsync();
+
+        Task<MemberRegistrationChartViewModel> GetMemberRegistrationReportAsync();
     }
 }

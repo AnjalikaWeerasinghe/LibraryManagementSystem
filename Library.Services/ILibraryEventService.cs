@@ -14,7 +14,7 @@ namespace Library.Services
         PagedResult<LibraryEventViewModel> GetEventByTitle(string name, int pageNumber, int pageSize);
         LibraryEventViewModel GetLibraryEventById(int LibraryId);
         void UpdateLibraryEvent(LibraryEventViewModel libraryEvent);
-        void InsertLibraryEvent(LibraryEventViewModel libraryEvent);
+        string InsertLibraryEvent(LibraryEventViewModel libraryEvent);
         void DeleteLibraryEvent(int id);
         string GenerateNextEventCode();
 

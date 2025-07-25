@@ -69,17 +69,31 @@ namespace Library.Services
             return vm;
         }
 
-        public void InsertGenre(GenreViewModel genre)
+        public string InsertGenre(GenreViewModel genre)
         {
-            var model = new GenreViewModel().ConvertViewModel(genre);
+            var existing = _unitOfWork.GenericRepository<Genre>()
+                    .GetAll()
+                    .FirstOrDefault(c => c.Name == genre.Name);
+
+            if (existing != null)
+                return "Genre already exists.";
+
+            var model = new Genre
+            {
+                Name = genre.Name,
+                Description = genre.Description
+            };
+
             _unitOfWork.GenericRepository<Genre>().Add(model);
             _unitOfWork.Save();
+
+            return "Genre added successfully.";
         }
 
         public void UpdateGenre(GenreViewModel genre)
         {
-            var model = new GenreViewModel().ConvertViewModel(genre);
-            var ModelById = _unitOfWork.GenericRepository<Genre>().GetById(model.Id);
+            
+            var ModelById = _unitOfWork.GenericRepository<Genre>().GetById(genre.Id);
 
             ModelById.Name = genre.Name;
             ModelById.Description = genre.Description;

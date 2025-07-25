@@ -14,7 +14,7 @@ namespace Library.Services
         FieldOfStudyViewModel GetFieldById(int fieldId);
         Task<IEnumerable<FieldOfStudyViewModel>> GetAllAsync();
         void UpdateField(FieldOfStudyViewModel field);
-        void InsertField(FieldOfStudyViewModel field);
+        string InsertField(FieldOfStudyViewModel field);
         void DeleteField(int id);
     }
 }

@@ -25,6 +25,8 @@ namespace Library.ViewModels
         [RegularExpression(@"^(?:\+94|0)[1-9][0-9]{8}$", ErrorMessage = "Invalid Landline Number.")]
         public string? Landline { get; set; }
 
+        public PagedResult<PublisherViewModel> PagedPublishers { get; set; }
+
         public class PublisherSearchViewModel
         {
             public string SearchTerm { get; set; }

@@ -4,11 +4,47 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>@Model.Title</h2>
-<img src="@Model.ImageUrl" class="img-fluid mb-3" />
-<p><strong>Date:</strong> @Model.StartDate.ToShortDateString()</p>
-<p>@Model.Description</p>
+<div class="card shadow-sm mb-4">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="@Model.ImageUrl" class="img-fluid rounded-start" alt="@Model.Title" />
+        </div>
 
-<a asp-area="Member" asp-controller="EventRegistration" asp-action="Register" asp-route-eventId="@Model.Id" class="btn btn-info">
-    Register for this Event
-</a>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h4 class="card-title mb-2">@Model.Title</h4>
+                <p class="text-muted mb-1"><strong>Date:</strong> @Model.StartDate.ToShortDateString()</p>
+                <p class="card-text">@Model.Description</p>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-primary register-button" data-event-id="@Model.Id">
+                        <i class="bi bi-pencil-square me-1"></i> Register
+                    </button>
+                </div>
+
+                <div id="registerFormContainer" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).on("click", ".register-button", function () {
+            var eventId = $(this).data("event-id");
+
+            $.ajax({
+                url: '/Member/EventParticipant/RegisterForm',
+                type: 'GET',
+                data: { eventId: eventId },
+                success: function (partialHtml) {
+                    $("#registerFormContainer").html(partialHtml);
+                },
+                error: function () {
+                    alert("Failed to load the registration form.");
+                }
+            });
+        });
+    </script>
+}

@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Library.Utilities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace Library.ViewModels
 
         public IEnumerable<SelectListItem> ItemTypeList { get; set; }
 
+        public PagedResult<CategoryViewModel> PagedCategories { get; set; }
+
         public CategoryViewModel()
         {
         }
@@ -39,6 +42,26 @@ namespace Library.ViewModels
                 Id = model.Id,
                 Name = model.Name,
                 ItemType = model.ItemType
+            };
+        }
+
+        public Category ToEntity()
+        {
+            return new Category
+            {
+                Id = this.Id,
+                Name = this.Name,
+                ItemType = this.ItemType
+            };
+        }
+
+        public static CategoryViewModel FromEntity(Category category)
+        {
+            return new CategoryViewModel
+            {
+                Id = category.Id,
+                Name = category.Name,
+                ItemType = category.ItemType
             };
         }
     }

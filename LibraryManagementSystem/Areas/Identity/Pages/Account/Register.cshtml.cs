@@ -68,11 +68,6 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account
     
         public class InputModel
         {
-            //[Required]
-            //[Display(Name = "UserName")]
-            //[StringLength(20)]
-            //public string UserName { get; set; }
-
             [Required, StringLength(100)]
             [Display(Name = "Full Name")]
             public string FullName { get; set; } = string.Empty;

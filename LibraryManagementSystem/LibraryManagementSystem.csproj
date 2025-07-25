@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="15.0.1" />
     <PackageReference Include="cloudscribe.Web.Pagination" Version="8.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.11" />
@@ -21,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Library.Mappings\Library.Mappings.csproj" />
     <ProjectReference Include="..\Library.Repositories\Library.Repositories.csproj" />
     <ProjectReference Include="..\Library.Utilities\Library.Utilities.csproj" />
     <ProjectReference Include="..\Library.Services\Library.Services.csproj" />

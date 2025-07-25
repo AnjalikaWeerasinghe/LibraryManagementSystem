@@ -9,112 +9,295 @@
     <link rel="stylesheet" href="~/LibraryManagementSystem.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-info border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img class="mx-auto d-block" src="~/Images/Urban_Council_Gampola_Logo.png" height="40"/>
-                    <h6 class="mt-2">Public Library <br/> Gampola</h6>
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+    <style>
+        #wrapper {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark me-5" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark me-5" asp-area="" asp-controller="About" asp-action="Index">About Us</a>
-                        </li>
+        #sidebar-wrapper {
+            width: 250px;
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
 
-                        @if (User.IsInRole("Member"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark me-5" asp-area="member" asp-controller="Event" asp-action="Index">Library Events</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark me-5" asp-area="member" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-                            </li>
-                            
-                            
-                        }
+        #sidebar-wrapper.collapsed {
+            width: 70px;
+        }
 
+        #page-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
 
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item dropdown hover-dropdown">
-                                <a class="nav-link dropdown-toggle text-dark me-5 no-caret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Collections</a>
-                                <ul class="dropdown-menu" aria-labelledby="collectiondropdown">
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Book" asp-action="Index">Books</a></li>
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Newspaper" asp-action="Index">Newspapers</a></li>
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Journal" asp-action="Index">Journals</a></li>
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Periodical" asp-action="Index">Periodicals</a></li>
+        .sidebar-heading {
+            padding: 1rem;
+            font-size: 1.2rem;
+        }
 
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Event" asp-action="Index">Events</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Report" asp-action="Index">Reports</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Acquisition" asp-action="Index">Acquisitions</a>
-                            </li>
-                            <li class="nav-item dropdown hover-dropdown">
-                                <a class="nav-link dropdown-toggle text-dark me-5 no-caret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">User Management</a>
-                                <ul class="dropdown-menu" aria-labelledby="collectiondropdown">
-                                    <li>
-                                        <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="User" asp-action="AllMembers">Member Details</a>
-                                    </li>
-                                    <li><a class="nav-link text-dark me-4" asp-area="admin" asp-controller="User" asp-action="Index">Staff Details</a></li>
-                                </ul>
-                            </li>
-                            
-                            <li class="nav-item dropdown hover-dropdown">
-                                <a class="nav-link dropdown-toggle text-dark me-5 no-caret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin Settings</a>
-                                <ul class="dropdown-menu" aria-labelledby="collectiondropdown">
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Library" asp-action="Index">Library Information</a></li>
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Language" asp-action="Index">Languages of Catalogs</a></li>
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Category" asp-action="Index">Catagories of Catalogs</a></li>
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Publisher" asp-action="Index">Publishers</a></li>
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Genre" asp-action="Index">Genres of Books</a></li>
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Country" asp-action="Index">Countries</a></li>
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="Author" asp-action="Index">Authors</a></li>
-                                    <li><a class="dropdown-item" asp-area="admin" asp-controller="FieldOfStudy" asp-action="Index">Fields - Journal</a></li>
-                                </ul>
-                            </li>
+        .collapse:not(.show) {
+            display: none;
+        }
 
-                        }
+        .collapse.show {
+            display: block;
+        }
 
-                      
-                        
-                    </ul>
-                    <partial name="_LoginPartial"/>
+        .navbar-brand img {
+            max-height: 40px;
+        }
+
+        .navbar-brand span {
+            line-height: 1.2;
+        }
+
+        .hover-bg:hover {
+            background-color: #f0f0f0; /* light grey hover background */
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-link {
+            color: #06035C !important; /* Bootstrap text-dark */
+        }
+
+            .nav-link.active,
+            .nav-link:focus,
+            .nav-link:hover {
+                color: #15151D !important; /* Bootstrap primary */
+                font-weight: 600;
+            }
+
+        .dropdown-menu {
+            border-radius: 0.5rem;
+            min-width: 180px;
+        }
+    </style>
+
+    <nav class="navbar navbar-expand-sm navbar-light bg-info border-bottom shadow">
+        <div class="container-fluid">
+            @if (User.IsInRole("Admin"))
+            {
+                <button class="btn btn-outline-primary me-3" id="menu-toggle">☰</button>
+            }
+            <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="~/Images/Urban_Council_Gampola_Logo.png" height="40" class="me-2" alt="Library Logo" />
+                <div class="d-flex flex-column lh-sm">
+                    <span class="fw-bold fs-5 text-dark">Public Library</span>
+                    @* <span class="fs-6 text-muted">Gampola</span> *@
                 </div>
+            </a>
+
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto align-items-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold px-3 py-2 rounded hover-bg" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold px-3 py-2 rounded hover-bg" asp-area="" asp-controller="About" asp-action="Index">About Us</a>
+                    </li>
+
+                    @if (User.IsInRole("Member"))
+                    {
+                        
+                        <li class="nav-item dropdown hover-dropdown">
+                            <a class="nav-link dropdown-toggle fw-semibold px-3 py-2 rounded hover-bg no-caret text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Collections</a>
+                            <ul class="dropdown-menu" aria-labelledby="collectiondropdown">
+                                <li><a class="dropdown-item" asp-area="member" asp-controller="Book" asp-action="Index">Books</a></li>
+                                <li><a class="dropdown-item" asp-area="member" asp-controller="Newspaper" asp-action="Index">Newspapers</a></li>
+                                <li><a class="dropdown-item" asp-area="member" asp-controller="Journal" asp-action="Index">Journals</a></li>
+                                <li><a class="dropdown-item" asp-area="member" asp-controller="Periodical" asp-action="Index">Periodicals</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold px-3 py-2 rounded hover-bg me-5" asp-area="member" asp-controller="Event" asp-action="Index">Library Events</a>
+                        </li>
+
+                    }
+                </ul>
+                <partial name="_LoginPartial" />
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+        </div>
+    </nav>
+
+    <div id="wrapper">
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="bg-light border-end" id="sidebar-wrapper">
+                <div class="sidebar-heading bg-info text-white">Admin Panel</div>
+                <ul class="nav flex-column p-2">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark me-5" asp-area="admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" data-bs-toggle="collapse" href="#collapseCollections" role="button" aria-expanded="false" aria-controls="collapseCollections">
+                            Collections
+                        </a>
+                        <div class="collapse" id="collapseCollections">
+                            <ul class="nav flex-column ms-3">
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="Book" asp-action="Index">Books</a></li>
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="Newspaper" asp-action="Index">Newspapers</a></li>
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="Journal" asp-action="Index">Journals</a></li>
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="Periodical" asp-action="Index">Periodicals</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Event" asp-action="Index">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" data-bs-toggle="collapse" href="#collapseUserMgmt" role="button" aria-expanded="false" aria-controls="collapseUserMgmt">
+                            Reports
+                        </a>
+                        <div class="collapse" id="collapseUserMgmt">
+                            <ul class="nav flex-column ms-3">
+                                <li><a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Report" asp-action="Index">Library Item Counts by Category</a></li>
+                                <li><a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Report" asp-action="MemberRegistrationReport">Member Count by Event</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Acquisition" asp-action="Index">Acquisitions</a>
+                    </li>
+                   
+                    <li class="nav-item">
+                        <a class="nav-link text-dark me-5" asp-area="admin" asp-controller="User" asp-action="Index">User Management</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" data-bs-toggle="collapse" href="#collapseAdminSettings" role="button" aria-expanded="false" aria-controls="collapseAdminSettings">
+                            Admin Settings
+                        </a>
+                        <div class="collapse" id="collapseAdminSettings">
+                            <ul class="nav flex-column ms-3">
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="Library" asp-action="Index">Library Information</a></li>
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="Language" asp-action="Index">Languages of Catalogs</a></li>
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="Category" asp-action="Index">Categories</a></li>
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="Publisher" asp-action="Index">Publishers</a></li>
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="Genre" asp-action="Index">Genres</a></li>
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="Country" asp-action="Index">Countries</a></li>
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="Author" asp-action="Index">Authors</a></li>
+                                <li><a class="nav-link text-dark" asp-area="admin" asp-controller="FieldOfStudy" asp-action="Index">Fields - Journal</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        }
+
+        <div id="page-content-wrapper">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+
+        <footer class="border-top footer text-muted mt-5">
+            <div class="container">
+                &copy; 2025 - LibraryManagementSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>
+
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - LibraryManagementSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/link-loader.js" defer></script>
     <script src="~/lib/chartjs/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+
+    @Html.Partial("_DeleteModal")
+    @Html.Partial("_InfoModal")
+    @Html.Partial("_SuccessModel")
+
+    <script>
+        const collapses = document.querySelectorAll("#sidebar-wrapper .collapse");
+        collapses.forEach(function (el) {
+            el.addEventListener("show.bs.collapse", function () {
+                document.getElementById("sidebar-wrapper")?.classList.remove("collapsed");
+            });
+        });
+    </script>
+
+    <script>
+        document.getElementById("menu-toggle")?.addEventListener("click", function (e) {
+            e.preventDefault();
+            document.getElementById("wrapper").classList.toggle("toggled");
+        });
+    </script>
+
+    <script>
+        let selectedId = 0;
+        let selectedName = "";
+        let currentController = "";
+
+        function openDeleteModal(Id, Name, Controller) {
+            selectedId = Id;
+            selectedName = Name;
+            currentController = Controller;
+            document.getElementById("confirmDeleteText").textContent = `Are you sure you want to delete "${Name}"?`;
+            const confirmModal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
+            confirmModal.show();
+        }
+
+        document.getElementById("confirmYesBtn").addEventListener("click", function () {
+            fetch(`${window.location.origin}/Admin/${currentController}/Delete/${selectedId}`, {
+                method: "POST"
+            }).then(response => {
+                if (response.ok) {
+                    const confirmModalEl = document.getElementById("confirmDeleteModal");
+                    const confirmModal = bootstrap.Modal.getInstance(confirmModalEl);
+                    confirmModal.hide();
+
+                    document.getElementById("successMessage").textContent = ` "${selectedName}" deleted successfully.`;
+                    const successModald = new bootstrap.Modal(document.getElementById("successModald"));
+                    successModald.show();
+                }
+            });
+        });
+
+        document.getElementById("successOkBtn").addEventListener("click", function () {
+            const successModald = bootstrap.Modal.getInstance(document.getElementById("successModald"));
+            successModald.hide();
+            location.reload(); // or redirect as needed
+        });
+    </script>
+
+    <script>
+        window.onload = function () {
+            var message = '@TempData["SuccessMessage"]';
+            if (message) {
+                document.getElementById("successText").innerText = message;
+
+                var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+            }
+        };
+
+        function clearForm() {
+            document.querySelector("form").reset();
+        }
+    </script>
+
+    <script>
+        window.onload = function () {
+            const successMessage = '@TempData["SuccessMessage"]';
+            const errorMessage = '@TempData["ErrorMessage"]';
+
+            if (successMessage) {
+                document.getElementById("infoText").innerText = successMessage;
+                new bootstrap.Modal(document.getElementById("infoModal")).show();
+            } else if (errorMessage) {
+                document.getElementById("infoText").innerText = errorMessage;
+                new bootstrap.Modal(document.getElementById("infoModal")).show();
+            }
+        };
+    </script>
+
 </body>
 </html>

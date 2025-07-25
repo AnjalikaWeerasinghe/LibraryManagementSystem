@@ -15,7 +15,7 @@ namespace Library.Services
         PublisherViewModel GetPublisherById(int PublisherId);
         Task<IEnumerable<PublisherViewModel>> GetAllAsync();
         void UpdatePublisher(PublisherViewModel publisher);
-        void InsertPublisher(PublisherViewModel publisher);
+        string InsertPublisher(PublisherViewModel publisher);
         void DeletePublisher(int id);
     }
 }

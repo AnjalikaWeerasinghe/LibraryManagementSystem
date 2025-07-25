@@ -14,7 +14,7 @@ namespace Library.Services
         GenreViewModel GetGenreById(int GenreId);
         Task<IEnumerable<GenreViewModel>> GetAllAsync();
         void UpdateGenre(GenreViewModel genre);
-        void InsertGenre(GenreViewModel genre);
+        string InsertGenre(GenreViewModel genre);
         void DeleteGenre(int id);
     }
 }

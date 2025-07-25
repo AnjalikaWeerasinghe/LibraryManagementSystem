@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Library.Repositories.Interfaces;
 using Library.Services;
 using Library.Utilities;
 using Library.ViewModels;
@@ -13,195 +14,138 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
     {
 
         private readonly IApplicationUserService _userService;
-        private const int PageSize = 20;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserController(IApplicationUserService userService)
+        public UserController(IApplicationUserService userService, IUnitOfWork unitOfWork)
         {
             _userService = userService;
+            _unitOfWork = unitOfWork;
         }
 
-        // GET: /Admin/ApplicationUser?page=1
-        public async Task<IActionResult> Index(int page = 1)
+        public IActionResult Index(string searchTerm, int pageNumber = 1, int pageSize = 10)
         {
-            var model = await _userService.GetAllAsync(page, PageSize);
-            return View(model);
-        }
+            PagedResult<ApplicationUserViewModel> result;
 
-        // GET: /Admin/ApplicationUser/Members
-        public async Task<IActionResult> Members(int page = 1)
-        {
-            var model = await _userService.GetAllMembersAsync(page, PageSize);
-            return View("Index", model);
-        }
-
-        // GET: /Admin/ApplicationUser/Staff
-        public async Task<IActionResult> Staff(int page = 1)
-        {
-            var model = await _userService.GetAllStaffAsync(page, PageSize);
-            return View("Index", model);
-        }
-
-        // GET: /Admin/ApplicationUser/Edit/123
-        [HttpGet]
-        public async Task<IActionResult> Edit(string id)
-        {
-            var vm = await _userService.GetByIdAsync(id);
-            if (vm == null) return NotFound();
-
-            vm.RoleList = new List<SelectListItem>
+            if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                new("Admin",      WebSiteRoles.WebSite_Admin),
-                new("Librarian",  WebSiteRoles.WebSite_Librarian),
-                new("Staff",      WebSiteRoles.WebSite_Staff),
-                new("Member",     WebSiteRoles.WebSite_Member)
-            };
-
-            vm.UserStatusList = Enum.GetValues(typeof(UserStatus))
-                .Cast<UserStatus>()
-                .Select(e => new SelectListItem
-                {
-                    Value = e.ToString(),
-                    Text = e.ToString(),
-                    Selected = (vm.UserStatus == e)
-                });
-
-            return View(vm);
-        }
-
-        // POST: /Admin/ApplicationUser/Edit
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ApplicationUserViewModel vm)
-        {
-            if (!ModelState.IsValid)
+                result = _userService.SearchUserByFullName(searchTerm, pageNumber, pageSize);
+            }
+            else
             {
-                // rebuild dropdowns because model binding lost them
-                vm.RoleList = BuildRoleList();
-                vm.UserStatusList = Enum.GetValues(typeof(UserStatus))
-                .Cast<UserStatus>()
-                .Select(e => new SelectListItem
-                {
-                    Value = e.ToString(),
-                    Text = e.ToString(),
-                    Selected = (vm.UserStatus == e)
-                });
-
-                return View(vm);
+                result = _userService.GetAll(pageNumber, pageSize);
             }
 
-            try
-            {
-                await _userService.UpdateApplicationUserAsync(vm);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();             // someone deleted it in the meantime
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                ModelState.AddModelError("", "The record was modified by another admin. Try again.");
-                vm.RoleList = BuildRoleList();
-                vm.UserStatusList = Enum.GetValues(typeof(UserStatus))
-                .Cast<UserStatus>()
-                .Select(e => new SelectListItem
-                {
-                    Value = e.ToString(),
-                    Text = e.ToString(),
-                    Selected = (vm.UserStatus == e)
-                });
-
-                return View(vm);
-            }
-
-            return RedirectToAction(nameof(Index));
+            ViewBag.SearchTerm = searchTerm;
+            return View(result);
         }
 
-        // POST: /Admin/ApplicationUser/ToggleStatus/123
-        [HttpPost]
-        public async Task<IActionResult> ToggleStatus(string id)
-        {
-            var user = await _userService.GetByIdAsync(id);
-            if (user == null) return NotFound();
-
-            var newStatus = user.UserStatus == UserStatus.Active ? UserStatus.Inactive : UserStatus.Active;
-            await _userService.SetUserStatusAsync(id, newStatus);
-            return RedirectToAction(nameof(Index));
-        }
-
-        // GET: /Admin/ApplicationUser/AssignRole/123
-        [HttpGet]
-        public async Task<IActionResult> AssignRole(string id)
-        {
-            var vm = await _userService.GetByIdAsync(id);
-            if (vm == null) return NotFound();
-            return View(vm);
-        }
-
-        // POST: /Admin/ApplicationUser/AssignRole
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AssignRole(string id, string roleName)
-        {
-            await _userService.AssignRoleAsync(id, roleName);
-            return RedirectToAction(nameof(Index));
-        }
-
-        // GET: /Admin/ApplicationUser/Create
         [HttpGet]
         public IActionResult Create()
         {
-            var vm = new ApplicationUserViewModel
+            var model = new ApplicationUserViewModel
             {
-                RoleList = BuildRoleList(),
+                GenderList = Enum.GetValues(typeof(Gender))
+                    .Cast<Gender>()
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.ToString(),
+                        Text = e.ToString()
+                    }),
+
                 UserStatusList = Enum.GetValues(typeof(UserStatus))
                     .Cast<UserStatus>()
                     .Select(e => new SelectListItem
                     {
                         Value = e.ToString(),
                         Text = e.ToString()
-                    })
+                    }),
+
+                RoleList = typeof(WebSiteRoles)
+                    .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                    .Where(f => f.IsLiteral && !f.IsInitOnly)
+                    .Select(f => new SelectListItem
+                    {
+                        Value = f.GetValue(null)?.ToString(),
+                        Text = f.GetValue(null)?.ToString()
+                    }).ToList()
             };
 
-            ModelState.Clear();
-            Console.WriteLine("Email in VM: " + vm.Email);
-            return View(vm);
+            return View(model);
         }
 
-        // POST: /Admin/ApplicationUser/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ApplicationUserViewModel model, string password)
+        public async Task<IActionResult> Create(ApplicationUserViewModel vm)
         {
-            if (!ModelState.IsValid)
-            {
-                model.RoleList = BuildRoleList();
-                model.UserStatusList = Enum.GetValues(typeof(UserStatus))
-                    .Cast<UserStatus>()
-                    .Select(e => new SelectListItem
-                    {
-                        Value = e.ToString(),
-                        Text = e.ToString(),
-                        Selected = (model.UserStatus == e)
-                    });
+            bool isMember = vm.UserRole == WebSiteRoles.WebSite_Member;
+            vm.UserCode =await _userService.GenerateNextUserCodeAsync(isMember);
 
-                //return View(model);
-            }
+            await _userService.InsertApplicationUserAsync(vm, vm.Password);
+            TempData["SuccessMessage"] = $"{vm.FullName} successfully added!";
 
-            var result = await _userService.InsertApplicationUserAsync(model, password);
+            return RedirectToAction(nameof(Create));
 
-            
-
-            return RedirectToAction(nameof(Index));
-            
         }
 
-        private static List<SelectListItem> BuildRoleList() => new()
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
         {
-            new("Admin",      WebSiteRoles.WebSite_Admin),
-            new("Librarian",  WebSiteRoles.WebSite_Librarian),
-            new("Staff",      WebSiteRoles.WebSite_Staff),
-            new("Member",     WebSiteRoles.WebSite_Member)
-        };
+            var user = _userService.GetUserById(id);
+
+            user.GenderList = Enum.GetValues(typeof(Gender))
+                .Cast<Gender>()
+                .Select(f => new SelectListItem
+                {
+                    Value = f.ToString(),
+                    Text = f.ToString(),
+                    Selected = (user.Gender == f)
+                });
+
+            user.UserStatusList = Enum.GetValues(typeof(UserStatus))
+                .Cast<UserStatus>()
+                .Select(f => new SelectListItem
+                {
+                    Value = f.ToString(),
+                    Text = f.ToString(),
+                    Selected = (user.UserStatus == f)
+                });
+
+            user.RoleList = typeof(WebSiteRoles)
+                .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                .Where(f => f.IsLiteral && !f.IsInitOnly)
+                .Select(f => new SelectListItem
+                {
+                    Value = f.GetValue(null)?.ToString(),
+                    Text = f.GetValue(null)?.ToString(),
+                    Selected = (user.UserRole == f.GetValue(null)?.ToString())
+                }).ToList();
+
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(ApplicationUserViewModel model)
+        {
+
+            var user = _unitOfWork.GenericRepository<ApplicationUser>().GetById(model.Id);
+            if (user == null)
+                return NotFound();
+
+            user.Gender = model.Gender;
+            user.Email = model.Email;
+            user.UserName = model.Email;
+            user.Address = model.Address;
+            user.CallingName = model.CallingName;
+            user.DOB = model.DOB;
+            user.UserStatus = model.UserStatus;
+            user.PictureUrl = model.PictureUrl;
+            user.FullName = model.FullName;
+
+            await _userService.UpdateApplicationUserAsync(model);
+
+            TempData["SuccessMessage"] = $"{model.FullName} updated successfully!";
+            return RedirectToAction(nameof(Index));
+
+        }
 
     }
 }

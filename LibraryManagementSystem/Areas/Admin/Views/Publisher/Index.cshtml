@@ -1,11 +1,9 @@
 ﻿@using Library.Utilities
-@model PagedResult<Library.ViewModels.PublisherViewModel>
+@model Library.ViewModels.PublisherViewModel
 
 @{
     ViewData["Title"] = "Index";
 }
-
-@Html.Partial("_DeleteModal")
 
 <h1>Publishers of Library Catalogs</h1>
 <br />
@@ -17,98 +15,96 @@
 </form>
 <br />
 
-<p>
-    <a asp-action="Create" class="btn btn-secondary">Add a New Publisher</a>
-</p>
+<div class="row">
+    <div class="col-md-9">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Address
+                    </th>
+                    <th>
+                        Phone Number
+                    </th>
+                    <th>
+                        Landline Number
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PagedPublishers?.Data)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PhoneNumber)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Landline)
+                        </td>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-               Id
-            </th>
-            <th>
-                Name
-            </th>
-            <th>
-                Address
-            </th>
-            <th>
-                Phone Number
-            </th>
-            <th>
-                Landline Number
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Data) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Landline)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |
-                <button class="btn btn-danger" onclick="openDeleteModal(@item.Id, '@item.Name')">Delete</button>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-dark">Edit</a> |
+                            <button class="btn btn-sm btn-danger" onclick="openDeleteModal(@item.Id, '@item.Name', '@ViewContext.RouteData.Values["controller"]')">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-3">
+        <form asp-action="CreateorUpdate" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Address"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PhoneNumber"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Landline"></label>
+                <input asp-for="Landline" class="form-control" />
+                <span asp-validation-for="Landline" class="text-danger"></span>
+            </div>
+
+            <br />
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+
+    </div>
+</div>
 
 @section Scripts {
-    <script>
-        let selectedPublisherId = 0;
-        let selectedPublisherName = "";
-
-        function openDeleteModal(publisherId, publisherName) {
-            selectedPublisherId = publisherId;
-            selectedPublisherName = publisherName;
-            document.getElementById("confirmDeleteText").textContent = `Are you sure you want to delete "${publisherName}"?`;
-            const confirmModal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
-            confirmModal.show();
-        }
-
-        document.getElementById("confirmYesBtn").addEventListener("click", function () {
-            fetch(`/Admin/Publisher/Delete/${selectedPublisherId}`, {
-                method: "POST"
-            }).then(response => {
-                if (response.ok) {
-                    const confirmModalEl = document.getElementById("confirmDeleteModal");
-                    const confirmModal = bootstrap.Modal.getInstance(confirmModalEl);
-                    confirmModal.hide();
-
-                    document.getElementById("successMessage").textContent = ` "${selectedPublisherName}" deleted successfully.`;
-                    const successModal = new bootstrap.Modal(document.getElementById("successModal"));
-                    successModal.show();
-                }
-            });
-        });
-
-        document.getElementById("successOkBtn").addEventListener("click", function () {
-            const successModal = bootstrap.Modal.getInstance(document.getElementById("successModal"));
-            successModal.hide();
-            location.reload(); // or redirect as needed
-        });
-    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 
-<cs-pager cs-paging-pagesize=(int)Model.PageSize
-          cs-paging-pagenumber=(int)Model.PageNumber
-          cs-paging-totalitems=(int)Model.TotalItems
+<cs-pager cs-paging-pagesize=(int)Model.PagedPublishers.PageSize
+          cs-paging-pagenumber=(int)Model.PagedPublishers.PageNumber
+          cs-paging-totalitems=(int)Model.PagedPublishers.TotalItems
           cs-pagenumber-param="pageNumber"
           asp-controller="Publisher"
 

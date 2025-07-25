@@ -30,11 +30,9 @@ namespace Library.ViewModels
         public string Edition { get; set; }
         [Required(ErrorMessage = "Select a language.")]
         [Display(Name = "Language")]
-        [ForeignKey("Language")]
         public int LanguageId { get; set; }
         [Required(ErrorMessage = "Select a category.")]
         [Display(Name = "Category")]
-        [ForeignKey("Category")]
         public int CategoryId { get; set; }
         [Display(Name = "Publisher")]
         [ForeignKey("Publisher")]

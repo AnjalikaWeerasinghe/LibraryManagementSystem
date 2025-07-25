@@ -315,8 +315,14 @@ namespace Library.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("EventTitle")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("LibraryEventId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ParticipantStatus")
                         .HasColumnType("int");
@@ -1339,6 +1345,10 @@ namespace Library.Repositories.Migrations
 
                     b.Property<int>("Gender")
                         .HasColumnType("int");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PictureUrl")
                         .HasColumnType("nvarchar(max)");

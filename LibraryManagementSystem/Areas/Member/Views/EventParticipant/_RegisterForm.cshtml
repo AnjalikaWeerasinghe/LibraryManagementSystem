@@ -1,0 +1,27 @@
+﻿@using Library.Models
+@model Library.ViewModels.EventParticipantViewModel
+
+<form asp-action="Register" asp-controller="EventParticipant" method="post">
+    <input type="hidden" asp-for="LibraryEventId" />
+    <input type="hidden" asp-for="ApplicationUserId" />
+    
+    <input type="hidden" asp-for="RegisteredDate" />
+    <div class="mb-2">
+        <label class="form-label">Event Title</label>
+        <input type="text" class="form-control" value="@Model.EventTitle" readonly />
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Location</label>
+        <input type="text" class="form-control" value="@Model.Location" readonly />
+    </div>
+
+    <div class="mb-2">
+        <label asp-for="ParticipantStatus" class="form-label"></label>
+        <select asp-for="ParticipantStatus" asp-items="Html.GetEnumSelectList<ParticipantStatus>()" class="form-select">
+            <option value="">-- Select status --</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-info">Submit</button>
+</form>

@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Library.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,6 +15,8 @@ namespace Library.ViewModels
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+
+        public PagedResult<FieldOfStudyViewModel> PagedFields { get; set; }
 
         public FieldOfStudyViewModel()
         {

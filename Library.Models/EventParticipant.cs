@@ -19,6 +19,10 @@ namespace Library.Models
         [DataType(DataType.Date)]
         public DateTime RegisteredDate { get; set; }
 
+        public string? EventTitle { get; set; }
+
+        public string? Location { get; set; }
+
         [Required]
         public ParticipantStatus ParticipantStatus { get; set; } = ParticipantStatus.Registered;
 

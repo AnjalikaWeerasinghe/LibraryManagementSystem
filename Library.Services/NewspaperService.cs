@@ -72,11 +72,32 @@ namespace Library.Services
             return vm;
         }
 
-        public void InsertNewspaper(NewspaperViewModel newspaper)
+        public string InsertNewspaper(NewspaperViewModel newspaper)
         {
-            var model = new NewspaperViewModel().ConvertToViewModelToModel(newspaper);
+            var existing = _unitOfWork.GenericRepository<Newspaper>()
+                .GetAll()
+                .FirstOrDefault(c => c.Title == newspaper.Title && c.ISSN == newspaper.ISSN);
+
+            if (existing != null)
+                return "Newspaper already exists.";
+
+            var model = new Newspaper
+            {
+                Title = newspaper.Title,
+                ISSN = newspaper.ISSN,
+                Description = newspaper.Description,
+                PublisherId = newspaper.PublisherId,
+                LanguageId = newspaper.LanguageId,
+                CategoryId = newspaper.CategoryId,
+                ItemCode = newspaper.ItemCode,
+                IssuedDate = newspaper.IssuedDate,
+                IssueNumber = newspaper.IssueNumber
+            };
+
             _unitOfWork.GenericRepository<Newspaper>().Add(model);
             _unitOfWork.Save();
+
+            return "Newspaper added successfully.";
         }
 
         public void UpdateNewspaper(NewspaperViewModel newspaper)

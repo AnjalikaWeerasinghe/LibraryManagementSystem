@@ -14,7 +14,7 @@ namespace Library.Services
         CountryViewModel GetCountryById(int CountryId);
         Task<IEnumerable<CountryViewModel>> GetAllAsync();
         void UpdateCountry(CountryViewModel country);
-        void InsertCountry(CountryViewModel country);
+        string InsertCountry(CountryViewModel country);
         void DeleteCountry(int id);
     }
 }

@@ -13,7 +13,7 @@
     </div>
 
     <div class="col-md-6">
-        <label asp-for="Email" class="form-label"></label>
+        <label asp-for="Email" class="form-label">User Email</label>
         <input asp-for="Email" class="form-control" autocomplete="off" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
@@ -30,8 +30,9 @@
 
     <div class="col-md-4">
         <label asp-for="Gender" class="form-label"></label>
-        <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()"
-                class="form-select"></select>
+        <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-select">
+            <option value="">-- Select Gender --</option>
+        </select>
     </div>
 
     <div class="col-6">
@@ -63,7 +64,7 @@
         {
             <div class="form-group">
                 <label>Current Image</label><br />
-                <img src="@Model.PictureUrl" alt="Event Image" style="max-height: 120px;" />
+                <img src="@Model.PictureUrl" alt="User Image" style="max-height: 120px;" />
             </div>
         }
     </div>

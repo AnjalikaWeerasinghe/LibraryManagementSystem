@@ -32,7 +32,7 @@
             </div>
 
             <div class="col-md-6 form-group">
-                <label asp-for="EndDate" class="control-label"></label>
+                <label asp-for="EndDate" class="control-label">End Date</label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
@@ -78,32 +78,8 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@if (ViewBag.ShowModal != null && (bool)ViewBag.ShowModal)
-{
-    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-info text-black">
-                    <h5 class="modal-title" id="updateModalLabel">Update Successful!</h5>
-                </div>
-                <div class="modal-body">
-                    @ViewBag.UpdateSuccess
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-info" id="confirmRedirectBtn">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        window.addEventListener('load', function () {
-            var modal = new bootstrap.Modal(document.getElementById('updateModal'));
-            modal.show();
-
-            document.getElementById('confirmRedirectBtn').addEventListener('click', function () {
-                window.location.href = '@Url.Action("Index", "Event")';
-            });
-        });
-    </script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

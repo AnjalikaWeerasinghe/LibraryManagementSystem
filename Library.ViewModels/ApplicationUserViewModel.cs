@@ -16,20 +16,21 @@ namespace Library.ViewModels
     {
         public string? Id { get; set; }
 
-        [Required, EmailAddress]
-        public string Email { get; set; } = string.Empty;
+        [Required]
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters.")]
-        public string? Password { get; set; }
+        public string Password { get; set; }
 
-        public string? UserName { get; set; } = "";
+        public string? UserName { get; set; }
 
         [Required]
         [Display(Name = "User Code"), ReadOnly(true)]
         [UserCodeFormat]
-        public string UserCode { get; set; } = string.Empty; // LIB-MEM-00001 , LIB-STF-001
+        public string UserCode { get; set; } = string.Empty; // LIB-MEM-0001 , LIB-STF-0001
 
         // User Personnel Information
         [Required, StringLength(100)]
@@ -46,10 +47,10 @@ namespace Library.ViewModels
 
         [Required]
         [Display(Name = "Gender")]
-        public Gender Gender { get; set; }
+        public Gender? Gender { get; set; }
 
         [Required, StringLength(250)]
-        public string Address { get; set; } = string.Empty;
+        public string? Address { get; set; } = string.Empty;
 
         [Url]
         [Display(Name = "Profile Picture URL")]
@@ -66,11 +67,55 @@ namespace Library.ViewModels
 
         public IEnumerable<SelectListItem>? GenderList { get; set; }
         public IEnumerable<SelectListItem>? UserStatusList { get; set; }
-        public IEnumerable<SelectListItem>? RoleList { get; set; }
+        public List<SelectListItem>? RoleList { get; set; }
+
+        public class UserSearchViewModel
+        {
+            public string SearchTerm { get; set; }
+            public PagedResult<ApplicationUserViewModel> Result { get; set; }
+        }
 
         public ApplicationUserViewModel()
         {
             
+        }
+
+        public ApplicationUserViewModel(ApplicationUser model)
+        {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+
+            Id = model.Id;
+            FullName = model.FullName;
+            CallingName = model.CallingName;
+            UserName = model.UserName;
+            DOB = model.DOB;
+            Email = model.Email;
+            Gender = model.Gender;
+            Address = model.Address;
+            PictureUrl = model.PictureUrl;
+            UserCode = model.UserCode;
+            UserRole = model.UserRole;
+            UserStatus = model.UserStatus;
+        }
+
+        public static ApplicationUser ConvertViewModelToModel(ApplicationUserViewModel model)
+        {
+            return new ApplicationUser
+            {
+
+                FullName = model.FullName,
+                CallingName = model.CallingName,
+                UserName = model.UserName,
+                DOB = model.DOB,
+                Email = model.Email,
+                Gender = model.Gender,
+                Address = model.Address,
+                PictureUrl = model.PictureUrl,
+                UserCode = model.UserCode,
+                UserRole = model.UserRole,
+                UserStatus = model.UserStatus
+            };
         }
 
         

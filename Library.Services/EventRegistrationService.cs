@@ -1,6 +1,7 @@
 ﻿using Library.Models;
 using Library.Repositories.Interfaces;
 using Library.Utilities;
+using Library.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,43 +19,68 @@ namespace Library.Services
             _unitOfWork = unitOfWork;
         }
 
-        public bool CancelRegistration(int eventId, string userId, out string message)
+        public async Task CancelRegistrationAsync(int eventregistrationId, string userId)
         {
-            throw new NotImplementedException();
+            var registration = _unitOfWork.GenericRepository<EventParticipant>()
+            .GetAll()
+            .FirstOrDefault(p => p.Id == eventregistrationId && p.ApplicationUserId == userId);
+
+            if (registration == null)
+                throw new Exception("Registration not found.");
+
+            _unitOfWork.GenericRepository<EventParticipant>().Delete(registration);
+            await _unitOfWork.SaveAsync();
         }
 
-        public PagedResult<EventParticipant> GetUserRegistrations(string userId, int pageNumber, int pageSize)
+        public async Task<IEnumerable<EventParticipantViewModel>> GetRegistrationsByEventAsync(int eventId)
         {
-            throw new NotImplementedException();
+            var participants = _unitOfWork.GenericRepository<EventParticipant>()
+            .GetAll(includeProperties: "LibraryEvent,ApplicationUser")
+            .Where(p => p.LibraryEventId == eventId)
+            .ToList();
+
+            var vms = participants.Select(p => new EventParticipantViewModel(p));
+            return await Task.FromResult(vms);
         }
 
-        public bool MarkAsParticipated(int eventParticipantId)
+        public async Task<IEnumerable<EventParticipantViewModel>> GetRegistrationsByUserAsync(string userId)
         {
-            throw new NotImplementedException();
+            var registrations = _unitOfWork.GenericRepository<EventParticipant>()
+            .GetAll(includeProperties: "LibraryEvent,ApplicationUser")
+            .Where(p => p.ApplicationUserId == userId)
+            .ToList();
+
+            var viewModels = registrations.Select(r => new EventParticipantViewModel(r));
+            return await Task.FromResult(viewModels);
         }
 
-        public bool RegisterUser(int eventId, string userId, out string message)
+        public async Task<string> RegisterAsync(int eventId, string userId)
         {
-            // Check for duplicate
-            var exists = _unitOfWork.GenericRepository<EventParticipant>()
-                             .GetAll(ep => ep.LibraryEventId == eventId &&
-                                           ep.ApplicationUserId == userId)
-                             .Any();
-            if (exists)
-            {
-                message = "You are already registered for this event.";
-                return false;
-            }
+            var existing = _unitOfWork.GenericRepository<EventParticipant>()
+                .GetAll(includeProperties: "LibraryEvent,ApplicationUser")
+                .FirstOrDefault(p => p.LibraryEventId == eventId && p.ApplicationUserId == userId);
 
-            // Save registration
-            _unitOfWork.GenericRepository<EventParticipant>().Add(new EventParticipant
+            var ev = _unitOfWork.GenericRepository<LibraryEvent>().GetById(eventId);
+
+            if (existing != null)
+                return "Already registered.";
+
+            var registration = new EventParticipant
             {
                 LibraryEventId = eventId,
-                ApplicationUserId = userId
-            });
-            _unitOfWork.Save();
-            message = "Registration successful!";
-            return true;
+                ApplicationUserId = userId,
+                RegisteredDate = DateTime.UtcNow,
+                ParticipantStatus = ParticipantStatus.Registered,
+                Location = ev.Location,
+                EventTitle = ev.Title
+            };
+
+            _unitOfWork.GenericRepository<EventParticipant>().Add(registration);
+            await _unitOfWork.SaveAsync();
+
+            return "Registration Successful.";
         }
+
+
     }
 }

@@ -71,10 +71,24 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(PeriodicalViewModel vm)
         {
+            
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdowns(vm);
+            }
+
             vm.ItemCode = _periodical.GenerateNextPeriodicalCode();
 
-            _periodical.InsertPeriodical(vm);
-            TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
+            string result = _periodical.InsertPeriodical(vm);
+
+            if (result == "Periodical already exists.")
+            {
+                TempData["ErrorMessage"] = result;
+            }
+            else
+            {
+                TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
+            }
 
             return RedirectToAction(nameof(Create));
 
@@ -170,10 +184,17 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
                         Selected = (vm.Frequency == e)
                     });
 
-            ViewBag.UpdateSuccess = $" '{periodical.Title}' updated successfully!";
-            ViewBag.ShowModal = true;
+            TempData["SuccessMessage"] = $"{vm.Title} updated successfully !";
 
             return View(vm);
+        }
+
+        private async Task PopulateDropdowns(PeriodicalViewModel vm)
+        {
+            vm.Languages = await _languageService.GetAllAsync();
+            vm.Publishers = await _publisherService.GetAllAsync();
+            vm.Categories = await _categoryService.GetAllAsync();
+
         }
     }
 }

@@ -4,12 +4,13 @@ using Library.Services;
 using Library.Utilities;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Drawing.Printing;
 using static Library.ViewModels.PublisherViewModel;
 
 namespace LibraryManagementSystem.Areas.Admin.Controllers
 {
-    [Area("admin")]
+    [Area("Admin")]
     public class PublisherController : Controller
     {
         private IPublisherService _publisher;
@@ -23,85 +24,73 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
 
         public IActionResult Index(string searchTerm, int pageNumber = 1, int pageSize = 10)
         {
-            PagedResult<PublisherViewModel> result;
+            var result = string.IsNullOrWhiteSpace(searchTerm)
+                ? _publisher.GetAll(pageNumber, pageSize)
+                : _publisher.GetPublisherByName(searchTerm, pageNumber, pageSize);
 
-            if (!string.IsNullOrWhiteSpace(searchTerm))
+            var vm = new PublisherViewModel
             {
-                result = _publisher.GetPublisherByName(searchTerm, pageNumber, pageSize);
-            }
-            else
-            {
-                result = _publisher.GetAll(pageNumber, pageSize);
-            }
+                PagedPublishers = result,
+                
+            };
 
             ViewBag.SearchTerm = searchTerm;
-            return View(result);
-        }
-
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            var viewModel = _publisher.GetPublisherById(id);
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(PublisherViewModel vm)
-        {
-            if (!ModelState.IsValid)
-                return View(vm);
-
-            var publisher = _unitOfWork.GenericRepository<Publisher>().GetById(vm.Id);
-            if (publisher == null)
-                return NotFound();
-
-            publisher.Name = vm.Name;
-            publisher.Address = vm.Address;
-            publisher.PhoneNumber = vm.PhoneNumber;
-            publisher.Landline = vm.Landline;
-
-            _unitOfWork.GenericRepository<Publisher>().Update(publisher);
-            _unitOfWork.Save();
-
-            ViewBag.UpdateSuccess = $" '{publisher.Name}' updated successfully!";
-            ViewBag.ShowModal = true;
-
             return View(vm);
         }
 
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
         [HttpPost]
-        public IActionResult Create(PublisherViewModel vm)
+        public IActionResult CreateorUpdate(PublisherViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(vm);
-
-            try
             {
-                _unitOfWork.GenericRepository<Publisher>().Add(new Publisher
+                vm.PagedPublishers = _publisher.GetAll(1, 10);
+                return View(vm);
+                
+            }
+
+            if (vm.Id == 0)
+            {
+                var result = _publisher.InsertPublisher(vm);
+                if (result == "Publisher already exists.")
                 {
-                    Name = vm.Name,
-                    Address = vm.Address,
-                    PhoneNumber = vm.PhoneNumber,
-                    Landline = vm.Landline
-                });
-                _unitOfWork.Save();
+                    TempData["ErrorMessage"] = result;
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = $"{vm.Name} successfully Added!";
+                }
 
-                TempData["SuccessMessage"] = $"{vm.Name} successfully Added !";
-                ModelState.Clear(); // clear input fields
-                return View();
+                ModelState.Clear();
             }
-            catch
+            else
             {
-                ModelState.AddModelError("", "An error occurred while saving.");
-                return View(vm);
+                _publisher.UpdatePublisher(vm);
+                TempData["SuccessMessage"] = $"{vm.Name} updated successfully !";
+                ModelState.Clear();
             }
 
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var publisher = _publisher.GetPublisherById(id);
+            if (publisher == null)
+                return NotFound();
+
+            var pagedData = _publisher.GetAll(1, 10);
+
+            var vm = new PublisherViewModel
+            {
+                Id = publisher.Id,
+                Name = publisher.Name,
+                Address = publisher.Address,
+                PhoneNumber = publisher.PhoneNumber,
+                Landline = publisher.Landline,
+                PagedPublishers = pagedData
+            };
+
+            return View("Index", vm);
         }
 
         public IActionResult Delete(int id)

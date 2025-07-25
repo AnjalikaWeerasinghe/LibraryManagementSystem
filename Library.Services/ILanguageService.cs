@@ -15,7 +15,7 @@ namespace Library.Services
         LanguageViewModel GetLanguageById(int LanguageId);
         Task<IEnumerable<LanguageViewModel>> GetAllAsync();
         void UpdateLanguage(LanguageViewModel language);
-        void InsertLanguage(LanguageViewModel language);
+        string InsertLanguage(LanguageViewModel language);
         void DeleteLanguage(int id);
 
     }

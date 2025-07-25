@@ -72,11 +72,33 @@ namespace Library.Services
             return vm;
         }
 
-        public void InsertBook(BookViewModel book)
+        public string InsertBook(BookViewModel book)
         {
-            var model = new BookViewModel().ConvertToViewModelToModel(book);
+            var existing = _unitOfWork.GenericRepository<Book>()
+                .GetAll()
+                .FirstOrDefault(c => c.Title == book.Title && c.ISBN == book.ISBN);
+
+            if (existing != null)
+                return "Book already exists.";
+
+            var model = new Book
+            {
+                Title = book.Title,
+                ISBN = book.ISBN,
+                Description = book.Description,
+                PublisherId = book.PublisherId,
+                LanguageId = book.LanguageId,
+                CategoryId = book.CategoryId,
+                GenreId = book.GenreId,
+                PublishedYear = book.PublishedYear,
+                Edition = book.Edition,
+                ItemCode = book.ItemCode,
+            };
+
             _unitOfWork.GenericRepository<Book>().Add(model);
             _unitOfWork.Save();
+
+            return "Book added successfully.";
         }
 
 

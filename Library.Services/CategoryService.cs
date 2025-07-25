@@ -69,17 +69,31 @@ namespace Library.Services
             return vm;
         }
 
-        public void InsertCategory(CategoryViewModel category)
+        public string InsertCategory(CategoryViewModel category)
         {
-            var model = new CategoryViewModel().ConvertViewModel(category);
+            var existing = _unitOfWork.GenericRepository<Category>()
+                    .GetAll()
+                    .FirstOrDefault(c => c.Name == category.Name && c.ItemType == category.ItemType);
+
+            if (existing != null)
+                return "Category already exists.";
+
+            var model = new Category
+            {
+                Name = category.Name,
+                ItemType = category.ItemType
+            };
+
             _unitOfWork.GenericRepository<Category>().Add(model);
             _unitOfWork.Save();
+
+            return "Category added successfully.";
         }
 
         public void UpdateCategory(CategoryViewModel category)
         {
-            var model = new CategoryViewModel().ConvertViewModel(category);
-            var ModelById = _unitOfWork.GenericRepository<Category>().GetById(model.Id);
+            
+            var ModelById = _unitOfWork.GenericRepository<Category>().GetById(category.Id);
 
             ModelById.Name = category.Name;
             ModelById.ItemType = category.ItemType;
@@ -90,7 +104,7 @@ namespace Library.Services
 
         public async Task<IEnumerable<CategoryViewModel>> GetAllAsync()
         {
-            var cats = await _unitOfWork.GenericRepository<Category>().GetAllAsync();     // <- this is the missing call
+            var cats = await _unitOfWork.GenericRepository<Category>().GetAllAsync();     
 
             return cats.Select(c => new CategoryViewModel
             {

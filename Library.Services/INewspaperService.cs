@@ -14,7 +14,7 @@ namespace Library.Services
         PagedResult<NewspaperViewModel> GetNewspaperByName(string name, int pageNumber, int pageSize);
         NewspaperViewModel GetNewspaperById(int newspaperId);
         void UpdateNewspaper(NewspaperViewModel newspaper);
-        void InsertNewspaper(NewspaperViewModel newspaper);
+        string InsertNewspaper(NewspaperViewModel newspaper);
         void DeleteNewspaper(int id);
         string GenerateNextNewspaperCode();
     }

@@ -86,7 +86,7 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
                 vm.Languages = await _languageService.GetAllAsync();
                 vm.Publishers = await _publisherService.GetAllAsync();
                 vm.Categories = (await _categoryService.GetAllAsync())
-                    .Where(c => c.ItemType == ItemType.Journal).ToList();
+                    .Where(c => c.ItemType == ItemType.Book).ToList();
                 vm.Genres = await _genreService.GetAllAsync();
 
             }
@@ -95,7 +95,7 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             if (book == null)
                 return NotFound();
 
-            book.Id = vm.Id; // Ensure the ID is set correctly
+            book.Id = vm.Id; 
             book.Title = vm.Title;
             book.Description = vm.Description;
             book.ISBN = vm.ISBN;
@@ -110,10 +110,9 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             _unitOfWork.GenericRepository<Book>().Update(book);
             _unitOfWork.Save();
 
-            ViewBag.UpdateSuccess = $" '{book.Title}' updated successfully!";
-            ViewBag.ShowModal = true;
+            TempData["SuccessMessage"] = $"{vm.Title} updated successfully !";
 
-            return View(vm);
+            return RedirectToAction(nameof(Create));
         }
 
         [HttpGet]
@@ -136,12 +135,24 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(BookViewModel vm)
         {
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdowns(vm);
+            }
+
             vm.ItemCode = _book.GenerateNextBookCode();
 
-            _book.InsertBook(vm);
-            TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
+            string result = _book.InsertBook(vm);
 
-            // PRG: redirect to avoid duplicate submissions
+            if (result == "Book already exists.")
+            {
+                TempData["ErrorMessage"] = result;
+            }
+            else
+            {
+                TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
+            }
+
             return RedirectToAction(nameof(Create));
 
         }
@@ -156,6 +167,14 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             _unitOfWork.Save();
 
             return Ok();
+        }
+
+        private async Task PopulateDropdowns(BookViewModel vm)
+        {
+            vm.Languages = await _languageService.GetAllAsync();
+            vm.Publishers = await _publisherService.GetAllAsync();
+            vm.Categories = await _categoryService.GetAllAsync();
+            vm.Genres = await _genreService.GetAllAsync();
         }
     }
 }

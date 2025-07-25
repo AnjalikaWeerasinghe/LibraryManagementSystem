@@ -80,17 +80,30 @@ namespace Library.Services
             return vm;
         }
 
-        public void InsertField(FieldOfStudyViewModel field)
+        public string InsertField(FieldOfStudyViewModel field)
         {
-            var model = new FieldOfStudyViewModel().ToModel(field);
+            var existing = _unitOfWork.GenericRepository<FieldOfStudy>()
+                    .GetAll()
+                    .FirstOrDefault(c => c.Name == field.Name);
+
+            if (existing != null)
+                return "Field already exists.";
+
+            var model = new FieldOfStudy
+            {
+                Name = field.Name,
+               
+            };
             _unitOfWork.GenericRepository<FieldOfStudy>().Add(model);
             _unitOfWork.Save();
+
+            return "Field added successfully.";
         }
 
         public void UpdateField(FieldOfStudyViewModel field)
         {
-            var model = new FieldOfStudyViewModel().ToModel(field);
-            var ModelById = _unitOfWork.GenericRepository<FieldOfStudy>().GetById(model.Id);
+            
+            var ModelById = _unitOfWork.GenericRepository<FieldOfStudy>().GetById(field.Id);
 
             ModelById.Name = field.Name;
 

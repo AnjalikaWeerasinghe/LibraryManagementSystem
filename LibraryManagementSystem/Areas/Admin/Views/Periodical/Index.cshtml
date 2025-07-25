@@ -5,8 +5,6 @@
     ViewData["Title"] = "Index";
 }
 
-@Html.Partial("_DeleteModal")
-
 <h1>Periodicals</h1>
 
 <br />
@@ -20,7 +18,7 @@
 <p>
     <a asp-action="Create" class="btn btn-secondary">Create a new Periodical</a>
 </p>
-<table class="table">
+<table class="table table-stripped">
     <thead>
         <tr>
             <th>
@@ -91,51 +89,14 @@
 
             <td>
                 <div class="d-flex gap-2">
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |
-                    <button class="btn btn-danger" onclick="openDeleteModal(@item.Id, '@item.Title')">Delete</button>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |
+                <button class="btn btn-sm btn-danger" onclick="openDeleteModal(@item.Id, '@item.Title', '@ViewContext.RouteData.Values["controller"]')">Delete</button>
                 </div>
             </td>
         </tr>
 }
     </tbody>
 </table>
-
-@section Scripts {
-    <script>
-        let selectedId = 0;
-        let selectedName = "";
-
-        function openDeleteModal(id, name) {
-            selectedId = id;
-            selectedName = name;
-            document.getElementById("confirmDeleteText").textContent = `Are you sure you want to delete "${name}"?`;
-            const confirmModal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
-            confirmModal.show();
-        }
-
-        document.getElementById("confirmYesBtn").addEventListener("click", function () {
-            fetch(`/Admin/Periodical/Delete/${selectedId}`, {
-                method: "POST"
-            }).then(response => {
-                if (response.ok) {
-                    const confirmModalEl = document.getElementById("confirmDeleteModal");
-                    const confirmModal = bootstrap.Modal.getInstance(confirmModalEl);
-                    confirmModal.hide();
-
-                    document.getElementById("successMessage").textContent = ` "${selectedName}" deleted successfully.`;
-                    const successModal = new bootstrap.Modal(document.getElementById("successModal"));
-                    successModal.show();
-                }
-            });
-        });
-
-        document.getElementById("successOkBtn").addEventListener("click", function () {
-            const successModal = bootstrap.Modal.getInstance(document.getElementById("successModal"));
-            successModal.hide();
-            location.reload(); // or redirect as needed
-        });
-    </script>
-}
 
 <cs-pager cs-paging-pagesize=(int)Model.PageSize
           cs-paging-pagenumber=(int)Model.PageNumber

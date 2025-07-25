@@ -1,3 +1,4 @@
+using Library.Mappings;
 using Library.Models;
 using Library.Repositories;
 using Library.Repositories.Implementation;
@@ -7,6 +8,10 @@ using Library.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+
+using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
+using LibraryManagementSystem.Factories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +27,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
 
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -60,7 +67,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-DataSeeding();
+
 app.UseRouting();
 app.UseAuthentication();
 
@@ -78,7 +85,7 @@ app.UseEndpoints(endpoints =>
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 });
-
+DataSeeding();
 app.Run();
 
 void DataSeeding()

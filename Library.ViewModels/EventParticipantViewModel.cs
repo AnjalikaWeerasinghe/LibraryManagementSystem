@@ -14,25 +14,24 @@ namespace Library.ViewModels
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Please select an event.")]
         [Display(Name = "Event")]
         public int LibraryEventId { get; set; }
 
-        [Required(ErrorMessage = "Please enter a registration date.")]
+        public string? EventTitle { get; set; } = string.Empty;
+
+        public string? Location { get; set; } = string.Empty;
+
         [DataType(DataType.Date)]
         [Display(Name = "Registered Date")]
         public DateTime RegisteredDate { get; set; }
 
-        [Required(ErrorMessage = "Please select a participation status.")]
         [Display(Name = "Participant Status")]
         public ParticipantStatus ParticipantStatus { get; set; } = ParticipantStatus.Registered;
 
-        [Required(ErrorMessage = "User is required.")]
         [Display(Name = "User")]
         public string ApplicationUserId { get; set; } //Foreign key to Application User
 
-        public List<SelectListItem> Events { get; set; }
-        public List<SelectListItem> Users { get; set; }
+        
 
         public EventParticipantViewModel()
         {
@@ -43,9 +42,12 @@ namespace Library.ViewModels
         {
             Id = participant.Id;
             LibraryEventId = participant.LibraryEventId;
+            EventTitle = participant.LibraryEvent?.Title;
+            Location = participant.LibraryEvent?.Location;
             RegisteredDate = participant.RegisteredDate;
             ParticipantStatus = participant.ParticipantStatus;
             ApplicationUserId = participant.ApplicationUserId;
+            
         }
 
         public EventParticipant ConvertViewModelToModel(EventParticipantViewModel model)

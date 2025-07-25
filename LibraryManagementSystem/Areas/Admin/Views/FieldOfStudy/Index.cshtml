@@ -1,88 +1,67 @@
 ﻿@using Library.Utilities
-@model PagedResult<Library.ViewModels.FieldOfStudyViewModel>
+@model Library.ViewModels.FieldOfStudyViewModel
 
 @{
     ViewData["Title"] = "Index";
 }
 
-@Html.Partial("_DeleteModal")
+<h1>Study Fields</h1>
 
-<h1>Fields Of Study - Journals</h1>
+<div class="row">
+    <div class="col-md-7">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PagedFields?.Data)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
 
-<p>
-    <a asp-action="Create" class="btn btn-secondary">Add a new Field</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Id
-            </th>
-            <th>
-                Name
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Data) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |
+                            <button class="btn btn-danger" onclick="openDeleteModal(@item.Id, '@item.Name', '@ViewContext.RouteData.Values["controller"]')">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-5">
+        <form asp-action="CreateorUpdate" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
             <br />
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |
-                <button class="btn btn-danger" onclick="openDeleteModal(@item.Id, '@item.Name')">Delete</button>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+
+    </div>
+</div>
 
 @section Scripts {
-    <script>
-        let selectedId = 0;
-        let selectedName = "";
-
-        function openDeleteModal(Id, Name) {
-            selectedId = Id;
-            selectedName = Name;
-            document.getElementById("confirmDeleteText").textContent = `Are you sure you want to delete "${Name}"?`;
-            const confirmModal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
-            confirmModal.show();
-        }
-
-        document.getElementById("confirmYesBtn").addEventListener("click", function () {
-            fetch(`/Admin/FieldOfStudy/Delete/${selectedCategoryId}`, {
-                method: "POST"
-            }).then(response => {
-                if (response.ok) {
-                    const confirmModalEl = document.getElementById("confirmDeleteModal");
-                    const confirmModal = bootstrap.Modal.getInstance(confirmModalEl);
-                    confirmModal.hide();
-
-                    document.getElementById("successMessage").textContent = ` "${selectedCategoryName}" deleted successfully.`;
-                    const successModal = new bootstrap.Modal(document.getElementById("successModal"));
-                    successModal.show();
-                }
-            });
-        });
-
-        document.getElementById("successOkBtn").addEventListener("click", function () {
-            const successModal = bootstrap.Modal.getInstance(document.getElementById("successModal"));
-            successModal.hide();
-            location.reload(); // or redirect as needed
-        });
-    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 
-<cs-pager cs-paging-pagesize=(int)Model.PageSize
-          cs-paging-pagenumber=(int)Model.PageNumber
-          cs-paging-totalitems=(int)Model.TotalItems
+<cs-pager cs-paging-pagesize=(int)Model.PagedFields.PageSize
+          cs-paging-pagenumber=(int)Model.PagedFields.PageNumber
+          cs-paging-totalitems=(int)Model.PagedFields.TotalItems
           cs-pagenumber-param="pageNumber"
           asp-controller="FieldOfStudy"
 

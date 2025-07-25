@@ -1,20 +1,23 @@
 ﻿@using Library.ViewModels
 @model IEnumerable<ItemCategoryCountViewModel>
+
 @{
     ViewData["Title"] = "Library Item Counts by Category";
 }
+
 @{
     string chartJson = ViewBag.ChartJson as string ?? "[]";
 }
 
 <h2>@ViewData["Title"]</h2>
 
-<canvas id="itemChart" width="400" height="400"></canvas>
-
-<!-- Optional: original table (hidden by default) -->
-<table id="rawTable" class="table table-bordered table-striped d-none">
+<table id="rawTable" class="table table-bordered table-striped">
     <thead class="table-dark">
-        <tr><th>Item Type</th><th>Category</th><th class="text-end">Count</th></tr>
+        <tr>
+            <th>Item Type</th>
+            <th>Category</th>
+            <th class="text-end">Count</th>
+        </tr>
     </thead>
     <tbody>
         @foreach (var row in Model)
@@ -28,6 +31,16 @@
     </tbody>
 </table>
 
+<div class="row mt-4">
+    <div class="col-md-6 text-center">
+        <canvas id="itemChart" width="300" height="300"></canvas>
+        <p class="fw-semibold mt-2">Pie Chart</p>
+    </div>
+    <div class="col-md-6 text-center">
+        <canvas id="barChart" width="300" height="300"></canvas>
+        <p class="fw-semibold mt-2">Bar Chart</p>
+    </div>
+</div>
 
 @section Scripts
 {
@@ -35,28 +48,58 @@
     <script src="~/lib/chartjs/chart.umd.min.js"></script>
 
     <script>
-        // Parse the JSON we tucked into ViewBag
         const chartData = JSON.parse('@Html.Raw(chartJson)');
 
         const labels = chartData.map(x => x.label);
         const counts = chartData.map(x => x.value);
 
-        const ctx = document.getElementById('itemChart').getContext('2d');
-        new Chart(ctx, {
+        // Pie Chart
+        const pieCtx = document.getElementById('itemChart').getContext('2d');
+        new Chart(pieCtx, {
             type: 'pie',
             data: {
                 labels: labels,
                 datasets: [{
-                    data: counts
-                    // Chart.js will pick a pleasant default colour palette
+                    data: counts,
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF9800', '#9C27B0', '#03A9F4'
+                        ]
                 }]
             },
             options: {
                 plugins: {
                     legend: { position: 'right' },
-                    tooltip: { callbacks: {
-                        label: ctx => `${ctx.label}: ${ctx.parsed}`
-                    }}
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => `${ctx.label}: ${ctx.parsed}`
+                        }
+                    }
+                }
+            }
+        });
+
+        // Bar Chart
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Item Count',
+                    data: counts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
                 }
             }
         });

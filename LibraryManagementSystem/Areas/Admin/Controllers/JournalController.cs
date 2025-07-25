@@ -112,8 +112,7 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             _unitOfWork.GenericRepository<Journal>().Update(journal);
             _unitOfWork.Save();
 
-            ViewBag.UpdateSuccess = $" '{journal.Title}' updated successfully!";
-            ViewBag.ShowModal = true;
+            TempData["SuccessMessage"] = $"{vm.Title} updated successfully !";
 
             return RedirectToAction(nameof(Index));
         }
@@ -137,12 +136,25 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(JournalViewModel vm)
         {
+            
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdowns(vm);
+            }
+
             vm.ItemCode = _journal.GenerateNextJournalCode();
 
-            _journal.InsertJournal(vm);
-            TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
+            string result = _journal.InsertJournal(vm);
 
-            // PRG: redirect to avoid duplicate submissions
+            if (result == "Journal already exists.")
+            {
+                TempData["ErrorMessage"] = result;
+            }
+            else
+            {
+                TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
+            }
+
             return RedirectToAction(nameof(Create));
 
         }
@@ -157,6 +169,15 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             _unitOfWork.Save();
 
             return Ok();
+        }
+
+        private async Task PopulateDropdowns(JournalViewModel vm)
+        {
+            vm.Languages = await _languageService.GetAllAsync();
+            vm.Publishers = await _publisherService.GetAllAsync();
+            vm.Categories = await _categoryService.GetAllAsync();
+            vm.Fields = await _fieldOfStudyService.GetAllAsync();
+
         }
     }
 }

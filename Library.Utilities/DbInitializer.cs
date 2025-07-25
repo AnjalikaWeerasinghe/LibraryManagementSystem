@@ -52,7 +52,7 @@ namespace Library.Utilities
 
                 _userManager.CreateAsync(new ApplicationUser
                 {
-                    UserName = "Admin",
+                    UserName = "adminuser@gmail.com",
                     Email = "adminuser@gmail.com",
                     FullName = "Admin User",
                     UserCode = "LIB-ADM-0001",

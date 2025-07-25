@@ -1,12 +1,11 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-#nullable disable
+﻿#nullable disable
 
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Library.Models;
+using Library.Utilities.Validation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -17,13 +16,16 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IWebHostEnvironment _environment;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IWebHostEnvironment environment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _environment = environment;
         }
 
         #region Output / TempData
@@ -40,6 +42,11 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public InputModel Input { get; set; }
 
+        [BindProperty]
+        public IFormFile PictureFile { get; set; }
+
+        public string PictureUrl { get; set; }
+
         public class InputModel
         {
             [Required, Display(Name = "Full name")]
@@ -53,6 +60,13 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account.Manage
 
             [Display(Name = "Gender")]
             public Gender? Gender { get; set; }
+
+            [Display(Name = "Profile Picture URL")]
+            public string PictureUrl { get; set; }
+
+            [Display(Name = "User Code")]
+            [UserCodeFormat]
+            public string UserCode { get; set; }
 
             [Display(Name = "Date of birth"), DataType(DataType.Date)]
             public DateTime? DOB { get; set; }
@@ -77,6 +91,8 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account.Manage
                 Address = user.Address,
                 Gender = user.Gender,
                 DOB = user.DOB,
+                PictureUrl = user.PictureUrl,
+                UserCode = user.UserCode,
                 PhoneNumber = await _userManager.GetPhoneNumberAsync(user)
             };
         }
@@ -126,6 +142,30 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            if (PictureFile != null && PictureFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "profile");
+                Directory.CreateDirectory(uploadsFolder); 
+
+                var uniqueFileName = $"{Guid.NewGuid()}_{PictureFile.FileName}";
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await PictureFile.CopyToAsync(fileStream);
+                }
+
+                if (!string.IsNullOrEmpty(user.PictureUrl))
+                {
+                    var oldPath = Path.Combine(_environment.WebRootPath, user.PictureUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath))
+                        System.IO.File.Delete(oldPath);
+                }
+
+                user.PictureUrl = $"/uploads/profile/{uniqueFileName}";
+                await _userManager.UpdateAsync(user);
+            }
+
             bool changed = false;
 
             if (user.FullName != Input.FullName) { user.FullName = Input.FullName; changed = true; }
@@ -140,6 +180,7 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account.Manage
             // Refresh cookie
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
+            PictureUrl = user.PictureUrl;
             return RedirectToPage();
       
         }

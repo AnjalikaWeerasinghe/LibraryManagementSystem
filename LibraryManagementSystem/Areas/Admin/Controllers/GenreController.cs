@@ -3,10 +3,11 @@ using Library.Repositories.Interfaces;
 using Library.Services;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LibraryManagementSystem.Areas.Admin.Controllers
 {
-    [Area("admin")]
+    [Area("Admin")]
     public class GenreController : Controller
     {
         private IUnitOfWork _unitOfWork;
@@ -20,68 +21,63 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
 
         public IActionResult Index(int pageNumber = 1, int pageSize = 10)
         {
-            return View(_genre.GetAll(pageNumber, pageSize));
-        }
-
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            var viewModel = _genre.GetGenreById(id);
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(GenreViewModel vm)
-        {
-            if (!ModelState.IsValid)
-                return View(vm);
-
-            var genre = _unitOfWork.GenericRepository<Genre>().GetById(vm.Id);
-            if (genre == null)
-                return NotFound();
-
-            genre.Name = vm.Name;
-            genre.Description = vm.Description;
-
-            _unitOfWork.GenericRepository<Genre>().Update(genre);
-            _unitOfWork.Save();
-
-            ViewBag.UpdateSuccess = $"Genre, '{genre.Name}' updated successfully!";
-            ViewBag.ShowModal = true;
+            var vm = new GenreViewModel
+            {
+                PagedGenres = _genre.GetAll(pageNumber, pageSize),
+                
+            };
 
             return View(vm);
         }
 
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
         [HttpPost]
-        public IActionResult Create(GenreViewModel vm)
+        public IActionResult CreateorUpdate(GenreViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(vm);
-
-            try
             {
-                _unitOfWork.GenericRepository<Genre>().Add(new Genre
+                vm.PagedGenres = _genre.GetAll(1, 10);
+            
+            }
+
+            if (vm.Id == 0)
+            {
+                var result =_genre.InsertGenre(vm);
+                if (result == "Genre already exists.")
                 {
-                    Name = vm.Name,
-                    Description = vm.Description
-                });
-                _unitOfWork.Save();
-
-                TempData["SuccessMessage"] = $"Genre, {vm.Name} successfully Added !";
-                ModelState.Clear(); // clear input fields
-                return View();
+                    TempData["ErrorMessage"] = result;
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = $"{vm.Name} successfully Added!";
+                }
             }
-            catch
+            else
             {
-                ModelState.AddModelError("", "An error occurred while saving.");
-                return View(vm);
+                _genre.UpdateGenre(vm);
+                TempData["SuccessMessage"] = $"{vm.Name} updated successfully !";
+                ModelState.Clear();
             }
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var genre = _genre.GetGenreById(id);
+            if (genre == null)
+                return NotFound();
+
+            var pagedData = _genre.GetAll(1, 10);
+
+            var vm = new GenreViewModel
+            {
+                Id = genre.Id,
+                Name = genre.Name,
+                Description = genre.Description,
+                PagedGenres = pagedData
+            };
+
+            return View("Index", vm);
         }
 
         public IActionResult Delete(int id)

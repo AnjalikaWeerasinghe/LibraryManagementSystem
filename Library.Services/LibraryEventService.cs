@@ -72,11 +72,30 @@ namespace Library.Services
             return vm;
         }
 
-        public void InsertLibraryEvent(LibraryEventViewModel libraryEvent)
+        public string InsertLibraryEvent(LibraryEventViewModel libraryEvent)
         {
-            var model = new LibraryEventViewModel().ConvertViewModel(libraryEvent);
+            var existing = _unitOfWork.GenericRepository<LibraryEvent>()
+                    .GetAll()
+                    .FirstOrDefault(c => c.Title == libraryEvent.Title && c.StartDate == libraryEvent.StartDate);
+
+            if (existing != null)
+                return "Event already exists.";
+
+            var model = new LibraryEvent
+            {
+                Title = libraryEvent.Title,
+                Description = libraryEvent.Description,
+                ImageUrl = libraryEvent.ImageUrl,
+                StartDate = libraryEvent.StartDate,
+                EndDate = libraryEvent.EndDate,
+                Location = libraryEvent.Location,
+                EventCode = libraryEvent.EventCode
+            };
+
             _unitOfWork.GenericRepository<LibraryEvent>().Add(model);
             _unitOfWork.Save();
+
+            return "Event created successfully.";
         }
 
         public void UpdateLibraryEvent(LibraryEventViewModel libraryEvent)

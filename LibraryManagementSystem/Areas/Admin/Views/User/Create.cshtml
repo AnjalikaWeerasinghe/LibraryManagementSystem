@@ -5,12 +5,15 @@
 
 <h2>Create User</h2>
 
-<form asp-action="Create" method="post">
+<form asp-action="Create" method="post" autocomplete="off">
     <partial name="_UserForm" />
-    <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input name="password" type="password" class="form-control" required />
+    <br />
+    <div class="col-md-4">
+        <label asp-for="Password" class="control-label">Password</label>
+        <input asp-for="Password" class="form-control" autocomplete="new-password"/>
+        <span asp-validation-for="Password" class="text-danger"></span>
     </div>
+    <br /> 
     <button class="btn btn-success">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>

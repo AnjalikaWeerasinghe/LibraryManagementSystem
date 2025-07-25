@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Library.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,6 +15,8 @@ namespace Library.ViewModels
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+
+        public PagedResult<CountryViewModel> PagedCountries { get; set; }
 
         public CountryViewModel()
         {
@@ -31,6 +34,24 @@ namespace Library.ViewModels
             {
                 Id = model.Id,
                 Name = model.Name
+            };
+        }
+
+        public Country ToEntity()
+        {
+            return new Country
+            {
+                Id = this.Id,
+                Name = this.Name,
+            };
+        }
+
+        public static CountryViewModel FromEntity(Country country)
+        {
+            return new CountryViewModel
+            {
+                Id = country.Id,
+                Name = country.Name
             };
         }
     }

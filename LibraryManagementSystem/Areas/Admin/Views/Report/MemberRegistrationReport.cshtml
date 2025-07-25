@@ -1,0 +1,80 @@
+﻿@using Library.ViewModels
+@model Library.ViewModels.MemberRegistrationChartViewModel
+
+
+<h2>Member Count by Event</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Event Title</th>
+            <th class="text-end">Registrations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in Model.Registrations)
+        {
+            <tr>
+                <td>@row.EventTitle</td>
+                <td class="text-end">@row.RegistrationCount</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="row mt-4">
+    <div class="col-md-6 text-center">
+        <canvas id="eventPieChart" width="300" height="300"></canvas>
+        <p class="fw-semibold mt-2">Pie Chart</p>
+    </div>
+    <div class="col-md-6 text-center">
+        <canvas id="eventBarChart" width="300" height="300"></canvas>
+        <p class="fw-semibold mt-2">Bar Chart</p>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/chartjs/chart.umd.min.js"></script>
+
+    <script>
+        const chartData = @Html.Raw(Model.ChartJson);
+        const labels = chartData.map(x => x.label);
+        const counts = chartData.map(x => x.value);
+
+        new Chart(document.getElementById('eventPieChart'), {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{ data: counts }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('eventBarChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Registrations',
+                    data: counts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+}
+

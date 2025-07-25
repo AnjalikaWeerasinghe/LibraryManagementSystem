@@ -7,7 +7,15 @@
 
 <h1>Library Events</h1>
 
-<table class="table">
+<br />
+<form asp-action="Index" method="get">
+    <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" style="width: 400px" placeholder="Search Events" />
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a asp-action="Index" class="btn btn-primary">Clear</a>
+</form>
+<br />
+
+<table class="table table-striped">
     <thead>
         <tr>
             
@@ -61,13 +69,27 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Location)
             </td>
-            
+            <td>
+                    <a asp-area="Member"
+                       asp-controller="Event"
+                       asp-action="Details"
+                       asp-route-id="@item.Id"
+                       class="btn btn-primary">Register</a>
+            </td>
             
         </tr>
 }
     </tbody>
 </table>
 
+@section Scripts {
+    <script>
+        $(document).on("click", ".register-button", function () {
+            var eventId = $(this).data("event-id");
+            window.location.href = `/Member/Event/Details/${eventId}`;
+        });
+    </script>
+}
 <cs-pager cs-paging-pagesize=(int)Model.PageSize
           cs-paging-pagenumber=(int)Model.PageNumber
           cs-paging-totalitems=(int)Model.TotalItems

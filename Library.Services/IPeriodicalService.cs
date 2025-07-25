@@ -14,7 +14,7 @@ namespace Library.Services
         PagedResult<PeriodicalViewModel> GetPeriodicalByName(string name, int pageNumber, int pageSize);
         PeriodicalViewModel GetPeriodicalById(int periodicalId);
         void UpdatePeriodical(PeriodicalViewModel periodical);
-        void InsertPeriodical(PeriodicalViewModel periodical);
+        string InsertPeriodical(PeriodicalViewModel periodical);
         void DeletePeriodical(int id);
         string GenerateNextPeriodicalCode();
     }

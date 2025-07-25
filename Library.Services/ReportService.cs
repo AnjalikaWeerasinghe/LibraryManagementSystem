@@ -21,10 +21,10 @@ namespace Library.Services
         public async Task<List<ItemCategoryCountViewModel>> GetCountsAsync()
         {
             var flat = await _unitOfWork.GenericRepository<LibraryItem>()
-                .GetAll()  // Add GetAll() or IQueryable source if needed
+                .GetAll()  
                 .Select(i => new
                 {
-                    i.ItemType,
+                    ItemType = i.GetType().Name,
                     CategoryName = i.Category.Name // rename to avoid conflict with 'Name'
                 })
                 .ToListAsync();  // SQL ends here
@@ -42,6 +42,41 @@ namespace Library.Services
                 .ToList();
 
             return data;
+        }
+
+        public async Task<MemberRegistrationChartViewModel> GetMemberRegistrationReportAsync()
+        {
+            var events = _unitOfWork.GenericRepository<EventParticipant>()
+                .GetAll(includeProperties: "LibraryEvent")
+                .ToList(); 
+
+            var registrations = events
+                .GroupBy(r => r.LibraryEvent.Title)
+                .Select(g => new EventRegistrationReportViewModel
+                {
+                    EventTitle = g.Key,
+                    RegistrationCount = g.Count()
+                })
+                .ToList();
+
+            var chartData = registrations.Select(r => new
+            {
+                label = r.EventTitle,
+                value = r.RegistrationCount
+            });
+
+            var chartJson = System.Text.Json.JsonSerializer.Serialize(
+                chartData.ToList(),
+                new System.Text.Json.JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                });
+
+            return new MemberRegistrationChartViewModel
+            {
+                Registrations = registrations,
+                ChartJson = chartJson
+            };
         }
     } 
 }

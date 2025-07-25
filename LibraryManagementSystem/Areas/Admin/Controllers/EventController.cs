@@ -106,10 +106,9 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             _unitOfWork.GenericRepository<LibraryEvent>().Update(libevent);
             _unitOfWork.Save();
 
-            ViewBag.UpdateSuccess = $"'{libevent.Title}' updated successfully!";
-            ViewBag.ShowModal = true;
+            TempData["SuccessMessage"] = $"{vm.Title} updated successfully !";
 
-            return View(vm);
+            return RedirectToAction(nameof(Create));
         }
 
         [HttpGet]
@@ -126,10 +125,10 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Create(LibraryEventViewModel vm, IFormFile ImageFile)
         {
-            // Auto-generate EventCode BEFORE model validation
+            
             vm.EventCode = _libraryEvent.GenerateNextEventCode();
 
-            // Handle image upload (if applicable)
+            // Handle image upload 
             if (ImageFile != null && ImageFile.Length > 0)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
@@ -149,10 +148,16 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
                 vm.ImageUrl = "/images/events/" + fileName;
             }
 
-            _libraryEvent.InsertLibraryEvent(vm);
-            TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
+            var result = _libraryEvent.InsertLibraryEvent(vm);
+            if (result == "Event already exists.")
+            {
+                TempData["ErrorMessage"] = result;
+            }
+            else
+            {
+                TempData["SuccessMessage"] = $"{vm.Title} successfully added!";
+            }
 
-            // PRG: redirect to avoid duplicate submissions
             return RedirectToAction(nameof(Create));
 
         }

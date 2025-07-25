@@ -1,26 +1,28 @@
 html {
-  font-size: 14px;
+    font-size: 15px;
 }
 
 @media (min-width: 1000px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 /*CSS for user profile*/
 
 body {
-  margin-bottom: 70px;
+    margin-top: 0;
+    padding: 0;
+    margin-bottom: 70px;
 }
 
 .profile-header {
@@ -37,17 +39,17 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.profile-section label {
-    font-weight: 500;
-    color: #333;
-}
+    .profile-section label {
+        font-weight: 500;
+        color: #333;
+    }
 
-.profile-section input,
-.profile-section select {
-    border-radius: 6px;
-    padding: 8px 10px;
-    font-size: 0.95rem;
-}
+    .profile-section input,
+    .profile-section select {
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 0.95rem;
+    }
 
 /* new part*/
 
@@ -58,54 +60,65 @@ body {
     --navbar-h: 56px; /* matches Bootstrap default */
 }
 
-/* ??? top bar always on top ?? */
+/*  top bar always on top  */
 #topbar {
     height: var(--navbar-h);
     z-index: 1030; /* above sidebar */
 }
 
-/* ??? sidebar ?? */
+/*  sidebar  */
 #sidebar {
     width: var(--sidebar-full);
-    background: #fff;
+    background: #20c997;
     border-right: 1px solid #e1e4e8;
     transition: width .25s ease;
 }
 
-    /* collapsed mode */
-    #sidebar.collapsed {
-        width: var(--sidebar-mini);
+.sidebar {
+    min-height: 100vh;
+    padding-top: 1rem;
+    background-color: #20c997;
+    color: white;
+}
+
+.navbar {
+    z-index: 1040; /* Ensure it stays above sidebar */
+}
+
+/* collapsed mode */
+#sidebar.collapsed {
+    width: var(--sidebar-mini);
+}
+
+    #sidebar.collapsed .nav-link span,
+    #sidebar.collapsed .section-title {
+        display: none;
     }
 
-        #sidebar.collapsed .nav-link span,
-        #sidebar.collapsed .section-title {
-            display: none;
-        }
+/* keep icons centered when collapsed */
+#sidebar .nav-link i {
+    width: 1.5rem;
+    text-align: center;
+}
 
-    /* keep icons centered when collapsed */
-    #sidebar .nav-link i {
-        width: 1.5rem;
-        text-align: center;
+/* hover tooltip when collapsed */
+#sidebar.collapsed .nav-link {
+    position: relative;
+}
+
+    #sidebar.collapsed .nav-link:hover::after {
+        content: attr(data-bs-title);
+        position: absolute;
+        left: calc(var(--sidebar-mini) + .25rem);
+        top: 50%;
+        translate: 0 -50%;
+        background: #000;
+        color: #fff;
+        font-size: .75rem;
+        padding: .15rem .4rem;
+        border-radius: .2rem;
+        white-space: nowrap;
     }
-
-    /* hover tooltip when collapsed */
-    #sidebar.collapsed .nav-link {
-        position: relative;
-    }
-
-        #sidebar.collapsed .nav-link:hover::after {
-            content: attr(data-bs-title);
-            position: absolute;
-            left: calc(var(--sidebar-mini) + .25rem);
-            top: 50%;
-            translate: 0 -50%;
-            background: #000;
-            color: #fff;
-            font-size: .75rem;
-            padding: .15rem .4rem;
-            border-radius: .2rem;
-            white-space: nowrap;
-        }
 
 .section-title {
     font-size: .75rem;
@@ -127,4 +140,58 @@ body {
     #page-content.sidebar-mini {
         margin-left: var(--sidebar-mini);
     }
+
+/*Admin Layout*/
+#wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+#sidebar-wrapper {
+    width: 250px;
+    transition: all 0.3s ease;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: -250px;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    margin-left: 0;
+}
+
+#page-content-wrapper {
+    flex: 1;
+}
+
+/*side bar*/
+.sidebar .nav-link {
+    padding: 10px 15px;
+    font-size: 20px;
+    transition: background 0.2s ease;
+}
+
+    .sidebar .nav-link:hover {
+        background-color: #198754;
+        color: lightcyan !important;
+    }
+
+.sidebar .collapse .nav-link {
+    padding-left: 25px;
+    font-size: 15px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.card {
+    transition: transform 0.2s ease;
+}
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
 

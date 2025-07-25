@@ -3,11 +3,12 @@ using Library.Repositories.Interfaces;
 using Library.Services;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Drawing.Printing;
 
 namespace LibraryManagementSystem.Areas.Admin.Controllers
 {
-    [Area("admin")]
+    [Area("Admin")]
     public class CountryController : Controller
     {
         private IUnitOfWork _unitOfWork;
@@ -20,67 +21,66 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         }
         public IActionResult Index(int pageNumber = 1, int pageSize = 10)
         {
-            return View(_country.GetAll(pageNumber, pageSize));
-        }
-
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            var viewModel = _country.GetCountryById(id);
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(CountryViewModel vm)
-        {
-            if (!ModelState.IsValid)
-                return View(vm);
-
-            var country = _unitOfWork.GenericRepository<Country>().GetById(vm.Id);
-            if (country == null)
-                return NotFound();
-
-            country.Name = vm.Name;
-
-            _unitOfWork.GenericRepository<Country>().Update(country);
-            _unitOfWork.Save();
-
-            ViewBag.UpdateSuccess = $" '{country.Name}' updated successfully!";
-            ViewBag.ShowModal = true;
+            var vm = new CountryViewModel
+            {
+                PagedCountries = _country.GetAll(pageNumber, pageSize)
+            };
 
             return View(vm);
         }
 
-        [HttpGet]
-        public IActionResult Create()
+        public IActionResult Edit(int id)
         {
-            return View();
+            var country = _country.GetCountryById(id);
+            if (country == null)
+                return NotFound();
+
+            var pagedData = _country.GetAll(1, 10);
+
+            var vm = new CountryViewModel
+            {
+                Id = country.Id,
+                Name = country.Name,
+                PagedCountries = pagedData
+            };
+
+            return View("Index", vm);
         }
 
         [HttpPost]
-        public IActionResult Create(CountryViewModel vm)
+        public IActionResult CreateorUpdate(CountryViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(vm);
-
-            try
             {
-                _unitOfWork.GenericRepository<Country>().Add(new Country
+                vm.PagedCountries = _country.GetAll(1, 10);
+                
+            }
+
+            if (vm.Id == 0)
+            {
+                var result = _country.InsertCountry(vm);
+                if (result == "Genre already exists.")
                 {
-                    Name = vm.Name
-                });
-                _unitOfWork.Save();
+                    TempData["ErrorMessage"] = result;
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = $"{vm.Name} successfully Added!";
+                }
 
-                TempData["SuccessMessage"] = $"{vm.Name} successfully Added !";
-                ModelState.Clear(); // clear input fields
-                return View();
+                ModelState.Clear();
             }
-            catch
+            else
             {
-                ModelState.AddModelError("", "An error occurred while saving.");
-                return View(vm);
+                _country.UpdateCountry(vm);
+                TempData["SuccessMessage"] = $"{vm.Name} updated successfully !";
+                ModelState.Clear();
             }
+
+
+            return RedirectToAction("Index");
         }
+
 
         public IActionResult Delete(int id)
         {

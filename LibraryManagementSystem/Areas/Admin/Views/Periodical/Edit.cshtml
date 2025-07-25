@@ -22,7 +22,7 @@
         <div class="row">
             <div class="col-md-6 form-group">
                 <label asp-for="ItemCode" class="control-label"></label>
-                <input asp-for="ItemCode" class="form-control" placeholder="Item Code must be in the format ITD-PD-00001." readonly />
+                <input asp-for="ItemCode" class="form-control" readonly />
                 <span asp-validation-for="ItemCode" class="text-danger"></span>
             </div>
 
@@ -57,7 +57,7 @@
             </div>
 
             <div class="col-md-6 form-group">
-                <label asp-for="PublisherId" class="control-label"></label>
+                <label asp-for="PublisherId" class="control-label">Publisher</label>
                 <select asp-for="PublisherId"
                         asp-items="@(new SelectList(Model.Publishers, nameof(PublisherViewModel.Id), nameof(PublisherViewModel.Name)))"
                         class="form-control">
@@ -72,7 +72,7 @@
             </div>
 
             <div class="col-md-6 form-group">
-                <label asp-for="PublishedYear" class="control-label"></label>
+                <label asp-for="PublishedYear" class="control-label">Year Published</label>
                 <select asp-for="PublishedYear" class="form-control">
                     <option value="" disabled selected class="placeholder-option">-- Select Published Year --</option>
                     @for (var y = DateTime.UtcNow.Year; y >= 1900; y--)
@@ -100,8 +100,8 @@
 
         </div>
 
-        <br />
         <div class="form-group">
+            <br />
             <input type="submit" value="Save" class="btn btn-info" />
         </div>
 
@@ -112,33 +112,9 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@if (ViewBag.ShowModal != null && (bool)ViewBag.ShowModal)
-{
-    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-info text-black">
-                    <h5 class="modal-title" id="updateModalLabel">Update Successful!</h5>
-                </div>
-                <div class="modal-body">
-                    @ViewBag.UpdateSuccess
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-info" id="confirmRedirectBtn">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        window.addEventListener('load', function () {
-            var modal = new bootstrap.Modal(document.getElementById('updateModal'));
-            modal.show();
-
-            document.getElementById('confirmRedirectBtn').addEventListener('click', function () {
-                window.location.href = '@Url.Action("Index", "Periodical")';
-            });
-        });
-    </script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 

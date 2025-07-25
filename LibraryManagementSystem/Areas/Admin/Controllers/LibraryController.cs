@@ -33,23 +33,5 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
-        public IActionResult Create() 
-        { 
-            return View(); 
-        }
-
-        [HttpPost]
-        public IActionResult Create(LibraryInfoViewModel vm)
-        { 
-            _libraryInfo.InsertLibraryInfo(vm);
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult Delete(int id)
-        {
-            _libraryInfo.DeleteLibraryInfo(id);
-            return RedirectToAction("Index");
-        }
     }
 }

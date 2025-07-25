@@ -29,15 +29,17 @@ namespace Library.Models
 
         [Required]
         [Display(Name = "Gender")]
-        public Gender Gender { get; set; }
+        public Gender? Gender { get; set; }
 
         [Required, StringLength(250)]
-        public string Address { get; set; } = string.Empty;
+        public string? Address { get; set; } = string.Empty;
 
         [Url]
         [Display(Name = "Profile Picture URL")]
         public string? PictureUrl { get; set; }
 
+
+        public string Password { get; set; }
 
         [Required]
         [Display(Name = "User Code")]

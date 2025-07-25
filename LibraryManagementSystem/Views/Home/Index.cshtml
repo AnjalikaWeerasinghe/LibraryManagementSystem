@@ -2,6 +2,51 @@
     ViewData["Title"] = "Home";
 }
 
+<style>
+    .custom-carousel img {
+        width: 100%;
+        max-height: 500px;
+        object-fit: contain;
+    }
+
+    .carousel-caption-below {
+        position: static;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.05);
+        padding: 10px;
+    }
+
+    .carousel-item {
+        position: relative;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 5%;
+        z-index: 10;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: rgba(0, 0, 0, 0.5);
+        background-size: 100% 100%;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+    .custom-btn i {
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 12px;
+        border-radius: 50%;
+        transition: background 0.3s;
+    }
+
+        .custom-btn i:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+</style>
+
 <div class="text-center">
     <h1 class="display-4">Welcome to the Public Library</h1>
     <h2>Urban Council Gampola </h2>
@@ -11,13 +56,14 @@
 @if (ViewBag.LatestEventImages != null && ViewBag.LatestEventImages.Count > 0)
 {
     <div id="eventCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-        <div class="carousel-inner">
+        <div class="carousel-inner custom-carousel">
             @for (int i = 0; i < ViewBag.LatestEventImages.Count; i++)
             {
                 var eventItem = ViewBag.LatestEventImages[i];
                 <div class="carousel-item @(i == 0 ? "active" : "")">
-                    <img src="@eventItem.ImageUrl" class="d-block w-100" alt="Event Image">
-                    <div class="carousel-caption d-none d-md-block">
+                    <img src="@eventItem.ImageUrl" alt="Event Image">
+
+                    <div class="carousel-caption-below">
                         <a asp-area="member" asp-controller="Event" asp-action="Details" asp-route-id="@eventItem.Id">
                             <h5>@eventItem.Title</h5>
                         </a>
@@ -38,20 +84,40 @@
     </div>
 }
 
-<div class="container">
-    <div class="row">
-    <div class="col-md-4">
-        <h3>About Us</h3>
-        <p>We are dedicated to providing a wide range of books and resources to our community. Our library offers a peaceful environment for reading, studying, and learning.</p>
-    </div>
-    <div class="col-md-4">
-        <h3>Membership</h3>
-        <p>Join our library to access thousands of books, e-books, and other resources. Membership is free for all residents of Gampola.</p>
-    </div>
-    <div class="col-md-4">
-        <h3>Contact Us</h3>
-        <p>If you have any questions or need assistance, feel free to reach out to us via email or phone.</p>
-    </div>
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h3 class="card-title">About Us</h3>
+                    <p class="card-text">
+                        We are dedicated to providing a wide range of books and resources to our community. Our library offers a peaceful environment for reading, studying, and learning.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h3 class="card-title">Membership</h3>
+                    <p class="card-text">
+                        Join our library to access thousands of books, e-books, and other resources. Membership is free for all residents of Gampola.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h3 class="card-title">Contact Us</h3>
+                    <p class="card-text">
+                        If you have any questions or need assistance, feel free to reach out to us via email or phone.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

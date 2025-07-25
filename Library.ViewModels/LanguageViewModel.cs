@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Library.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,6 +16,8 @@ namespace Library.ViewModels
         [Required]
         [StringLength(100)]
         public string Name { get; set; }
+
+        public PagedResult<LanguageViewModel> PagedLanguages { get; set; }
 
         public LanguageViewModel()
         {

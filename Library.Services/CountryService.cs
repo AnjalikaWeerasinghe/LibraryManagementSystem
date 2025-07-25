@@ -69,17 +69,30 @@ namespace Library.Services
             return vm;
         }
 
-        public void InsertCountry(CountryViewModel country)
+        public string InsertCountry(CountryViewModel country)
         {
-            var model = new CountryViewModel().ConvertViewModel(country);
+            var existing = _unitOfWork.GenericRepository<Country>()
+                    .GetAll()
+                    .FirstOrDefault(c => c.Name == country.Name);
+
+            if (existing != null)
+                return "Country already exists.";
+
+            var model = new Country
+            {
+                Name = country.Name
+            };
+
             _unitOfWork.GenericRepository<Country>().Add(model);
             _unitOfWork.Save();
+
+            return "Country added successfully.";
         }
 
         public void UpdateCountry(CountryViewModel country)
         {
-            var model = new CountryViewModel().ConvertViewModel(country);
-            var ModelById = _unitOfWork.GenericRepository<Country>().GetById(model.Id);
+            
+            var ModelById = _unitOfWork.GenericRepository<Country>().GetById(country.Id);
 
             ModelById.Name = country.Name;
 

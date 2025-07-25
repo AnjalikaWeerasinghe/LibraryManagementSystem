@@ -3,10 +3,11 @@ using Library.Repositories.Interfaces;
 using Library.Services;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LibraryManagementSystem.Areas.Admin.Controllers
 {
-    [Area("admin")]
+    [Area("Admin")]
     public class LanguageController : Controller
     {
         private IUnitOfWork _unitOfWork;
@@ -20,66 +21,62 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
 
         public IActionResult Index(int pageNumber = 1, int pageSize = 10)
         {
-            return View(_language.GetAll(pageNumber, pageSize));
-        }
-
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            var viewModel = _language.GetLanguageById(id);
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(LanguageViewModel vm)
-        {
-            if (!ModelState.IsValid)
-                return View(vm);
-
-            var language = _unitOfWork.GenericRepository<Language>().GetById(vm.Id);
-            if (language == null)
-                return NotFound();
-
-            language.Name = vm.Name;
-
-            _unitOfWork.GenericRepository<Language>().Update(language);
-            _unitOfWork.Save();
-
-            ViewBag.UpdateSuccess = $" '{language.Name}' updated successfully!";
-            ViewBag.ShowModal = true;
+            var vm = new LanguageViewModel
+            {
+                PagedLanguages = _language.GetAll(pageNumber, pageSize) 
+            };
 
             return View(vm);
         }
 
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
         [HttpPost]
-        public IActionResult Create(LanguageViewModel vm)
+        public IActionResult CreateorUpdate(LanguageViewModel vm)
         {
             if (!ModelState.IsValid)
-                return View(vm);
-
-            try
             {
-                _unitOfWork.GenericRepository<Language>().Add(new Language
+                vm.PagedLanguages = _language.GetAll(1, 10);
+            }
+
+            if (vm.Id == 0)
+            {
+                var result = _language.InsertLanguage(vm);
+                if (result == "Language already exists.")
                 {
-                    Name = vm.Name
-                });
-                _unitOfWork.Save();
+                    TempData["ErrorMessage"] = result;
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = $"{vm.Name} successfully Added!";
+                }
 
-                TempData["SuccessMessage"] = $"{vm.Name} successfully Added !";
-                ModelState.Clear(); // clear input fields
-                return View();
+                ModelState.Clear();
             }
-            catch
+            else
             {
-                ModelState.AddModelError("", "An error occurred while saving.");
-                return View(vm);
+                _language.UpdateLanguage(vm);
+                TempData["SuccessMessage"] = $"{vm.Name} updated successfully !";
+                ModelState.Clear();
             }
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var language = _language.GetLanguageById(id);
+            if (language == null)
+                return NotFound();
+
+            var pagedData = _language.GetAll(1, 10);
+
+            var vm = new LanguageViewModel
+            {
+                Id = language.Id,
+                Name = language.Name,
+                PagedLanguages = pagedData
+            };
+
+            return View("Index", vm);
         }
 
         public IActionResult Delete(int id)

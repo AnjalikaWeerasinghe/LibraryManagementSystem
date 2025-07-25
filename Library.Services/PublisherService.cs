@@ -70,17 +70,33 @@ namespace Library.Services
             return vm;
         }
 
-        public void InsertPublisher(PublisherViewModel publisher)
+        public string InsertPublisher(PublisherViewModel publisher)
         {
-            var model = new PublisherViewModel().ConvertViewModel(publisher);
+            var existing = _unitOfWork.GenericRepository<Publisher>()
+                    .GetAll()
+                    .FirstOrDefault(c => c.Name == publisher.Name );
+
+            if (existing != null)
+                return "Publisher already exists.";
+
+            var model = new Publisher
+            {
+                Name = publisher.Name,
+                Address = publisher.Address,
+                PhoneNumber = publisher.PhoneNumber,
+                Landline = publisher.Landline
+            };
+
             _unitOfWork.GenericRepository<Publisher>().Add(model);
             _unitOfWork.Save();
+
+            return "Publisher added successfully.";
         }
 
         public void UpdatePublisher(PublisherViewModel publisher)
         {
-            var model = new PublisherViewModel().ConvertViewModel(publisher);
-            var ModelById = _unitOfWork.GenericRepository<Publisher>().GetById(model.Id);
+            
+            var ModelById = _unitOfWork.GenericRepository<Publisher>().GetById(publisher.Id);
 
             ModelById.Name = publisher.Name;
             ModelById.Address = publisher.Address;

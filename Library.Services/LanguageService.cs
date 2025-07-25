@@ -70,11 +70,25 @@ namespace Library.Services
             return vm;
         }
 
-        public void InsertLanguage(LanguageViewModel language)
+        public string InsertLanguage(LanguageViewModel language)
         {
-            var model = new LanguageViewModel().ConvertViewModel(language);
+            var existing = _unitOfWork.GenericRepository<Language>()
+                    .GetAll()
+                    .FirstOrDefault(c => c.Name == language.Name);
+
+            if (existing != null)
+                return "Language already exists.";
+
+            var model = new Language
+            {
+                Name = language.Name,
+                
+            };
+
             _unitOfWork.GenericRepository<Language>().Add(model);
             _unitOfWork.Save();
+
+            return "Language added successfully.";
         }
 
         public void UpdateLanguage(LanguageViewModel language)

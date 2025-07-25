@@ -29,7 +29,11 @@ namespace Library.ViewModels
 
         public Country Country { get; set; }
 
-        public IEnumerable<CountryViewModel> Countries { get; set; }
+        //public IEnumerable<CountryViewModel> Countries { get; set; }
+
+        public IEnumerable<SelectListItem> Countries { get; set; }
+
+        public PagedResult<AuthorViewModel> PagedAuthors { get; set; }
 
 
         public class AuthorSearchViewModel

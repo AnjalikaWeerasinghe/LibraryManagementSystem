@@ -15,7 +15,9 @@ namespace Library.Services
         PagedResult<AuthorViewModel> GetAuthorByName(string name, int pageNumber, int pageSize);
         AuthorViewModel GetAuthorById(int AuthorId);
         void UpdateAuthor(AuthorViewModel author);
-        void InsertAuthor(AuthorViewModel author);
+        string InsertAuthor(AuthorViewModel author);
         void DeleteAuthor(int id);
+
+        IEnumerable<CountryViewModel> GetAllCountries();
     }
 }

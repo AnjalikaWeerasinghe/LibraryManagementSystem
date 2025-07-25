@@ -14,7 +14,7 @@ namespace Library.Services
         CategoryViewModel GetCategoryById(int CategoryId);
         Task<IEnumerable<CategoryViewModel>> GetAllAsync();
         void UpdateCategory(CategoryViewModel category);
-        void InsertCategory(CategoryViewModel category);
+        string InsertCategory(CategoryViewModel category);
         void DeleteCategory(int id);
 
     }

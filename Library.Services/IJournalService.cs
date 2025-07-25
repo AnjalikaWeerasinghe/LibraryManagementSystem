@@ -14,7 +14,7 @@ namespace Library.Services
         PagedResult<JournalViewModel> GetJournalByName(string name, int pageNumber, int pageSize);
         JournalViewModel GetJournalById(int journalId);
         void UpdateJournal(JournalViewModel journal);
-        void InsertJournal(JournalViewModel journal);
+        string InsertJournal(JournalViewModel journal);
         void DeleteJournal(int id);
         string GenerateNextJournalCode();
     }

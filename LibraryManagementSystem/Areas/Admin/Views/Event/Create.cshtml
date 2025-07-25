@@ -33,7 +33,7 @@
             </div>
 
             <div class="col-md-6 form-group">
-                <label asp-for="EndDate" class="control-label"></label>
+                <label asp-for="EndDate" class="control-label">End Date</label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
@@ -71,31 +71,8 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center">
-            <div class="modal-body">
-                <p id="successText" class="fs-5"></p>
-                <button type="button" class="btn btn-primary mt-3" data-bs-dismiss="modal" onclick="clearForm()">OK</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
-    <script>
-        window.onload = function () {
-            var message = '@TempData["SuccessMessage"]';
-            if (message) {
-                document.getElementById("successText").innerText = message;
-
-                var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
-            }
-        };
-
-        function clearForm() {
-            document.querySelector("form").reset();
-        }
-    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

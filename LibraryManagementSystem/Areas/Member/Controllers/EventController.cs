@@ -7,7 +7,7 @@ using System.Drawing.Printing;
 
 namespace LibraryManagementSystem.Areas.Member.Controllers
 {
-    [Area("member")]
+    [Area("Member")]
     public class EventController : Controller
     {
         private ILibraryEventService _libraryEvent;
@@ -26,43 +26,10 @@ namespace LibraryManagementSystem.Areas.Member.Controllers
 
         public IActionResult Details(int id)
         {
-            var evt = _unitOfWork.GenericRepository<LibraryEvent>().GetById(id);
-            if (evt == null) return NotFound();
-
-            var vm = new LibraryEventViewModel
-            {
-                Id = evt.Id,
-                Title = evt.Title,
-                Description = evt.Description,
-                ImageUrl = evt.ImageUrl,
-                StartDate = evt.StartDate
-            };
-
+            var vm = _libraryEvent.GetLibraryEventById(id);
             return View(vm);
         }
 
-        [HttpGet]
-        public IActionResult Register(int eventId)
-        {
-            // Pass the eventId to the view or fetch event details if needed
-            var model = new EventParticipantViewModel
-            {
-                LibraryEventId = eventId
-                // Optionally load Event title, date etc.
-            };
-            return View(model);
-        }
-
-        [HttpPost]
-        public IActionResult Register(EventParticipantViewModel model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            // Save registration logic here
-            // Redirect or show success
-
-            return RedirectToAction("Confirmation");
-        }
+        
     }
 }

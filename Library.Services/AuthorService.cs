@@ -121,25 +121,33 @@ namespace Library.Services
             };
         }
 
-        public void InsertAuthor(AuthorViewModel author)
+        public string InsertAuthor(AuthorViewModel author)
         {
-            var model = new AuthorViewModel().ConvertViewModel(author);
+            var existing = _unitOfWork.GenericRepository<Author>()
+                    .GetAll()
+                    .FirstOrDefault(c => c.Name == author.Name);
 
-            //var model = new Author
-            //{
-            //    Name = author.Name,
-            //    CountryId = author.CountryId,
-            //    Biography = author.Biography
-            //};
-            
+            if (existing != null)
+                return "Author already exists.";
+
+            var model = new Author
+            {
+                Name = author.Name,
+                CountryId = author.CountryId,
+                Biography = author.Biography
+            };
+
             _unitOfWork.GenericRepository<Author>().Add(model);
             _unitOfWork.Save();
+
+            return "Author added successfully.";
+
         }
 
         public void UpdateAuthor(AuthorViewModel author)
         {
             var model = new AuthorViewModel().ConvertViewModel(author);
-            var ModelById = _unitOfWork.GenericRepository<Author>().GetById(model.Id);
+            var ModelById = _unitOfWork.GenericRepository<Author>().GetById(author.Id);
 
             ModelById.Name = author.Name;
             ModelById.CountryId = author.CountryId;
@@ -147,6 +155,17 @@ namespace Library.Services
 
             _unitOfWork.GenericRepository<Author>().Update(ModelById);
             _unitOfWork.Save();
+        }
+
+        public IEnumerable<CountryViewModel> GetAllCountries()
+        {
+            return _unitOfWork.GenericRepository<Country>()
+                .GetAll()
+                .Select(c => new CountryViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                });
         }
     }
 }

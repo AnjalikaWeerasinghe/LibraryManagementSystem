@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LibraryManagementSystem.Areas.Admin.Controllers
 {
-    [Area("admin")]
+    [Area("Admin")]
     public class AuthorController : Controller
     {
         private IAuthorService _author;
@@ -24,98 +24,96 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
 
         public IActionResult Index(string searchTerm, int pageNumber = 1, int pageSize = 10)
         {
-            //return View(_author.GetAll(pageNumber, pageSize));
 
-            PagedResult<AuthorViewModel> result;
-
-            if (!string.IsNullOrWhiteSpace(searchTerm))
-            {
-                result = _author.GetAuthorByName(searchTerm, pageNumber, pageSize);
-            }
-            else
-            {
-                result = _author.GetAll(pageNumber, pageSize);
-            }
-
-            ViewBag.SearchTerm = searchTerm;
-            return View(result);
-        }
-
-        private List<SelectListItem> GetCountryList()
-        {
-            return _unitOfWork.GenericRepository<Country>()
-                .GetAll()
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name,
-                }).ToList();
-        }
-
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            var viewModel = _author.GetAuthorById(id);
-            
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(AuthorViewModel vm)
-        {
-            //if (!ModelState.IsValid)
-            //{
-            //    vm.CountryList = GetCountryList(); // Repopulate on validation failure
-            //    return View(vm);
-            //}
-
-            //try
-            //{
-            //    _author.UpdateAuthor(vm); // Use service
-
-            //    ViewBag.UpdateSuccess = $"'{vm.Name}' updated successfully!";
-            //    ViewBag.ShowModal = true;
-            //}
-            //catch
-            //{
-            //    ModelState.AddModelError("", "An error occurred while updating.");
-            //}
-
-            //vm.CountryList = GetCountryList();
-            //return View(vm);
-
-            _author.UpdateAuthor(vm);
-            return RedirectToAction("Index");
-
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Create()
-        {
+            var result = string.IsNullOrWhiteSpace(searchTerm)
+                ? _author.GetAll(pageNumber, pageSize)
+                : _author.GetAuthorByName(searchTerm, pageNumber, pageSize);
 
             var vm = new AuthorViewModel
             {
-                Countries = await _country.GetAllAsync()
+                PagedAuthors = result,
+                Countries = _author.GetAllCountries()
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Name
+                    })
             };
+
+            ViewBag.SearchTerm = searchTerm;
             return View(vm);
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public IActionResult Create(AuthorViewModel vm)
+        public IActionResult CreateorUpdate(AuthorViewModel vm)
         {
-            
+            if (!ModelState.IsValid)
+            {
+                vm.PagedAuthors = _author.GetAll(1, 10);
+                vm.Countries = _author.GetAllCountries()
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Name
+                    });
+            }
 
-            _author.InsertAuthor(vm);
-            TempData["SuccessMessage"] = $"{vm.Name} created successfully!";
-            return RedirectToAction(nameof(Create));
+            if (vm.Id == 0)
+            {
+                var result = _author.InsertAuthor(vm);
+                if (result == "Author already exists.")
+                {
+                    TempData["ErrorMessage"] = result;
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = $"{vm.Name} successfully Added!";
+                }
 
+                ModelState.Clear();
+            }
+            else
+            {
+                _author.UpdateAuthor(vm);
+                TempData["SuccessMessage"] = $"{vm.Name} updated successfully !";
+                ModelState.Clear();
+            }
+
+            return RedirectToAction("Index");
         }
+
+
+        public IActionResult Edit(int id)
+        {
+            var author = _author.GetAuthorById(id);
+            if (author == null)
+                return NotFound();
+
+            var pagedData = _author.GetAll(1, 10);
+            var countries = _author.GetAllCountries()
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Name
+                    });
+
+            var vm = new AuthorViewModel
+            {
+                Id = author.Id,
+                Name = author.Name,
+                Biography = author.Biography,
+                CountryId = author.CountryId,
+                Countries = countries,
+
+                PagedAuthors = pagedData
+            };
+
+            return View("Index", vm);
+        }
+
 
         public IActionResult Delete(int id)
         {
-            //_author.DeleteAuthor(id);
-            //return RedirectToAction("Index");
 
             var entity = _unitOfWork.GenericRepository<Author>().GetById(id);
             if (entity == null)
