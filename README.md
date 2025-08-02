@@ -43,9 +43,6 @@ This system supports **catalog management, member registration, borrowing and re
 
 ## 📷 Screenshots
 
-> Here are some sample screenshots of the Library Management System UI.  
-> _(Replace these placeholders with actual images of your system's pages)_
-
 ### 🏠 Dashboard
 ![Dashboard Screenshot]()
 
