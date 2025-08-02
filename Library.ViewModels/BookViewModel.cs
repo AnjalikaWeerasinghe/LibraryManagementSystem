@@ -44,6 +44,15 @@ namespace Library.ViewModels
         [DataType(DataType.MultilineText)]
         [Display(Name = "Description")]
         public string? Description { get; set; }
+        public string? ShelfLocation { get; set; }
+
+        [Display(Name = "Number of Copies")]
+        [Range(1, 100)]
+        public int NumberOfCopies { get; set; }
+
+        public int AvailableCopies { get; set; } 
+        public int TotalCopies { get; set; }    
+        public bool IsMemberView { get; set; }
 
         public Genre Genre { get; set; }
         public Language Language { get; set; }
@@ -76,6 +85,7 @@ namespace Library.ViewModels
             Description = model.Description;
             ISBN = model.ISBN;
             Edition = model.Edition;
+           
         }
 
         public Book ConvertToViewModelToModel(BookViewModel model)

@@ -19,7 +19,7 @@ namespace Library.ViewModels
         public string Description { get; set; }
         public string Status { get; set; }
 
-        public DateTime RegisteredDate { get; set; }
+        public DateTime StartDate { get; set; }
         public ParticipantStatus ParticipantStatus { get; set; }
 
         public RegisteredEventViewModel()
@@ -30,20 +30,11 @@ namespace Library.ViewModels
         public RegisteredEventViewModel(EventParticipant participant)
         {
             EventId = participant.LibraryEventId;
-            RegisteredDate = participant.RegisteredDate;
+            StartDate = participant.StartDate;
             ParticipantStatus = participant.ParticipantStatus;
             EventParticipantId = participant.ApplicationUserId;
         }
 
-        public EventParticipant ConvertViewModelToModel(RegisteredEventViewModel model)
-        {
-            return new EventParticipant
-            {
-                LibraryEventId = model.EventId,
-                RegisteredDate = model.RegisteredDate,
-                ParticipantStatus = model.ParticipantStatus,
-                ApplicationUserId = model.EventParticipantId
-            };
-        }
+        
     }
 }

@@ -203,5 +203,44 @@ namespace Library.Services
                     new SelectListItem { Value = WebSiteRoles.WebSite_Member, Text = "Member" }
                 };
         }
+
+        public async Task SetUserStatusAsync(string userId, UserStatus status)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw new Exception("User not found");
+
+            user.UserStatus = status;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                throw new Exception("Failed to update user status");
+        }
+
+        public async Task ToggleUserStatusAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw new Exception("User not found");
+
+            user.UserStatus = user.UserStatus == UserStatus.Active
+                ? UserStatus.Inactive
+                : UserStatus.Active;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                throw new Exception("Failed to update user status");
+        }
+
+        public async Task<IEnumerable<SelectListItem>> GetAllMembersAsSelectListAsync()
+        {
+            var users = await _userManager.GetUsersInRoleAsync("Member");
+
+            return users.Select(u => new SelectListItem
+            {
+                Value = u.Id,
+                Text = $"{u.FullName} {u.UserCode} "
+            }).ToList();
+        }
     }
 }

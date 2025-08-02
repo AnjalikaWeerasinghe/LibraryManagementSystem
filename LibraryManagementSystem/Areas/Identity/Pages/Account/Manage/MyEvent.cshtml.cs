@@ -37,10 +37,10 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostCancelRegistrationAsync(int eventId)
+        public async Task<IActionResult> OnPostCancelRegistrationAsync(int eventregistrationId)
         {
             var userId = _userManager.GetUserId(User);
-            await _eventService.CancelRegistrationAsync(eventId, userId);
+            await _eventService.CancelRegistrationAsync(eventregistrationId, userId);
 
             return RedirectToPage();
         }

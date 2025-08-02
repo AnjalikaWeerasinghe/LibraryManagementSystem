@@ -22,7 +22,7 @@
 
             <div class="col-md-6 form-group">
                 <label asp-for="StartDate" class="control-label">Start Date<span class="text-danger"> *</label>
-                <input asp-for="StartDate" class="form-control" />
+                <input asp-for="StartDate" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
 
@@ -34,7 +34,7 @@
 
             <div class="col-md-6 form-group">
                 <label asp-for="EndDate" class="control-label">End Date</label>
-                <input asp-for="EndDate" class="form-control" />
+                <input asp-for="EndDate" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
 

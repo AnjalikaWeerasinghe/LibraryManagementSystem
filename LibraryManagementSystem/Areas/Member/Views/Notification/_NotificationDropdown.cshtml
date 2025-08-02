@@ -1,0 +1,19 @@
+﻿@model List<Library.ViewModels.NotificationViewModel>
+
+<ul class="dropdown-menu dropdown-menu-end show" style="display:block; max-height: 300px; overflow-y: auto;">
+    @if (!Model.Any())
+    {
+        <li class="dropdown-item text-muted">No notifications</li>
+    }
+    else
+    {
+        @foreach (var note in Model)
+        {
+            <li class="dropdown-item">
+                <strong>@note.Type:</strong> @note.Message <br />
+                <small class="text-muted">@note.Date.ToString("dd MMM yyyy")</small>
+            </li>
+        }
+    }
+</ul>
+

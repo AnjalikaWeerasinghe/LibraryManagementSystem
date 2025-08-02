@@ -1,5 +1,5 @@
 html {
-    font-size: 15px;
+    font-size: 12px;
 }
 
 @media (min-width: 1000px) {
@@ -23,6 +23,7 @@ body {
     margin-top: 0;
     padding: 0;
     margin-bottom: 70px;
+
 }
 
 .profile-header {
@@ -76,7 +77,7 @@ body {
 
 .sidebar {
     min-height: 100vh;
-    padding-top: 1rem;
+    padding-top: 0;
     background-color: #20c997;
     color: white;
 }

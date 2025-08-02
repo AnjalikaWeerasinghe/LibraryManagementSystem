@@ -1,0 +1,92 @@
+﻿@using Library.ViewModels
+@using Library.Utilities
+@model PagedResult<Library.ViewModels.BorrowingViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Borrowings</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-secondary">Add a Borrowing</a>
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                UserCode
+            </th>
+            <th>
+                ItemCopyCode
+            </th>
+            <th>
+                Borrowed Date
+            </th>
+            <th>
+                Due Date
+            </th>
+            <th>
+                Returned Date
+            </th>
+            <th>
+                Borrowed Status
+            </th>
+            <th>
+                Item Title
+            </th>
+            <th>
+                ItemCode
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Data)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemCopyCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BorrowedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DueDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReturnedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BorrowedStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemTitle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemCode)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> 
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<cs-pager cs-paging-pagesize=(int)Model.PageSize
+          cs-paging-pagenumber=(int)Model.PageNumber
+          cs-paging-totalitems=(int)Model.TotalItems
+          cs-pagenumber-param="pageNumber"
+          asp-controller="Borrowing"
+
+          asp-action="Index"
+          cs-pager-li-current-class="page-item active"
+          cs-pager-li-other-class="page-item"
+          cs-pager-li-non-active-class="page-item disabled"
+          cs-pager-link-current-class="page-link"
+          cs-pager-link-other-class="page-link">
+</cs-pager>

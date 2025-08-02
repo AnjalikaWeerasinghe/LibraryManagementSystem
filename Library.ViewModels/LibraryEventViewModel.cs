@@ -1,5 +1,6 @@
 ﻿using Library.Models;
 using Library.Utilities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -41,7 +42,10 @@ namespace Library.ViewModels
         [Required(ErrorMessage = "Add the location of the event.")]
         [StringLength(150, ErrorMessage = "Location cannot exceed 150 characters.")]
         public string Location { get; set; }
-        
+
+        public EventStatus EventStatus { get; set; }
+
+        public IEnumerable<SelectListItem>? EventStatusList { get; set; }
 
         public class EventSearchViewModel
         {
@@ -63,6 +67,7 @@ namespace Library.ViewModels
             StartDate = model.StartDate;
             EndDate = model.EndDate;
             Location = model.Location;
+            EventStatus = model.EventStatus;
            
         }
 
@@ -78,7 +83,7 @@ namespace Library.ViewModels
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
                 Location = model.Location,
-                
+                EventStatus = model.EventStatus
             };
         }
     }

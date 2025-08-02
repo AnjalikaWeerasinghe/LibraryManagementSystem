@@ -1,0 +1,20 @@
+﻿@model Library.ViewModels.BorrowingViewModel
+
+@{
+    ViewData["Title"] = "Edit Borrowing";
+}
+
+<h2>Edit Borrowing</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="ReturnedDate"></label>
+        <input asp-for="ReturnedDate" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
+

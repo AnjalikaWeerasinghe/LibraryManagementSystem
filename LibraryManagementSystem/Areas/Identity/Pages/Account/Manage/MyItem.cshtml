@@ -1,4 +1,47 @@
 ﻿@page
 @model LibraryManagementSystem.Areas.Identity.Pages.Account.Manage.MyItemModel
+ 
 @{
+    ViewData["Title"] = "My Borrowed Books";
 }
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Item Code</th>
+            <th>Borrowed Date</th>
+            <th>Due Date</th>
+            <th>Returned Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Borrowings.Data)
+    {
+        <tr>
+            <td>@item.ItemTitle</td>
+            <td>@item.ItemCode</td>
+            <td>@item.BorrowedDate.ToShortDateString()</td>
+            <td>@item.DueDate.ToShortDateString()</td>
+            <td>@(item.ReturnedDate?.ToShortDateString() ?? "-")</td>
+            <td>@item.BorrowedStatus</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<cs-pager cs-paging-pagesize="@(int)Model.Borrowings.PageSize"
+          cs-paging-pagenumber="@(int)Model.Borrowings.PageNumber"
+          cs-paging-totalitems="@(int)Model.Borrowings.TotalItems"
+          cs-pagenumber-param="PageNumber"
+
+          asp-page="./MyBorrowedBooks"
+          cs-pager-li-current-class="page-item active"
+          cs-pager-li-other-class="page-item"
+          cs-pager-li-non-active-class="page-item disabled"
+          cs-pager-link-current-class="page-link"
+          cs-pager-link-other-class="page-link">
+</cs-pager>

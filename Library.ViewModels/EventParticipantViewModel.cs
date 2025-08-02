@@ -22,8 +22,8 @@ namespace Library.ViewModels
         public string? Location { get; set; } = string.Empty;
 
         [DataType(DataType.Date)]
-        [Display(Name = "Registered Date")]
-        public DateTime RegisteredDate { get; set; }
+        [Display(Name = "Start Date")]
+        public DateTime StartDate { get; set; }
 
         [Display(Name = "Participant Status")]
         public ParticipantStatus ParticipantStatus { get; set; } = ParticipantStatus.Registered;
@@ -44,22 +44,12 @@ namespace Library.ViewModels
             LibraryEventId = participant.LibraryEventId;
             EventTitle = participant.LibraryEvent?.Title;
             Location = participant.LibraryEvent?.Location;
-            RegisteredDate = participant.RegisteredDate;
+            StartDate = participant.LibraryEvent.StartDate;
             ParticipantStatus = participant.ParticipantStatus;
             ApplicationUserId = participant.ApplicationUserId;
             
         }
 
-        public EventParticipant ConvertViewModelToModel(EventParticipantViewModel model)
-        {
-            return new EventParticipant
-            {
-                Id = model.Id,
-                LibraryEventId = model.LibraryEventId,
-                RegisteredDate = model.RegisteredDate,
-                ParticipantStatus = model.ParticipantStatus,
-                ApplicationUserId = model.ApplicationUserId
-            };
-        }
+        
     }
 }

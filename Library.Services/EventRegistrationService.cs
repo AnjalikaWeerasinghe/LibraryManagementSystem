@@ -32,6 +32,36 @@ namespace Library.Services
             await _unitOfWork.SaveAsync();
         }
 
+        public async Task<List<EventParticipationAdminViewModel>> GetEventParticipationReportAsync()
+        {
+            var participants = _unitOfWork.GenericRepository<EventParticipant>()
+            .GetAll(includeProperties: "LibraryEvent,ApplicationUser")
+            .ToList();
+
+            var grouped = participants
+                .GroupBy(p => new
+                {
+                    p.LibraryEvent.Id,
+                    p.LibraryEvent.Title,
+                    p.LibraryEvent.StartDate,
+                    p.LibraryEvent.Location
+                })
+                .Select(g => new EventParticipationAdminViewModel
+                {
+                    EventTitle = g.Key.Title,
+                    StartDate = g.Key.StartDate,
+                    Location = g.Key.Location,
+                    Participants = g.Select(p => new EventParticipationAdminViewModel.ParticipantDetail
+                    {
+                        FullName = p.ApplicationUser.FullName,
+                        UserCode = p.ApplicationUser.UserCode,
+                        Status = p.ParticipantStatus
+                    }).ToList()
+                }).ToList();
+
+            return await Task.FromResult(grouped);
+        }
+
         public async Task<IEnumerable<EventParticipantViewModel>> GetRegistrationsByEventAsync(int eventId)
         {
             var participants = _unitOfWork.GenericRepository<EventParticipant>()
@@ -69,7 +99,7 @@ namespace Library.Services
             {
                 LibraryEventId = eventId,
                 ApplicationUserId = userId,
-                RegisteredDate = DateTime.UtcNow,
+                StartDate = ev.StartDate,
                 ParticipantStatus = ParticipantStatus.Registered,
                 Location = ev.Location,
                 EventTitle = ev.Title

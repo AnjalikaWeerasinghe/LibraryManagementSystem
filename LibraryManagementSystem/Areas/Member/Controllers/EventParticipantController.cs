@@ -39,7 +39,7 @@ namespace LibraryManagementSystem.Areas.Member.Controllers
             var vm = new EventParticipantViewModel
             {
                 LibraryEventId = eventId,
-                RegisteredDate = DateTime.Now,
+                StartDate = libraryEvent.StartDate,
                 ApplicationUserId = user.Id,
                 Location = libraryEvent.Location ,
                 EventTitle = libraryEvent.Title

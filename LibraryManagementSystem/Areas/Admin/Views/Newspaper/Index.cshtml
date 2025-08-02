@@ -7,13 +7,11 @@
 
 <h1>Newspapers</h1>
 
-<br />
 <form asp-action="Index" method="get">
     <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" style="width: 400px" placeholder="Search by Newspaper" />
     <button type="submit" class="btn btn-primary">Search</button>
     <a asp-action="Index" class="btn btn-primary">Clear</a>
 </form>
-<br />
 
 <p>
     <a asp-action="Create" class="btn btn-secondary">Add a New Newspaper</a>
@@ -37,16 +35,10 @@
                 Issue Number
             </th>
             <th>
-                Description
-            </th>
-            <th>
                 Language
             </th>
             <th>
                 Category
-            </th>
-            <th>
-                Publisher
             </th>
             <th></th>
         </tr>
@@ -70,16 +62,10 @@
                 @Html.DisplayFor(modelItem => item.IssueNumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Language.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Category.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Publisher.Name)
             </td>
             <td>
                 <div class="d-flex gap-2">

@@ -45,7 +45,59 @@
         .custom-btn i:hover {
             background-color: rgba(0, 0, 0, 0.8);
         }
-</style>
+</style>  @* Styling for Caraousal *@
+
+<style>
+    .modal-backdrop.show {
+        backdrop-filter: blur(3px);
+    }
+
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+        background-color: #fff;
+    }
+
+    .modal-header {
+        background-color: aqua;
+        color: black;
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .modal-title {
+        font-weight: bold;
+    }
+
+    .modal-body {
+        font-size: 1rem;
+        padding: 1.5rem;
+        color: #333;
+        text-align: center;
+    }
+
+    .modal-footer {
+        justify-content: center;
+        padding-bottom: 1.2rem;
+    }
+
+        .modal-footer .btn {
+            width: 100px;
+            font-weight: 600;
+            border-radius: 8px;
+        }
+
+    .modal.fade .modal-dialog {
+        transform: translateY(-20%);
+        transition: transform 0.3s ease-out;
+    }
+
+    .modal.show .modal-dialog {
+        transform: translateY(0);
+    }
+</style>  @* Styling for Popup box *@
+
 
 <div class="text-center">
     <h1 class="display-4">Welcome to the Public Library</h1>
@@ -64,9 +116,7 @@
                     <img src="@eventItem.ImageUrl" alt="Event Image">
 
                     <div class="carousel-caption-below">
-                        <a asp-area="member" asp-controller="Event" asp-action="Details" asp-route-id="@eventItem.Id">
-                            <h5>@eventItem.Title</h5>
-                        </a>
+                        <a href="#" class="event-title" data-event-id="@eventItem.Id">@eventItem.Title</a>
                         <p>@eventItem.Description</p>
                     </div>
                 </div>
@@ -104,6 +154,9 @@
                     <p class="card-text">
                         Join our library to access thousands of books, e-books, and other resources. Membership is free for all residents of Gampola.
                     </p>
+                    <a asp-controller="Membership" asp-action="Details" class="btn btn-primary mt-auto">
+                        Learn More.
+                    </a>
                 </div>
             </div>
         </div>
@@ -135,6 +188,44 @@
             }
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const links = document.querySelectorAll(".event-title");
+
+            links.forEach(link => {
+                link.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    const eventId = this.getAttribute("data-event-id");
+                    const isAuthenticated = @User.Identity.IsAuthenticated.ToString().ToLower(); 
+
+                    if (!isAuthenticated) {
+                        const guestModal = new bootstrap.Modal(document.getElementById('guestModal'));
+                        guestModal.show();
+                    } else {
+                        window.location.href = `/member/Event/Details/${eventId}`;
+                    }
+                });
+            });
+        });
+    </script>
 }
+
+<div class="modal fade" id="guestModal" tabindex="-1" aria-labelledby="guestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="guestModalLabel">Notice</h5>
+            </div>
+            <div class="modal-body">
+                Please register first.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 

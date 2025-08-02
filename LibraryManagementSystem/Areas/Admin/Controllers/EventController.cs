@@ -5,6 +5,7 @@ using Library.Utilities;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Drawing.Printing;
 using System.Security.Policy;
@@ -116,7 +117,15 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
         {
             var model = new LibraryEventViewModel
             {
-                EventCode = _libraryEvent.GenerateNextEventCode()
+                EventCode = _libraryEvent.GenerateNextEventCode(),
+
+                //EventStatus = Enum.GetValues(typeof(UserStatus))
+                //    .Cast<UserStatus>()
+                //    .Select(e => new SelectListItem
+                //    {
+                //        Value = e.ToString(),
+                //        Text = e.ToString()
+                //    }),
             };
 
             return View(model);
@@ -172,6 +181,22 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             _unitOfWork.Save();
 
             return Ok();
+        }
+
+        [HttpPost]
+        public IActionResult ToggleStatus(int id)
+        {
+            try
+            {
+                 _libraryEvent.ToggleEventStatusAsync(id);
+                TempData["SuccessMessage"] = "Event status updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

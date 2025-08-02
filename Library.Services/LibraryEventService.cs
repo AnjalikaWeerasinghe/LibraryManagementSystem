@@ -2,6 +2,8 @@
 using Library.Repositories.Interfaces;
 using Library.Utilities;
 using Library.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,7 +91,8 @@ namespace Library.Services
                 StartDate = libraryEvent.StartDate,
                 EndDate = libraryEvent.EndDate,
                 Location = libraryEvent.Location,
-                EventCode = libraryEvent.EventCode
+                EventCode = libraryEvent.EventCode,
+                EventStatus = libraryEvent.EventStatus
             };
 
             _unitOfWork.GenericRepository<LibraryEvent>().Add(model);
@@ -139,6 +142,7 @@ namespace Library.Services
                 StartDate = p.StartDate,
                 EndDate = p.EndDate,
                 Location = p.Location,
+                EventStatus = p.EventStatus
 
             }).ToList();
 
@@ -168,6 +172,26 @@ namespace Library.Services
 
             return $"EID-{(lastNumber + 1).ToString("D4")}";
         }
+
+        public void ToggleEventStatusAsync(int eventId)
+        {
+            var model = _unitOfWork.GenericRepository<LibraryEvent>().GetById(eventId);
+
+            if (model == null)
+            {
+                throw new Exception("Event not found");
+            }
+                
+
+            model.EventStatus = model.EventStatus == EventStatus.Ongoing
+                ? EventStatus.Cancel
+                : EventStatus.Ongoing;
+
+            _unitOfWork.GenericRepository<LibraryEvent>().Update(model);
+           
+        }
+
+
     }
 
 }

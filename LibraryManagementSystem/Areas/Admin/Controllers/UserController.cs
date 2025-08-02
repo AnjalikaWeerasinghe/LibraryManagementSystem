@@ -147,5 +147,21 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(string id)
+        {
+            try
+            {
+                await _userService.ToggleUserStatusAsync(id);
+                TempData["SuccessMessage"] = "User status updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+
+            return RedirectToAction("Index");
+        }
+
     }
 }

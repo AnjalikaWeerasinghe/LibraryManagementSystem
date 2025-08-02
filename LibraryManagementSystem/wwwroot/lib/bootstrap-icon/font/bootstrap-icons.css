@@ -1,0 +1,100 @@
+﻿
+@font-face {
+    font-family: "bootstrap-icons";
+    src: url("../fonts/bootstrap-icons.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+
+.bi {
+    display: inline-block;
+    font-family: "bootstrap-icons" !important;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+.bi-alarm::before {
+    content: "\f101";
+}
+
+.bi-bell::before {
+    content: "\f1f6";
+}
+
+.bi-check::before {
+    content: "\f26a";
+}
+
+.bi-x::before {
+    content: "\f62a";
+}
+
+.bi-person::before {
+    content: "\f4e1";
+}
+
+.bi-calendar::before {
+    content: "\f135";
+}
+
+.bi-clock::before {
+    content: "\f143";
+}
+
+.bi-envelope::before {
+    content: "\f1ef";
+}
+
+.bi-gear::before {
+    content: "\f3ee";
+}
+
+.bi-house::before {
+    content: "\f37f";
+}
+
+.bi-info-circle::before {
+    content: "\f431";
+}
+
+.bi-plus::before {
+    content: "\f4fe";
+}
+
+.bi-search::before {
+    content: "\f52a";
+}
+
+.bi-trash::before {
+    content: "\f5de";
+}
+
+.bi-pencil::before {
+    content: "\f4ca";
+}
+
+.bi-eye::before {
+    content: "\f1c8";
+}
+
+.bi-lock::before {
+    content: "\f2ed";
+}
+
+.bi-unlock::before {
+    content: "\f61f";
+}
+
+.bi-download::before {
+    content: "\f1e9";
+}
+
+.bi-upload::before {
+    content: "\f61c";
+}

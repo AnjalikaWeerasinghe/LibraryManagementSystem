@@ -53,8 +53,8 @@
                         </td>
                         
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a> |
-                            <button class="btn btn-danger" onclick="openDeleteModal(@item.Id, '@item.Name', '@ViewContext.RouteData.Values["controller"]')">Delete</button>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-dark">Edit</a> |
+                            <button class="btn btn-sm btn-danger" onclick="openDeleteModal(@item.Id, '@item.Name', '@ViewContext.RouteData.Values["controller"]')">Delete</button>
                         </td>
                     </tr>
                 }

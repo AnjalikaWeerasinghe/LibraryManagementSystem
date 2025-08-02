@@ -1,6 +1,7 @@
 ﻿using Library.Models;
 using Library.Repositories.Interfaces;
 using Library.Services;
+using Library.Services.Results;
 using Library.Utilities;
 using Library.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -138,15 +139,16 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns(vm);
+                
             }
 
             vm.ItemCode = _book.GenerateNextBookCode();
 
-            string result = _book.InsertBook(vm);
+            InsertBookResult result = _book.InsertBook(vm);
 
-            if (result == "Book already exists.")
+            if (!result.Success)
             {
-                TempData["ErrorMessage"] = result;
+                TempData["ErrorMessage"] = result.Message;
             }
             else
             {

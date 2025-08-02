@@ -16,5 +16,7 @@ namespace Library.Services
         Task<IEnumerable<EventParticipantViewModel>> GetRegistrationsByEventAsync(int eventId);
         Task<IEnumerable<EventParticipantViewModel>> GetRegistrationsByUserAsync(string userId);
 
+        Task<List<EventParticipationAdminViewModel>> GetEventParticipationReportAsync();
+
     }
 }

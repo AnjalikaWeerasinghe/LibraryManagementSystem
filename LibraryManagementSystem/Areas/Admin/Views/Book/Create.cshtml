@@ -103,6 +103,18 @@
                     <option value="" disabled selected class="placeholder-option">-- Select Language --</option>
                 </select>
             </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="ShelfLocation"></label>
+                <input asp-for="ShelfLocation" class="form-control" />
+                <span asp-validation-for="ShelfLocation" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="NumberOfCopies" class="control-label"></label>
+                <input asp-for="NumberOfCopies" class="form-control" />
+                <span asp-validation-for="NumberOfCopies" class="text-danger"></span>
+            </div>
         </div>
 
         <br />

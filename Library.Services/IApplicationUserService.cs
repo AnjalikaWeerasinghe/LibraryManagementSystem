@@ -30,8 +30,12 @@ namespace Library.Services
         Task<string> GenerateNextUserCodeAsync(bool isMember);
 
         //Task AssignRoleAsync(string userId, string roleName);
-        //Task SetUserStatusAsync(string userId, UserStatus status);
+        Task SetUserStatusAsync(string userId, UserStatus status);
+
+        Task ToggleUserStatusAsync(string userId);
 
         List<SelectListItem> BuildRoleList();
+
+        Task<IEnumerable<SelectListItem>> GetAllMembersAsSelectListAsync();
     }
 }

@@ -51,6 +51,10 @@ builder.Services.AddTransient<IEventRegistrationService, EventRegistrationServic
 builder.Services.AddTransient<IUserCodeService, UserCodeService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddTransient<IFieldOfStudyService, FieldOfStudyService>();
+builder.Services.AddTransient<INotificationService, NotificationService>();
+builder.Services.AddTransient<IBorrowingService, BorrowingService>();
+builder.Services.AddTransient<IItemCopyService, ItemCopyService>();
+builder.Services.AddTransient<IAdminDashboardService, AdminDashboardService>();
 
 builder.Services.AddRazorPages();
 

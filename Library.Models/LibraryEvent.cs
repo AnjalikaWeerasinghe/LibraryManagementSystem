@@ -31,6 +31,16 @@ namespace Library.Models
         [Required(ErrorMessage = "Add the location of the event.")]
         public string Location { get; set; }
 
+        public EventStatus EventStatus { get; set; } = EventStatus.Ongoing;
+
         public ICollection<EventParticipant> Participants { get; set; }
+    }
+}
+
+namespace Library.Models
+{
+    public enum EventStatus
+    {
+        Cancel, Ongoing
     }
 }

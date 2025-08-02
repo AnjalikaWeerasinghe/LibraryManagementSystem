@@ -1,0 +1,81 @@
+﻿@model Library.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-4"><div class="card bg-warning p-3">Total Members: @Model.TotalMembers</div></div>
+    <div class="col-md-4"><div class="card bg-secondary p-3">Total Staff: @Model.TotalStaff</div></div>
+    <div class="col-md-4"><div class="card bg-success p-3">Items: @Model.TotalLibraryItems</div></div>
+    
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary p-3">Borrowed: @Model.TotalBorrowedItems</div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-danger p-3">Overdue Returns: @Model.OverdueReturnCount</div>
+    </div>
+    
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h5>Upcoming Events</h5>
+        <ul class="list-group">
+            @foreach (var e in Model.UpcomingEvents)
+            {
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>@e.Title</span>
+                    <span>@e.StartDate.ToShortDateString()</span>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h5>Monthly Borrowings</h5>
+        <canvas id="monthlyBorrowingChart"></canvas>
+    </div>
+    <div class="col-md-6">
+        <h5>Library Item Distribution</h5>
+        <canvas id="itemTypeChart"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/chart.js/chart.min.js"></script>
+    <script>
+        const monthlyBorrowingCtx = document.getElementById('monthlyBorrowingChart').getContext('2d');
+        const monthlyBorrowingChart = new Chart(monthlyBorrowingCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.MonthlyBorrowings.Select(m => m.Month))),
+                datasets: [{
+                    label: 'Borrowings',
+                    data: @Html.Raw(Json.Serialize(Model.MonthlyBorrowings.Select(m => m.BorrowCount))),
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }]
+            }
+        });
+
+        const itemTypeCtx = document.getElementById('itemTypeChart').getContext('2d');
+        const itemTypeChart = new Chart(itemTypeCtx, {
+            type: 'pie',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.LibraryItemDistribution.Select(i => i.ItemType))),
+                datasets: [{
+                    data: @Html.Raw(Json.Serialize(Model.LibraryItemDistribution.Select(i => i.Count))),
+                    backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745']
+                }]
+            }
+        });
+    </script>
+}
+

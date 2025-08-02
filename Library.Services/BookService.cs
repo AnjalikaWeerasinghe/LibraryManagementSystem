@@ -1,5 +1,6 @@
 ﻿using Library.Models;
 using Library.Repositories.Interfaces;
+using Library.Services.Results;
 using Library.Utilities;
 using Library.ViewModels;
 using Microsoft.Extensions.DependencyModel;
@@ -72,16 +73,25 @@ namespace Library.Services
             return vm;
         }
 
-        public string InsertBook(BookViewModel book)
+        public InsertBookResult InsertBook(BookViewModel book)
         {
-            var existing = _unitOfWork.GenericRepository<Book>()
+
+            var existingBook = _unitOfWork.GenericRepository<Book>()
                 .GetAll()
                 .FirstOrDefault(c => c.Title == book.Title && c.ISBN == book.ISBN);
 
-            if (existing != null)
-                return "Book already exists.";
+            if (existingBook != null)
+            {
+                return new InsertBookResult
+                {
+                    Success = false,
+                    Message = "Book already exists."
+                };
+            }
 
-            var model = new Book
+            string bookCode = GenerateNextBookCode();
+
+            var newBook = new Book
             {
                 Title = book.Title,
                 ISBN = book.ISBN,
@@ -92,13 +102,35 @@ namespace Library.Services
                 GenreId = book.GenreId,
                 PublishedYear = book.PublishedYear,
                 Edition = book.Edition,
-                ItemCode = book.ItemCode,
+                ItemCode = bookCode,
             };
 
-            _unitOfWork.GenericRepository<Book>().Add(model);
+            _unitOfWork.GenericRepository<Book>().Add(newBook);
             _unitOfWork.Save();
 
-            return "Book added successfully.";
+            int numberOfCopies = book.NumberOfCopies > 0 ? book.NumberOfCopies : 1;
+
+            for (int i = 1; i <= numberOfCopies; i++)
+            {
+                var itemCopy = new ItemCopy
+                {
+                    LibraryItemId = newBook.Id,
+                    ShelfLocation = book.ShelfLocation ?? "Default Shelf",
+                    Available = true,
+                    ItemCopyCode = $"{bookCode}-{i}"
+                };
+
+                _unitOfWork.GenericRepository<ItemCopy>().Add(itemCopy);
+            }
+
+            _unitOfWork.Save();
+
+            return new InsertBookResult
+            {
+                Success = true,
+                BookId = newBook.Id,
+                Message = $"{numberOfCopies} copy/copies added with code: {bookCode}"
+            };
         }
 
 

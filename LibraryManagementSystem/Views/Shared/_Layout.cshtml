@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Library.ViewModels
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,6 +9,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LibraryManagementSystem.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icon/font/bootstrap-icons.css" />
 </head>
 <body>
     <style>
@@ -116,9 +119,25 @@
                         </li>
 
                     }
+           
                 </ul>
+                @* <ul> *@
+                @*     @if (User.IsInRole("Member")) *@
+                @*     { *@
+                @*         <li class="nav-item dropdown" id="notificationDropdown"> *@
+                @*             <a href="#" class="nav-link" id="notificationIcon" data-bs-toggle="dropdown"> *@
+                @*                 <i class="bi bi-bell"></i> *@
+                @*                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationCount"> *@
+                @*                     <!-- Optional: count --> *@
+                @*                 </span> *@
+                @*             </a> *@
+                @*             <div id="notificationContent"></div> *@
+                @*         </li> *@
+                @*     } *@
+                @* </ul> *@
                 <partial name="_LoginPartial" />
             </div>
+            
         </div>
     </nav>
 
@@ -145,6 +164,9 @@
                         </div>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Borrowing" asp-action="Index">Borrowing</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Event" asp-action="Index">Events</a>
                     </li>
                     <li class="nav-item">
@@ -158,9 +180,9 @@
                             </ul>
                         </div>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Acquisition" asp-action="Index">Acquisitions</a>
-                    </li>
+                    @* <li class="nav-item"> *@
+                    @*     <a class="nav-link text-dark me-4" asp-area="admin" asp-controller="Acquisition" asp-action="Index">Acquisitions</a> *@
+                    @* </li> *@
                    
                     <li class="nav-item">
                         <a class="nav-link text-dark me-5" asp-area="admin" asp-controller="User" asp-action="Index">User Management</a>
@@ -195,7 +217,7 @@
 
         <footer class="border-top footer text-muted mt-5">
             <div class="container">
-                &copy; 2025 - LibraryManagementSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                &copy; 2025 - LibraryManagementSystem
             </div>
         </footer>
 
@@ -205,6 +227,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/link-loader.js" defer></script>
+    <script src="~/js/link-loader.js"></script>
     <script src="~/lib/chartjs/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -298,6 +321,25 @@
             }
         };
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const icon = document.getElementById("notificationIcon");
+            const content = document.getElementById("notificationContent");
+
+            icon.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                fetch('/Notification/GetUserNotifications')
+                    .then(response => response.text())
+                    .then(html => {
+                        content.innerHTML = html;
+                    })
+                    .catch(error => console.error("Error loading notifications:", error));
+            });
+        });
+    </script>
+
 
 </body>
 </html>

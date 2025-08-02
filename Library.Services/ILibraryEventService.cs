@@ -18,5 +18,7 @@ namespace Library.Services
         void DeleteLibraryEvent(int id);
         string GenerateNextEventCode();
 
+        void ToggleEventStatusAsync(int eventId);
+
     }
 }

@@ -1,0 +1,51 @@
+﻿@using Library.Models
+@using Library.ViewModels
+@model List<EventParticipationAdminViewModel>
+
+<h2>Event Registration Details </h2>
+
+@foreach (var eventItem in Model)
+{
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <strong>@eventItem.EventTitle</strong>
+            <span class="ms-2">(@eventItem.StartDate.ToShortDateString())</span>
+            <span class="ms-2">| Location: @eventItem.Location</span>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>UserCode</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in eventItem.Participants)
+                    {
+                        <tr>
+                            <td>@p.FullName</td>
+                            <td>@p.UserCode</td>
+                            <td>
+                                @switch (p.Status)
+                                {
+                                    case ParticipantStatus.Attended:
+                                        <span class="badge bg-success">Attended</span>
+                                        break;
+                                    case ParticipantStatus.Registered:
+                                        <span class="badge bg-warning text-dark">Registered</span>
+                                        break;
+                                    case ParticipantStatus.Cancelled:
+                                        <span class="badge bg-danger">Cancelled</span>
+                                        break;
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+

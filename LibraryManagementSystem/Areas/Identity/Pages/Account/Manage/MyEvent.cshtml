@@ -27,11 +27,11 @@ else
             <tbody>
                 @foreach (var e in Model.RegisteredEvents)
                 {
-                    var isPast = e.RegisteredDate < DateTime.Today;
+                    var isPast = e.StartDate < DateTime.Today;
 
                     <tr>
                         <td>@e.EventTitle</td>
-                        <td>@e.RegisteredDate.ToShortDateString()</td>
+                        <td>@e.StartDate.ToShortDateString()</td>
                         <td>@e.Location</td>
 
                         <td>
@@ -48,7 +48,7 @@ else
                             @if (!isPast)
                             {
                                 <form method="post" asp-page-handler="CancelRegistration">
-                                    <input type="hidden" name="eventId" value="@e.LibraryEventId" />
+                                    <input type="hidden" name="eventregistrationId" value="@e.Id" />
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         Cancel
                                     </button>

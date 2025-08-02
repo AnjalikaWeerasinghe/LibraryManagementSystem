@@ -18,5 +18,11 @@ namespace LibraryManagementSystem.Areas.Admin.Controllers
             var registrations = await _eventRegistrationService.GetRegistrationsByEventAsync(eventId);
             return View(registrations);
         }
+
+        public async Task<IActionResult> EventParticipation()
+        {
+            var report = await _eventRegistrationService.GetEventParticipationReportAsync();
+            return View(report);
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace Library.Models
 
         [Required]
         [DataType(DataType.Date)]
-        public DateTime RegisteredDate { get; set; }
+        public DateTime StartDate { get; set; }
 
         public string? EventTitle { get; set; }
 
