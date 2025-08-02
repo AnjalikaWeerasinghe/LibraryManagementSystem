@@ -47,22 +47,22 @@ This system supports **catalog management, member registration, borrowing and re
 > _(Replace these placeholders with actual images of your system's pages)_
 
 ### 🏠 Dashboard
-![Dashboard Screenshot](https://via.placeholder.com/800x400?text=Dashboard+Screenshot)
+![Dashboard Screenshot]()
 
 ### 👤 Member Management
-![Member Management Screenshot](https://via.placeholder.com/800x400?text=Member+Management+Screenshot)
+![Member Management Screenshot]()
 
 ### 📚 Book Catalog
-![Book Catalog Screenshot](https://via.placeholder.com/800x400?text=Book+Catalog+Screenshot)
+![Book Catalog Screenshot]()
 
 ### 🔄 Borrowing and Returning
-![Borrowing Screenshot](https://via.placeholder.com/800x400?text=Borrowing+Management+Screenshot)
+![Borrowing Screenshot]()
 
 ### 💰 Fine Calculation
-![Fine Calculation Screenshot](https://via.placeholder.com/800x400?text=Fine+Calculation+Screenshot)
+![Fine Calculation Screenshot]()
 
 ### 📅 Event Management
-![Event Management Screenshot](https://via.placeholder.com/800x400?text=Event+Management+Screenshot)
+![Event Management Screenshot]()
 
 ---
 
