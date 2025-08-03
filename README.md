@@ -44,7 +44,7 @@ This system supports **catalog management, member registration, borrowing and re
 ## 📷 Screenshots
 
 ### 🏠 Dashboard
-![Dashboard Screenshot]()
+![Dashboard Screenshot](screenshots/Dashboard.png)
 
 ### 👤 Member Management
 ![Member Management Screenshot]()
