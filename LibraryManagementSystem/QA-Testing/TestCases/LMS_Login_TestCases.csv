@@ -1,0 +1,31 @@
+Test Case ID,Test Scenario,Pre-Conditions,Test Steps,Expected Result,Actual Result,Status (Pass/Fail),,,
+TC_Login_01,Verify login with valid username and password,User is registered with valid credentials,"1. Open login page
+2. Enter valid username and password
+3. Click Login button",User should successfully log in and navigate to Dashboard,,,,,
+TC_Login_02,Verify login with invalid password,User is registered with valid username but incorrect password,"1. Open login page
+2. Enter valid username and invalid password
+3. Click Login button",System should display 'Invalid password' error message,,,,,
+TC_Login_03,Verify login with invalid username,Username does not exist in system,"1. Open login page
+2. Enter invalid username and valid password
+3. Click Login button",System should display 'User not found' error message,,,,,
+TC_Login_04,Verify login with empty username field,User is on login page,"1. Open login page
+2. Leave username blank
+3. Enter valid password
+4. Click Login button",System should display 'Username is required' error message,,,,,
+TC_Login_05,Verify login with empty password field,User is on login page,"1. Open login page
+2. Enter valid username
+3. Leave password blank
+4. Click Login button",System should display 'Password is required' error message,,,,,
+TC_Login_06,Verify login with both username and password fields empty,User is on login page,"1. Open login page
+2. Leave both fields blank
+3. Click Login button",System should display 'Username and Password are required' error message,,,,,
+TC_Login_07,Verify password field is masked while typing,User is on login page,"1. Open login page
+2. Enter password
+3. Observe characters typed",Password input should be masked (dots or asterisks),,,,,
+TC_Login_08,Verify user is redirected to Dashboard after successful login,User is registered with valid credentials,"1. Open login page
+2. Enter valid credentials
+3. Click Login button",User should be redirected to Dashboard page,,,,,
+TC_Login_09,Verify login session expires after inactivity,User is logged in and idle for set timeout duration,"1. Login successfully
+2. Remain inactive for session timeout period",User session should expire and redirect to login page,,,,,
+TC_Login_10,Verify 'Forgot Password' link navigates to reset page,User is on login page,"1. Open login page
+2. Click 'Forgot Password' link",User should be redirected to password reset page,,,,,
